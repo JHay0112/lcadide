@@ -6,7 +6,7 @@
  * Custom Lcapy wheel
  * It has been created without the matplotlib requirement
  */
-const LCAPY = "/py/lib/lcapy-1.11-py3-none-any.whl";
+const LCAPY = "py/lib/lcapy-1.11-py3-none-any.whl";
 
 /**
  * Load lcapy
