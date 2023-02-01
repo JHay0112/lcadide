@@ -8,12 +8,12 @@ import {loadPyodide, PyodideInterface} from "pyodide";
  * Custom Lcapy wheel
  * It has been created without the matplotlib requirement
  */
-const LCAPY: string = "lib/lcapy-1.11-py3-none-any.whl";
+const LCAPY: string = "lcapy-1.11-py3-none-any.whl";
 
 /**
  * Pyodide helper module
  */
-const PYODIDE: string = "lib/pyodide/";
+const PYODIDE: string = "pyodide/";
 
 /**
  * Load lcapy
