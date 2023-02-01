@@ -38,7 +38,7 @@ const LoadingScreen = () => {
   // TODO: get feedback from python loader to pass onto the user
   return (
     <>
-      <section class="h-screen w-screen flex flex-col justify-center text-center">
+      <section class="h-screen w-screen flex flex-col justify-center text-center bg-primary">
         <h1>lcadide</h1>
         <p><br /></p>
         <p>loading dependencies</p>

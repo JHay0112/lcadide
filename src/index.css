@@ -1,3 +1,12 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+    .bg-primary {
+        @apply bg-neutral-100 dark:bg-stone-900;
+    }
+    .text-primary {
+        @apply text-stone-900 dark:text-neutral-100;
+    }
+}
