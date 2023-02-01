@@ -1,8 +1,19 @@
-import type {Component} from 'solid-js';
+import {Component, lazy, Suspense} from 'solid-js';
+import loadPython from './py/lcapy';
+
+const Canvas = lazy(async () => {
+  let py = await loadPython();
+  return import("./ui/canvas");
+});
 
 const App: Component = () => {
-  return (
-    <p class="text-4xl text-green-700 text-center py-20">Lcadide</p>
+
+  return(
+    <>
+      <Suspense fallback={<p>loading...</p>}>
+        <Canvas />
+      </Suspense>
+    </>
   );
 };
 
