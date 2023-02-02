@@ -53,10 +53,12 @@ const LoadingScreen = () => {
     // TODO: get feedback from python loader to pass onto the user
     return (<>
         <section class="h-screen w-screen flex flex-col justify-center text-center bg-primary">
-            <h1>lcadide</h1>
+            <h1 class="h-primary font-bold text-lg">lcadide</h1>
             <p><br /></p>
             <p>loading dependencies</p>
             <p>{ellipses()}</p>
+            <p><br /></p>
+            <p><br /></p>
         </section>
     </>);
 }
@@ -71,6 +73,7 @@ const App: Component = () => {
             <Editor />
             <SheetCanvas />
             <button onclick={() => {sheet.addComponent(new Resistor())}}>New Resistor</button>
+            <button onclick={() => {console.log(sheet.forLcapy())}}>Log Netlist</button>
         </Suspense>
     </>);
 };

@@ -37,7 +37,7 @@ export abstract class Component {
      */
     forLcapy(): string {
         // TODO
-        return "";
+        return this.name;
     }
 
     get name() {return this._name}
