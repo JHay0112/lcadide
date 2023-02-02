@@ -6,7 +6,13 @@ import {
     createResource
 } from 'solid-js';
 
+import {Sheet} from './model/sheet';
 import loadPython from './py/lcapy';
+
+/**
+ * Component sheet to be managged by editor
+ */
+let sheet = new Sheet();
 
 /**
  * Python shell with lcapy
