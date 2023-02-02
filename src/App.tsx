@@ -34,6 +34,7 @@ const Editor = lazy(async () => {
             setEllipses(ellipses().concat("."));
         }
     }
+    console.log("Editor loaded");
     return import("./ui/Editor");
 });
 
