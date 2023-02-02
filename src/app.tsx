@@ -42,7 +42,7 @@ const Editor = lazy(async () => {
         }
     }
     console.log("Editor loaded");
-    return import("./ui/Editor");
+    return import("./ui/editor");
 });
 
 /**

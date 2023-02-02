@@ -3,7 +3,6 @@
  */
 
 import {createSignal, Accessor, Setter, For} from "solid-js";
-import * as sjs from "solid-js";
 import {Component} from "./cpts/cpt";
 
 /**
@@ -46,7 +45,7 @@ export default class Sheet {
      * Adds a component to the sheet
      */
     addComponent(value: Component) {
-        console.log("Added ", value.name, " to sheet.")
+        console.log("Added ", value.name, " to sheet.");
         this.components = [...this.components, value];
     }
 
