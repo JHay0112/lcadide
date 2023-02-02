@@ -8,7 +8,7 @@ import {
 
 import loadPython from './py/lcapy';
 import Sheet from './model/sheet';
-import Resistor from './model/cpts/resisitor';
+import Resistor from './model/cpts/resistor';
 
 /**
  * Python shell with lcapy
