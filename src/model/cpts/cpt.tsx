@@ -11,6 +11,10 @@ export abstract class Component {
     private _name: string;
     private _value: string;
 
+    constructor(name: string) {
+        this._name = name;
+    }
+
     /**
      * Returns a representation of the component for the canvas
      * 
@@ -21,7 +25,7 @@ export abstract class Component {
     /**
      * Returns a SOLID JS representation of the component for the sidebar
      */
-    forSidebar() {
+    forSidebar(): {} {
         // TODO
         return (<>
             
@@ -31,10 +35,13 @@ export abstract class Component {
     /**
      * Generates a string representation of the component for lcapy
      */
-    forLcapy() {
+    forLcapy(): string {
         // TODO
+        return "";
     }
 
-    get name()  {return this._name}
-    get value() {return this._value}
+    get name() {return this._name}
+
+    get value()              {return this._value}
+    set value(value: string) {this._value = value}
 }
