@@ -22,13 +22,13 @@ export default function Editor(props) {
 
     return (
         <>
-            <section class="h-full w-full md:w-2/3 inline-block align-top">
+            <section class="h-screen w-full md:w-2/3 inline-block align-top">
                 <section class="">
                     Editing canvas...
                 </section>
                 <Toolbar sheet={sheet} />
             </section>
-            <aside class="h-full w-full md:w-1/3 inline-block align-top">  
+            <aside class="h-screen w-full md:w-1/3 inline-block align-top">  
                 <Sidebar py={py} />
             </aside>
         </>

@@ -17,13 +17,13 @@ export default function Terminal(props) {
 
     // setup terminal output and input
     let input;
+    let parent;
     const [output, setOutput] = createSignal([]);
 
     return (<>
-        <section class="w-full h-full font-mono text-primary bg-primary">
             <Show when={!py.loading} fallback={<p>Loading Pyodide Shell...</p>}>
-                <section class="p-3" style="position: fixed; bottom: 0;">
-                    <section class="w-full overflow-y-scroll z-0" style="white-space: pre-wrap;">
+                <section ref={parent} class="w-full h-full bg-primary text-primary p-3 overflow-y-scroll">
+                    <section class="w-full whitespace-pre-wrap">
                         <For each={output()}>{(line, _) => 
                             <p>{line}</p>
                         }</For>
@@ -45,13 +45,13 @@ export default function Terminal(props) {
                                 }
                         }
                         input.value = "";
+                        parent.scrollTop = parent.scrollHeight;
                     }}>
                         <label for={input} class="h-primary text-bold float-left">&gt;&gt;&gt;&nbsp;</label>
-                        <input type="text" ref={input} class="bg-primary text-primary border-none float-left" value="" />
-                        <input type="submit" value="" />
+                        <input type="text" ref={input} class="bg-primary text-primary float-left border-b-2 border-white border-solid outline-none" value="" />
+                        <input type="submit" class="invisible" value="" />
                     </form>
                 </section>
             </Show>
-        </section>
     </>);
 }
