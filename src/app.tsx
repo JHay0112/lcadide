@@ -7,6 +7,7 @@ import {
 } from 'solid-js';
 
 import loadPython from './py/lcapy';
+import Terminal from './py/terminal';
 import Sheet from './model/sheet';
 import Resistor from './model/cpts/resistor';
 
@@ -71,6 +72,7 @@ const App: Component = () => {
     return (<>
         <Suspense fallback={<LoadingScreen />}>
             <Editor />
+            <Terminal py={py} />
             <SheetCanvas />
             <button onclick={() => {sheet.addComponent(new Resistor())}}>New Resistor</button>
             <button onclick={() => {console.log(sheet.forLcapy())}}>Log Netlist</button>

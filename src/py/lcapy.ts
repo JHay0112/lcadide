@@ -42,5 +42,12 @@ await install("wheel")
 
     await pyodide.loadPackage(LCAPY);
 
+    pyodide.runPython(`
+import lcapy
+import sys
+import io
+sys.stdout = io.StringIO()
+`);
+
     return pyodide;
 }
