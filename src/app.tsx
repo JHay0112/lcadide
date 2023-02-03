@@ -7,9 +7,6 @@ import {
 } from 'solid-js';
 
 import loadPython from './py/lcapy';
-import Terminal from './py/terminal';
-import Sheet from './model/sheet';
-import Resistor from './model/cpts/resistor';
 
 /**
  * Python shell with lcapy
@@ -20,11 +17,6 @@ const [py] = createResource(loadPython);
  * Loading ellipses spinner
  */
 const [ellipses, setEllipses] = createSignal(".");
-
-/**
- * Sheet
- */
-let sheet = new Sheet();
 
 /**
  * Lazy loading editor,
@@ -64,18 +56,10 @@ const LoadingScreen = () => {
     </>);
 }
 
-const SheetCanvas = () => {
-    return sheet.forDisplay();
-}
-
 const App: Component = () => {
     return (<>
         <Suspense fallback={<LoadingScreen />}>
-            <Editor />
-            <Terminal py={py} />
-            <SheetCanvas />
-            <button onclick={() => {sheet.addComponent(new Resistor())}}>New Resistor</button>
-            <button onclick={() => {console.log(sheet.forLcapy())}}>Log Netlist</button>
+            <Editor py={py} />
         </Suspense>
     </>);
 };
