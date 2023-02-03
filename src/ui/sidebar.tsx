@@ -19,10 +19,10 @@ export default function Sidebar(props) {
     let py: Resource<PyodideInterface> = local.py;
 
     return (<>
-        <section class="h-1/2 w-full">
+        <section class="h-full md:h-1/2 w-full">
             Components list...
         </section>
-        <section class="h-1/2 w-full dark">
+        <section class="h-full md:h-1/2 w-full dark">
             <Terminal py={py} />
         </section>
     </>);
