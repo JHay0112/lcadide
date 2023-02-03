@@ -22,13 +22,16 @@ export default function Terminal(props) {
 
     return (<>
             <Show when={!py.loading} fallback={<p>Loading Pyodide Shell...</p>}>
-                <section ref={parent} class="w-full h-full bg-primary text-primary p-3 overflow-y-scroll">
+                <section ref={parent} class="w-full h-full bg-primary text-primary p-3 overflow-y-scroll font-mono">
                     <section class="w-full whitespace-pre-wrap">
+                        <p>Python (Pyodide 0.22.1) Shell</p>
+                        <p>KNOWN BUG: Errors are supressed</p>
+                        <br />
                         <For each={output()}>{(line, _) => 
                             <p>{line}</p>
                         }</For>
                     </section>
-                    <form action="javascript:void(0)" onSubmit={() => {
+                    <form action="javascript:void(0)" class="flex" onSubmit={() => {
                         switch(input.value) {
                             case "exit()":
                                 break; // TODO: Collapse terminal?
@@ -47,8 +50,8 @@ export default function Terminal(props) {
                         input.value = "";
                         parent.scrollTop = parent.scrollHeight;
                     }}>
-                        <label for={input} class="h-primary text-bold float-left">&gt;&gt;&gt;&nbsp;</label>
-                        <input type="text" ref={input} class="bg-primary text-primary float-left border-b-2 border-white border-solid outline-none" value="" />
+                        <label for={input} class="h-primary text-bold float-left flex-none">&gt;&gt;&gt;&nbsp;</label>
+                        <input type="text" ref={input} class="bg-primary text-primary float-left border-b-2 border-white border-solid outline-none flex-1" value="" />
                         <input type="submit" class="invisible" value="" />
                     </form>
                 </section>
