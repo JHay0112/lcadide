@@ -6,6 +6,7 @@ import {
     createResource
 } from 'solid-js';
 
+import Sheet from './model/sheet';
 import loadPython from './py/lcapy';
 
 /**
@@ -17,6 +18,11 @@ const [py] = createResource(loadPython);
  * Loading ellipses spinner
  */
 const [ellipses, setEllipses] = createSignal(".");
+
+/**
+ * Editor sheet
+ */
+let sheet = new Sheet();
 
 /**
  * Lazy loading editor,
@@ -59,7 +65,7 @@ const LoadingScreen = () => {
 const App: Component = () => {
     return (<>
         <Suspense fallback={<LoadingScreen />}>
-            <Editor py={py} />
+            <Editor py={py} sheet={sheet} />
         </Suspense>
     </>);
 };
