@@ -20,17 +20,6 @@ export default class Sheet {
     }
 
     /**
-     * Produces the displayable jsx sheet component
-     */
-    forDisplay() {
-        return (<>
-            <For each={this.components}>{(component, _) => 
-                <p>{component.name}{component.value}</p>
-            }</For>
-        </>);
-    }
-
-    /**
      * Produces a netlist suitable for passing to lcapy
      */
     forLcapy(): string {
