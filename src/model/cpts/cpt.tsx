@@ -13,7 +13,17 @@ import { Color, Position } from "../../types";
  */
 export abstract class Component {
 
+    /**
+     * Lcapy component identifier
+     * Typically a single character, e.g. R for resistor
+     */
     public abstract readonly name: string;
+
+    /**
+     * SVG path description of the component.
+     * Limited to fit withing a 75h x 50w box.
+     */
+    public abstract readonly path: string;
 
     private static _nextId: number = 0;
     private _id: Accessor<number>;
@@ -36,9 +46,15 @@ export abstract class Component {
     }
 
     /**
-     * Returns a representation of the component for the canvas
+     * Returns an SVG representation of the component for the canvas
      */
-    abstract forDisplay();
+    forDisplay() {
+        return (<>
+            <svg height="75" width="50" style={`stroke: ${this.color}; stroke-width: 1; fill: none;`}>
+                <path d={this.path} />
+            </svg>
+        </>);  
+    }
 
     /**
      * Returns a SOLID JS representation of the component for the sidebar
@@ -58,12 +74,21 @@ export abstract class Component {
         return this.name;
     }
 
+    /**
+     * Component id. Automatically assigned.
+     */
     get id()           {return this._id()}
     set id(id: number) {this._setId(id)}
 
+    /**
+     * Symbolic or numerical value of the component.
+     */
     get value()              {return this._value()}
     set value(value: string) {this._setValue(value)}
 
+    /**
+     * Stroke colour for the component.
+     */
     get color()             {return this._color()}
     set color(color: Color) {this._setColor(color)}
 
