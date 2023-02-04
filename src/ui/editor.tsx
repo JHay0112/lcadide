@@ -2,8 +2,7 @@
  * Provides the editor interface
  */
 
-import { splitProps, Resource } from "solid-js";
-import { PyodideInterface } from "pyodide";
+import { splitProps } from "solid-js";
 
 import Sidebar from "./sidebar";
 import Toolbar from "./toolbar";
@@ -16,8 +15,7 @@ import Sheet from "../model/sheet";
 export default function Editor(props) {
 
     // get python instance from props
-    const [local, _] = splitProps(props, ["py", "sheet"]);
-    let py: Resource<PyodideInterface> = local.py;
+    const [local, _] = splitProps(props, ["sheet"]);
     let sheet: Sheet = local.sheet;
 
     return (
@@ -29,7 +27,7 @@ export default function Editor(props) {
                 <Toolbar sheet={sheet} />
             </section>
             <aside class="h-screen w-full md:w-1/3 inline-block align-top">  
-                <Sidebar py={py} />
+                <Sidebar />
             </aside>
         </>
     );

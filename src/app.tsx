@@ -2,17 +2,11 @@ import {
     Component,
     lazy,
     Suspense,
-    createSignal,
-    createResource
+    createSignal
 } from 'solid-js';
 
+import py from './py/lcapy';
 import Sheet from './model/sheet';
-import loadPython from './py/lcapy';
-
-/**
- * Python shell with lcapy
- */
-const [py] = createResource(loadPython);
 
 /**
  * Loading ellipses spinner
@@ -65,7 +59,7 @@ const LoadingScreen = () => {
 const App: Component = () => {
     return (<>
         <Suspense fallback={<LoadingScreen />}>
-            <Editor py={py} sheet={sheet} />
+            <Editor sheet={sheet} />
         </Suspense>
     </>);
 };

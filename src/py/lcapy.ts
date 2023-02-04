@@ -2,7 +2,8 @@
  * This script uses pyodide to load lcapy from a custom wheel
  */
 
-import {loadPyodide, PyodideInterface} from "pyodide";
+import { createResource } from "solid-js";
+import { loadPyodide, PyodideInterface } from "pyodide";
 
 /**
  * Custom Lcapy wheel
@@ -16,10 +17,16 @@ const LCAPY: string = "lcapy-1.11-py3-none-any.whl";
 const PYODIDE: string = "pyodide/";
 
 /**
+ * Pyodide instance loaded with lcapy
+ */
+const [py] = createResource(loadPython);
+export default py;
+
+/**
  * Load lcapy
  * This requires a manual loading of dependencies
  */
-export default async function loadPython(): Promise<PyodideInterface> {
+async function loadPython(): Promise<PyodideInterface> {
 
     let pyodide = await loadPyodide({
         indexURL: PYODIDE
@@ -44,6 +51,7 @@ await install("wheel")
 
     pyodide.runPython(`
 import lcapy
+from lcapy import Circuit
 import sys
 import io
 sys.stdout = io.StringIO()

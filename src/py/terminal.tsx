@@ -2,18 +2,14 @@
  * Emulates a graphical Python terminal
  */
 
-import { createSignal, Resource, Show, splitProps, For } from "solid-js";
-import { PyodideInterface } from "pyodide";
+import { createSignal, Show, For } from "solid-js";
+import py from "./lcapy";
 
 /**
  * Graphical Python terminal loader
  * TODO: Give error outputs
  */
-export default function Terminal(props) {
-
-    // get python instance from props
-    const [local, _] = splitProps(props, ["py"]);
-    let py: Resource<PyodideInterface> = local.py;
+export default function Terminal() {
 
     // setup terminal output and input
     let input;
@@ -25,7 +21,6 @@ export default function Terminal(props) {
                 <section ref={parent} class="w-full h-full bg-primary text-primary p-3 overflow-y-scroll font-mono">
                     <section class="w-full whitespace-pre-wrap">
                         <p>Python (Pyodide 0.22.1) Shell</p>
-                        <p>KNOWN BUG: Errors are supressed</p>
                         <br />
                         <For each={output()}>{(line, _) => 
                             <p>{line}</p>
@@ -40,12 +35,17 @@ export default function Terminal(props) {
                                 break;
                             default:
                                 setOutput([...output(), ">>> ".concat(input.value)]);
-                                py.latest.runPython(input.value);
-                                let stdout = py.latest.runPython("sys.stdout.getvalue()");
+                                try {
+                                    py.latest.runPython(input.value);
+                                    let stdout = py.latest.runPython("sys.stdout.getvalue()");
+                                    if (stdout != "") {
+                                        setOutput([...output(), stdout]);
+                                    }
+                                } catch(e) {
+                                    // catch and print python errors
+                                    setOutput([...output(), e.message]);
+                                } 
                                 py.latest.runPython("sys.stdout = io.StringIO()");
-                                if (stdout != "") {
-                                    setOutput([...output(), stdout]);
-                                }
                         }
                         input.value = "";
                         parent.scrollTop = parent.scrollHeight;
