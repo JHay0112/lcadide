@@ -16,7 +16,7 @@ export default function Canvas(props) {
     let sheet: Sheet = local.sheet;
 
     return (<>
-        <section class="h-full w-full">
+        <section class="h-full w-full overflow-scroll">
             <For each={sheet.components}>{(component) =>
                 component.forDisplay()
             }</For>

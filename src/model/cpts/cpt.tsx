@@ -9,10 +9,15 @@ import { Color, Position } from "../../types";
 /**
  * Base class for circuit components
  * Specific components need to derive from this base class
+ * Derived visual components implement reactive behaviours with SolidJS
  */
 export abstract class Component {
 
-    private _name: string;
+    public abstract readonly name: string;
+
+    private static _nextId: number = 0;
+    private _id: Accessor<number>;
+    private _setId: Setter<number>;
 
     private _value: Accessor<string>;
     private _setValue: Setter<string>;
@@ -23,10 +28,9 @@ export abstract class Component {
     private _position: Accessor<Position>;
     private _setPosition: Setter<Position>;
 
-    constructor(name: string) {
-        this._name = name;
-
+    constructor() {
         [this._value, this._setValue] = createSignal("");
+        [this._id, this._setValue] = createSignal(Component._nextId++);
         [this._color, this._setColor] = createSignal("#252525");
         [this._position, this._setPosition] = createSignal([0, 0]);
     }
@@ -54,7 +58,8 @@ export abstract class Component {
         return this.name;
     }
 
-    get name() {return this._name}
+    get id()           {return this._id()}
+    set id(id: number) {this._setId(id)}
 
     get value()              {return this._value()}
     set value(value: string) {this._setValue(value)}
