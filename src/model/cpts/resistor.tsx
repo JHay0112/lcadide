@@ -2,7 +2,7 @@
  * Resistor component
  */
 
-import { Component } from "./cpt";
+import Component from "./cpt";
 
 /**
  * Ideal resistor model

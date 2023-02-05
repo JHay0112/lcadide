@@ -11,7 +11,7 @@ import { Color, Position } from "../../types";
  * Specific components need to derive from this base class
  * Derived visual components implement reactive behaviours with SolidJS
  */
-export abstract class Component {
+export default abstract class Component {
 
     /**
      * Lcapy component identifier
@@ -24,6 +24,17 @@ export abstract class Component {
      * Limited to fit withing a 75h x 50w box.
      */
     public abstract readonly path: string;
+
+    /**
+     * Describes the position of nodes 
+     * (points at which other components may connect)
+     * relative to the position of the component.
+     * 
+     * For single port (two-node) components the convention holds
+     * that the first listed node is "positive" and the second
+     * listed node is "negative".
+     */
+    public abstract readonly nodes: Array<Position>;
 
     private static _nextId: number = 0;
     private _id: Accessor<number>;
@@ -92,6 +103,12 @@ export abstract class Component {
     get color()             {return this._color()}
     set color(color: Color) {this._setColor(color)}
 
+    /**
+     * The position of the component.
+     * Node positions are derived from this with
+     * axes extending to the right (x) and down (y)
+     * from the component "position";
+     */
     get position()             {return this._position()}
     set position(pos: Position) {this._setPosition(pos)}
 }
