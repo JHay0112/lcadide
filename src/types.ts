@@ -17,4 +17,4 @@ export type Color = RGB | RGBA | HEX;
 /**
  * Tuple describing a 2d cartesian position
  */
-export type Position = [number, number];
+export type Position = [x: number, y: number];

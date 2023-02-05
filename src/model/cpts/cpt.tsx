@@ -34,7 +34,7 @@ export default abstract class Component {
      * that the first listed node is "positive" and the second
      * listed node is "negative".
      */
-    public abstract readonly nodes: Array<Position>;
+    public abstract readonly nodes: Position[];
 
     private static _nextId: number = 0;
     private _id: Accessor<number>;
