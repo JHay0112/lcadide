@@ -4,7 +4,7 @@
 
 import { createSignal, Accessor, Setter } from "solid-js";
 
-import { Color, Position } from "../../types";
+import { Color, Orientation, Position } from "../../types";
 
 /**
  * Base class for circuit components
@@ -49,11 +49,15 @@ export default abstract class Component {
     private _position: Accessor<Position>;
     private _setPosition: Setter<Position>;
 
+    private _orientation: Accessor<Orientation>;
+    private _setOrientation: Setter<Orientation>;
+
     constructor() {
         [this._value, this._setValue] = createSignal("");
         [this._id, this._setValue] = createSignal(String(Component._nextId++));
         [this._color, this._setColor] = createSignal("#252525");
         [this._position, this._setPosition] = createSignal([-255, -255]);
+        [this._orientation, this._setOrientation] = createSignal(Orientation.VERTICAL);
     }
 
     /**
@@ -69,6 +73,7 @@ export default abstract class Component {
                     position: absolute;
                     top: ${this.position[0]}px;
                     left: ${this.position[1]}px;
+                    rotate: ${this.orientation}deg;
                 `}
             >
                 <path d={this.path} />
@@ -120,4 +125,10 @@ export default abstract class Component {
      */
     get position()             {return this._position()}
     set position(pos: Position) {this._setPosition(pos)}
+
+    /**
+     * The orientation of the component.
+     */
+    get orientation()                 {return this._orientation()}
+    set orientation(ori: Orientation) {this._setOrientation(ori)}
 }
