@@ -53,7 +53,7 @@ export default abstract class Component {
         [this._value, this._setValue] = createSignal("");
         [this._id, this._setValue] = createSignal(String(Component._nextId++));
         [this._color, this._setColor] = createSignal("#252525");
-        [this._position, this._setPosition] = createSignal([0, 0]);
+        [this._position, this._setPosition] = createSignal([-255, -255]);
     }
 
     /**
@@ -66,7 +66,7 @@ export default abstract class Component {
                 style={`
                     stroke: ${this.color}; 
                     stroke-width: 2; fill: none;
-                    position: relative;
+                    position: absolute;
                     top: ${this.position[0]}px;
                     left: ${this.position[1]}px;
                 `}

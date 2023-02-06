@@ -13,13 +13,19 @@ export default class Sheet {
 
     private _components: Accessor<Component[]>; 
     private _setComponents: Setter<Component[]>;
+
+    private _active: Accessor<boolean>;
+    private _setActive: Setter<boolean>;
+
     private _activeComponent: Accessor<Component>;
     private _setActiveComponent: Setter<Component>;
 
     constructor() {
         // Setup components array
         [this._components, this._setComponents] = createSignal([]);
-        [this._activeComponent, this._setActiveComponent] = createSignal(null);
+        [this._active, this._setActive] = createSignal(false);
+        [this._activeComponent, this._setActiveComponent] = createSignal(undefined);
+        this.active = false;
     }
 
     /**
@@ -37,9 +43,9 @@ export default class Sheet {
      * Places the active component down in its current position.
      */
     placeActiveComponent() {
-        if (this.activeComponent != null) {
+        if (this.active) {
             this.components = [...this.components, this.activeComponent];
-            this.activeComponent = null;
+            this.active = false;
         }
     }
 
@@ -50,9 +56,20 @@ export default class Sheet {
     set components(value: Component[]) {this._setComponents(value)}
 
     /**
-     * Details the component being actively manipulated by the user.
-     * This component should not be included in the 
+     * Tracks whether a component is currently considered "active".
      */
-    get activeComponent()               {return this._activeComponent()}
-    set activeComponent(cpt: Component) {this._setActiveComponent(cpt)}
+    get active()               {return this._active()}
+    set active(value: boolean) {this._setActive(value)}
+
+    /**
+     * Details the component being actively manipulated by the user.
+     * This component should not be included in the components list.
+     * 
+     * Assignment automatically sets the active flag...
+     */
+    get activeComponent() {return this._activeComponent()}
+    set activeComponent(cpt: Component) {
+        this._setActiveComponent(cpt)
+        this.active = true;
+    }
 }
