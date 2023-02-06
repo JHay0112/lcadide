@@ -37,8 +37,8 @@ export default abstract class Component {
     public abstract readonly nodes: Position[];
 
     private static _nextId: number = 0;
-    private _id: Accessor<number>;
-    private _setId: Setter<number>;
+    private _id: Accessor<string>;
+    private _setId: Setter<string>;
 
     private _value: Accessor<string>;
     private _setValue: Setter<string>;
@@ -51,7 +51,7 @@ export default abstract class Component {
 
     constructor() {
         [this._value, this._setValue] = createSignal("");
-        [this._id, this._setValue] = createSignal(Component._nextId++);
+        [this._id, this._setValue] = createSignal(String(Component._nextId++));
         [this._color, this._setColor] = createSignal("#252525");
         [this._position, this._setPosition] = createSignal([0, 0]);
     }
@@ -61,7 +61,7 @@ export default abstract class Component {
      */
     forDisplay() {
         return (<>
-            <svg height="75" width="50" style={`stroke: ${this.color}; stroke-width: 1; fill: none;`}>
+            <svg height="75" width="50" style={`stroke: ${this.color}; stroke-width: 2; fill: none;`}>
                 <path d={this.path} />
             </svg>
         </>);  
@@ -89,7 +89,7 @@ export default abstract class Component {
      * Component id. Automatically assigned.
      */
     get id()           {return this._id()}
-    set id(id: number) {this._setId(id)}
+    set id(id: string) {this._setId(id)}
 
     /**
      * Symbolic or numerical value of the component.
