@@ -4,15 +4,41 @@
 
 import { createSignal, Accessor, Setter } from "solid-js";
 
-import { Color, Position } from "../../types";
+import { Color, Orientation, Position } from "../../types";
 
 /**
  * Base class for circuit components
  * Specific components need to derive from this base class
+ * Derived visual components implement reactive behaviours with SolidJS
  */
-export abstract class Component {
+export default abstract class Component {
 
-    private _name: string;
+    /**
+     * Lcapy component identifier
+     * Typically a single character, e.g. R for resistor
+     */
+    public abstract readonly name: string;
+
+    /**
+     * SVG path description of the component.
+     * Limited to fit withing a 75h x 50w box.
+     */
+    public abstract readonly path: string;
+
+    /**
+     * Describes the position of nodes 
+     * (points at which other components may connect)
+     * relative to the position of the component.
+     * 
+     * For single port (two-node) components the convention holds
+     * that the first listed node is "positive" and the second
+     * listed node is "negative".
+     */
+    public abstract readonly nodes: Position[];
+
+    private static _nextId: number = 0;
+    private _id: Accessor<string>;
+    private _setId: Setter<string>;
 
     private _value: Accessor<string>;
     private _setValue: Setter<string>;
@@ -23,18 +49,37 @@ export abstract class Component {
     private _position: Accessor<Position>;
     private _setPosition: Setter<Position>;
 
-    constructor(name: string) {
-        this._name = name;
+    private _orientation: Accessor<Orientation>;
+    private _setOrientation: Setter<Orientation>;
 
+    constructor() {
         [this._value, this._setValue] = createSignal("");
+        [this._id, this._setValue] = createSignal(String(Component._nextId++));
         [this._color, this._setColor] = createSignal("#252525");
-        [this._position, this._setPosition] = createSignal([0, 0]);
+        [this._position, this._setPosition] = createSignal([-255, -255]);
+        [this._orientation, this._setOrientation] = createSignal(Orientation.VERTICAL);
     }
 
     /**
-     * Returns a representation of the component for the canvas
+     * Returns an SVG representation of the component for the canvas
      */
-    abstract forDisplay();
+    forDisplay() {
+        return (<>
+            <svg 
+                height="75" width="50" 
+                style={`
+                    stroke: ${this.color}; 
+                    stroke-width: 2; fill: none;
+                    position: absolute;
+                    top: ${this.position[0]}px;
+                    left: ${this.position[1]}px;
+                    rotate: ${this.orientation}deg;
+                `}
+            >
+                <path d={this.path} />
+            </svg>
+        </>);  
+    }
 
     /**
      * Returns a SOLID JS representation of the component for the sidebar
@@ -54,14 +99,36 @@ export abstract class Component {
         return this.name;
     }
 
-    get name() {return this._name}
+    /**
+     * Component id. Automatically assigned.
+     */
+    get id()           {return this._id()}
+    set id(id: string) {this._setId(id)}
 
+    /**
+     * Symbolic or numerical value of the component.
+     */
     get value()              {return this._value()}
     set value(value: string) {this._setValue(value)}
 
+    /**
+     * Stroke colour for the component.
+     */
     get color()             {return this._color()}
     set color(color: Color) {this._setColor(color)}
 
+    /**
+     * The position of the component.
+     * Node positions are derived from this with
+     * axes extending to the right (x) and down (y)
+     * from the component "position";
+     */
     get position()             {return this._position()}
     set position(pos: Position) {this._setPosition(pos)}
+
+    /**
+     * The orientation of the component.
+     */
+    get orientation()                 {return this._orientation()}
+    set orientation(ori: Orientation) {this._setOrientation(ori)}
 }

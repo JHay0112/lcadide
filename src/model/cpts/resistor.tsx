@@ -2,24 +2,29 @@
  * Resistor component
  */
 
-import { Component } from "./cpt";
+import { Position } from "../../types";
+
+import Component from "./cpt";
 
 /**
  * Ideal resistor model
  */
 export default class Resistor extends Component {
-
-    constructor() {
-        super("R");
-    }
-
-    forDisplay() {
-        return (<>
-            <svg height="100" width="50" style={`stroke: ${this.color}; stroke-width: 2;`}>
-                <line x1="25" y1="0" x2="25" y2="20" />
-            </svg>
-        </>);        
-    }
-
-
+    name = "R";
+    path = `
+        M 25 , 0
+        L 25 , 20
+        l 20 , 5
+        l -40, 5
+        l 40 , 5
+        l -40, 5
+        l 40 , 5
+        l -40, 5
+        l 20 , 5
+        L 25, 75
+    `;
+    nodes: Position[] = [
+        [25, 0],
+        [25, 75]
+    ];
 }

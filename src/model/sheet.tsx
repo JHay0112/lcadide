@@ -2,8 +2,8 @@
  * Handles the component sheet
  */
 
-import {createSignal, Accessor, Setter, For} from "solid-js";
-import {Component} from "./cpts/cpt";
+import { createSignal, Accessor, Setter } from "solid-js";
+import Component from "./cpts/cpt";
 
 /**
  * Component sheet class
@@ -14,9 +14,18 @@ export default class Sheet {
     private _components: Accessor<Component[]>; 
     private _setComponents: Setter<Component[]>;
 
+    private _active: Accessor<boolean>;
+    private _setActive: Setter<boolean>;
+
+    private _activeComponent: Accessor<Component>;
+    private _setActiveComponent: Setter<Component>;
+
     constructor() {
         // Setup components array
         [this._components, this._setComponents] = createSignal([]);
+        [this._active, this._setActive] = createSignal(false);
+        [this._activeComponent, this._setActiveComponent] = createSignal(undefined);
+        this.active = false;
     }
 
     /**
@@ -31,13 +40,36 @@ export default class Sheet {
     }
 
     /**
-     * Adds a component to the sheet
+     * Places the active component down in its current position.
      */
-    addComponent(value: Component) {
-        console.log("Added ", value.name, " to sheet.");
-        this.components = [...this.components, value];
+    placeActiveComponent() {
+        if (this.active) {
+            this.components = [...this.components, this.activeComponent];
+            this.active = false;
+        }
     }
 
+    /**
+     * List of components included in the sheet.
+     */
     get components()                   {return this._components()}
     set components(value: Component[]) {this._setComponents(value)}
+
+    /**
+     * Tracks whether a component is currently considered "active".
+     */
+    get active()               {return this._active()}
+    set active(value: boolean) {this._setActive(value)}
+
+    /**
+     * Details the component being actively manipulated by the user.
+     * This component should not be included in the components list.
+     * 
+     * Assignment automatically sets the active flag...
+     */
+    get activeComponent() {return this._activeComponent()}
+    set activeComponent(cpt: Component) {
+        this._setActiveComponent(cpt)
+        this.active = true;
+    }
 }

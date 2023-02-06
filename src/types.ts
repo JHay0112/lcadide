@@ -17,4 +17,20 @@ export type Color = RGB | RGBA | HEX;
 /**
  * Tuple describing a 2d cartesian position
  */
-export type Position = [number, number];
+export type Position = [x: number, y: number];
+
+/**
+ * Enum describing the orientation of a component.
+ * 
+ * Enum values translate into degree values 
+ * compatible with CSS rotate
+ * ```css
+ * .example {
+ *   rotate: ${Orientation}deg;
+ * }
+ * ```
+ */
+export enum Orientation {
+    VERTICAL = 0,
+    HORIZONTAL = 90
+}
