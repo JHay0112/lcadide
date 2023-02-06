@@ -61,7 +61,16 @@ export default abstract class Component {
      */
     forDisplay() {
         return (<>
-            <svg height="75" width="50" style={`stroke: ${this.color}; stroke-width: 2; fill: none;`}>
+            <svg 
+                height="75" width="50" 
+                style={`
+                    stroke: ${this.color}; 
+                    stroke-width: 2; fill: none;
+                    position: relative;
+                    top: ${this.position[0]}px;
+                    left: ${this.position[1]}px;
+                `}
+            >
                 <path d={this.path} />
             </svg>
         </>);  

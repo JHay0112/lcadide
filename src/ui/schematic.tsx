@@ -2,12 +2,11 @@
  * Canvas for drawing schematics upon
  */
 
-import { splitProps, For } from "solid-js";
+import { splitProps, For, Show } from "solid-js";
 
 import Toolbar from "./toolbar";
 
 import Sheet from "../model/sheet";
-import Component from "../model/cpts/cpt";
 
 /**
  * Canvas that draws schematics from a sheet
@@ -18,11 +17,21 @@ export default function Schematic(props) {
     const [local, _] = splitProps(props, ["sheet"]);
     let sheet: Sheet = local.sheet;
 
-    // track the actively selected component
-    let activeComponent: Component = null;
+    /**
+     * Handles mouse movements.
+     * This will update the position of the active component wrt the mouse.
+     */
+    function handleMouseMove(event) {
+        if (sheet.activeComponent != null) {
+            sheet.activeComponent.position = [event.clientY, event.clientX];
+        }
+    }
 
     return (<>
-        <section class="h-full w-full overflow-scroll">
+        <section class="h-full w-full overflow-scroll" onMouseMove={handleMouseMove} onMouseDown={sheet.placeActiveComponent}>
+            <Show when={sheet.activeComponent != null}>
+                {sheet.activeComponent.forDisplay()}
+            </Show>
             <For each={sheet.components}>{(component) =>
                 component.forDisplay()
             }</For>

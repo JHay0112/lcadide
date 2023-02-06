@@ -2,7 +2,7 @@
  * Handles editor toolbar
  */
 
-import { Resource, splitProps } from "solid-js";
+import { splitProps } from "solid-js";
 
 import Sheet from "../model/sheet";
 import Resistor from "../model/cpts/resistor";
