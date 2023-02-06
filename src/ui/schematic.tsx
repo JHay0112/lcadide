@@ -4,13 +4,15 @@
 
 import { splitProps, For } from "solid-js";
 
+import Toolbar from "./toolbar";
+
 import Sheet from "../model/sheet";
 import Component from "../model/cpts/cpt";
 
 /**
  * Canvas that draws schematics from a sheet
  */
-export default function Canvas(props) {
+export default function Schematic(props) {
 
     // get sheet instance from props
     const [local, _] = splitProps(props, ["sheet"]);
@@ -24,6 +26,7 @@ export default function Canvas(props) {
             <For each={sheet.components}>{(component) =>
                 component.forDisplay()
             }</For>
+            <Toolbar sheet={sheet} />
         </section>
     </>);
 }

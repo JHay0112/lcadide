@@ -2,8 +2,8 @@
  * Handles the component sheet
  */
 
-import {createSignal, Accessor, Setter, For} from "solid-js";
-import {Component} from "./cpts/cpt";
+import { createSignal, Accessor, Setter } from "solid-js";
+import Component from "./cpts/cpt";
 
 /**
  * Component sheet class
@@ -13,10 +13,13 @@ export default class Sheet {
 
     private _components: Accessor<Component[]>; 
     private _setComponents: Setter<Component[]>;
+    private _activeComponent: Accessor<Component>;
+    private _setActiveComponent: Setter<Component>;
 
     constructor() {
         // Setup components array
         [this._components, this._setComponents] = createSignal([]);
+        [this._activeComponent, this._setActiveComponent] = createSignal(null);
     }
 
     /**
@@ -31,13 +34,25 @@ export default class Sheet {
     }
 
     /**
-     * Adds a component to the sheet
+     * Places the active component down in its current position.
      */
-    addComponent(value: Component) {
-        console.log("Added ", value.name, " to sheet.");
-        this.components = [...this.components, value];
+    placeActiveComponent() {
+        if (this.activeComponent != null) {
+            this.components = [...this.components, this.activeComponent];
+            this.activeComponent = null;
+        }
     }
 
+    /**
+     * List of components included in the sheet.
+     */
     get components()                   {return this._components()}
     set components(value: Component[]) {this._setComponents(value)}
+
+    /**
+     * Details the component being actively manipulated by the user.
+     * This component should not be included in the 
+     */
+    get activeComponent()               {return this._activeComponent()}
+    set activeComponent(cpt: Component) {this._setActiveComponent(cpt)}
 }
