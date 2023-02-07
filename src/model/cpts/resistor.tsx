@@ -6,9 +6,6 @@ import { Position } from "../../types";
 
 import Component from "./cpt";
 
-/**
- * Ideal resistor model
- */
 export default class Resistor extends Component {
     name = "R";
     path = `

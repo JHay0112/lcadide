@@ -2,14 +2,19 @@
  * Handles circuit components
  */
 
-import { createSignal, Accessor, Setter } from "solid-js";
+import { createSignal, Accessor, Setter, Show } from "solid-js";
 
 import { Color, Orientation, Position } from "../../types";
+
+import Sheet from "../sheet";
 
 /**
  * Base class for circuit components
  * Specific components need to derive from this base class
  * Derived visual components implement reactive behaviours with SolidJS
+ * 
+ * @param sheet
+ *  The sheet that the component is a part of.
  */
 export default abstract class Component {
 
@@ -52,9 +57,15 @@ export default abstract class Component {
     private _orientation: Accessor<Orientation>;
     private _setOrientation: Setter<Orientation>;
 
-    constructor() {
+    /**
+     * The sheet that the component is a part of.
+     */
+    private sheet: Sheet;
+
+    constructor(sheet: Sheet) {
+        this.sheet = sheet;
         [this._value, this._setValue] = createSignal("");
-        [this._id, this._setValue] = createSignal(String(Component._nextId++));
+        [this._id, this._setId] = createSignal(String(Component._nextId++));
         [this._color, this._setColor] = createSignal("#252525");
         [this._position, this._setPosition] = createSignal([-255, -255]);
         [this._orientation, this._setOrientation] = createSignal(Orientation.VERTICAL);
@@ -64,21 +75,56 @@ export default abstract class Component {
      * Returns an SVG representation of the component for the canvas
      */
     forDisplay() {
+
+        let [displayContextMenu, setDisplayContextMenu] = createSignal(false);
+        let [contextMenuPosition, setContextMenuPosition] = createSignal([0, 0]);
+
         return (<>
             <svg 
                 height="75" width="50" 
                 style={`
                     stroke: ${this.color}; 
-                    stroke-width: 2; fill: none;
+                    stroke-width: 2; 
+                    fill: none;
                     position: absolute;
                     top: ${this.position[0]}px;
                     left: ${this.position[1]}px;
-                    rotate: ${this.orientation}deg;
+                    rotate: ${90*this.orientation}deg;
                 `}
+                onContextMenu={(event) => {
+                    setContextMenuPosition([event.clientX, event.clientY]);
+                    setDisplayContextMenu(true);
+                    event.preventDefault();
+                }}
             >
                 <path d={this.path} />
             </svg>
+            <Show when={displayContextMenu()}>
+                <aside 
+                    class="bg-primary rounded-md p-3 drop-shadow-md text-left" 
+                    style={`
+                        position: absolute;
+                        top: ${contextMenuPosition()[1]}px;
+                        left: ${contextMenuPosition()[0]}px;
+                    `}
+                    onMouseLeave={() => {
+                        setDisplayContextMenu(false);
+                    }}
+                >
+                    <button class="w-full hover:opacity-80" onClick={() => {this.delete()}}>Delete</button>
+                    <button class="w-full hover:opacity-80" onClick={() => {this.orientation++}}>Rotate</button>
+                </aside>
+            </Show>
         </>);  
+    }
+
+    /**
+     * Returns a SOLID JS represenation of a context menu for the component
+     */
+    forContextMenu(event?) {
+        return (<>
+
+        </>);
     }
 
     /**
@@ -97,6 +143,13 @@ export default abstract class Component {
     forLcapy(): string {
         // TODO
         return this.name;
+    }
+
+    /**
+     * Deletes the component.
+     */
+    delete() {
+        this.sheet.deleteComponent(this);
     }
 
     /**

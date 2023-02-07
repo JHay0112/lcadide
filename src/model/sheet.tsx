@@ -50,6 +50,21 @@ export default class Sheet {
     }
 
     /**
+     * Deletes a component in the sheet.
+     * 
+     * This will not error out if the component cannot be found
+     */
+    deleteComponent(cpt: Component) {
+        // shallow copy of components
+        let newComponents = this.components.slice();
+        const index = this.components.indexOf(cpt);
+        if (index > -1) {
+            newComponents.splice(index, 1);
+        }
+        this.components = newComponents;
+    }
+
+    /**
      * List of components included in the sheet.
      */
     get components()                   {return this._components()}
