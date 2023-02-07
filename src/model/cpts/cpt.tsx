@@ -79,16 +79,22 @@ export default abstract class Component {
         let [displayContextMenu, setDisplayContextMenu] = createSignal(false);
         let [contextMenuPosition, setContextMenuPosition] = createSignal([0, 0]);
 
+        let pixelPos = this.sheet.toPixels(this.position);
+        // KNOWN BUG: TOFIX:
+        // If rotated, this node shifting fails to place on grid
+        pixelPos[0] += this.nodes[0][0];
+        pixelPos[1] += this.nodes[0][1];
+
         return (<>
             <svg 
-                height="75" width="50" 
+                height="75" width="50"
                 style={`
                     stroke: ${this.color}; 
                     stroke-width: 2; 
                     fill: none;
                     position: absolute;
-                    top: ${this.position[0]}px;
-                    left: ${this.position[1]}px;
+                    top: ${pixelPos[1]}px;
+                    left: ${pixelPos[0]}px;
                     rotate: ${90*this.orientation}deg;
                 `}
                 onContextMenu={(event) => {
@@ -171,7 +177,7 @@ export default abstract class Component {
      * axes extending to the right (x) and down (y)
      * from the component "position";
      */
-    get position()             {return this._position()}
+    get position()              {return this._position()}
     set position(pos: Position) {this._setPosition(pos)}
 
     /**
