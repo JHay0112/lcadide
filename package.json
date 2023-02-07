@@ -17,6 +17,7 @@
     "vite-plugin-solid": "^2.5.0"
   },
   "dependencies": {
+    "katex": "^0.16.4",
     "pyodide": "0.22.1",
     "solid-js": "^1.6.6"
   }
