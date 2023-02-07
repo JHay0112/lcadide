@@ -19,6 +19,16 @@ import Sheet from "../sheet";
 export default abstract class Component {
 
     /**
+     * Component graphical as a multiple of the grid spacing.
+     */
+    public static readonly HEIGHT: number = 4;
+
+    /**
+     * Component graphical width as a multiple of the grid spacing.
+     */
+    public static readonly WIDTH: number = 2;
+
+    /**
      * Lcapy component identifier
      * Typically a single character, e.g. R for resistor
      */
@@ -80,24 +90,22 @@ export default abstract class Component {
         let [contextMenuPosition, setContextMenuPosition] = createSignal([0, 0]);
 
         let pixelPos = this.sheet.toPixels(this.position);
-        // KNOWN BUG: TOFIX:
-        // If rotated, this node shifting fails to place on grid
-        pixelPos[0] += this.nodes[0][0];
-        pixelPos[1] += this.nodes[0][1];
 
         return (<>
             <svg 
-                height="75" width="50"
+                height={this.pixelHeight} 
+                width={this.pixelWidth}
                 class="hover:cursor-grab"
                 style={`
                     stroke: ${this.color}; 
-                    stroke-width: 2; 
+                    stroke-width: 1.5; 
                     fill: none;
                     position: absolute;
                     top: ${pixelPos[1]}px;
                     left: ${pixelPos[0]}px;
                     rotate: ${90*this.orientation}deg;
                 `}
+                shape-rendering="auto"
                 onContextMenu={(event) => {
                     setContextMenuPosition([event.clientX, event.clientY]);
                     setDisplayContextMenu(true);
@@ -112,7 +120,7 @@ export default abstract class Component {
             </svg>
             <Show when={displayContextMenu()}>
                 <aside 
-                    class="bg-primary rounded-md p-3 drop-shadow-md text-left" 
+                    class="bg-primary rounded-md p-3 drop-shadow-md text-left z-50" 
                     style={`
                         position: absolute;
                         top: ${contextMenuPosition()[1] - 3}px;
@@ -123,7 +131,7 @@ export default abstract class Component {
                     }}
                 >
                     <button class="w-full hover:opacity-80" onClick={() => {this.delete()}}>Delete</button>
-                    <button class="w-full hover:opacity-80" onClick={() => {this.orientation++}}>Rotate</button>
+                    <button class="w-full hover:opacity-80" onClick={() => {this.rotate()}}>Rotate</button>
                 </aside>
             </Show>
         </>);  
@@ -152,6 +160,13 @@ export default abstract class Component {
      */
     delete() {
         this.sheet.deleteComponent(this);
+    }
+
+    /**
+     * Rotates the component.
+     */
+    rotate() {
+        this.orientation = (this.orientation + 1) % 2;
     }
 
     /**
@@ -186,4 +201,16 @@ export default abstract class Component {
      */
     get orientation()                 {return this._orientation()}
     set orientation(ori: Orientation) {this._setOrientation(ori)}
+
+    /**
+     * The graphical height of the component.
+     * This avoids exposing the sheet attribute publicly.
+     */
+    get pixelHeight() {return this.sheet.gridSpacing * Component.HEIGHT}
+
+    /**
+     * The graphical width of the component.
+     * This avoids exposing the sheet attribute publicly.
+     */
+    get pixelWidth()  {return this.sheet.gridSpacing * Component.WIDTH}
 }

@@ -9,19 +9,19 @@ import Component from "./cpt";
 export default class Resistor extends Component {
     name = "R";
     path = `
-        M 25 , 0
-        L 25 , 20
-        l 20 , 5
-        l -40, 5
-        l 40 , 5
-        l -40, 5
-        l 40 , 5
-        l -40, 5
-        l 20 , 5
-        L 25, 75
+        M ${this.pixelWidth/2} ,  0
+        l   0                  , 30
+        l  20                  ,  5
+        l -40                  ,  5
+        l  40                  ,  5
+        l -40                  ,  5
+        l  40                  ,  5
+        l -40                  ,  5
+        l  20                  ,  5
+        L ${this.pixelWidth/2} , ${this.pixelHeight}
     `;
     nodes: Position[] = [
-        [25, 0],
-        [25, 75]
+        [Resistor.WIDTH/2, 0              ],
+        [Resistor.WIDTH/2, Resistor.HEIGHT]
     ];
 }

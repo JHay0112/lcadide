@@ -25,8 +25,10 @@ export default class Sheet {
 
     /**
      * The spacing of grid points in the sheet.
+     * 
+     * Must be some fraction of 100
      */
-    public readonly gridSpacing: number = 50;
+    public readonly gridSpacing: number = 25;
 
     constructor() {
         // Setup components array
