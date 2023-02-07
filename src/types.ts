@@ -21,16 +21,8 @@ export type Position = [x: number, y: number];
 
 /**
  * Enum describing the orientation of a component.
- * 
- * Enum values translate into degree values 
- * compatible with CSS rotate
- * ```css
- * .example {
- *   rotate: ${Orientation}deg;
- * }
- * ```
  */
 export enum Orientation {
     VERTICAL = 0,
-    HORIZONTAL = 90
+    HORIZONTAL = 1
 }

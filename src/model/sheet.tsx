@@ -3,6 +3,9 @@
  */
 
 import { createSignal, Accessor, Setter } from "solid-js";
+
+import { Position } from "../types";
+
 import Component from "./cpts/cpt";
 
 /**
@@ -19,6 +22,11 @@ export default class Sheet {
 
     private _activeComponent: Accessor<Component>;
     private _setActiveComponent: Setter<Component>;
+
+    /**
+     * The spacing of grid points in the sheet.
+     */
+    public readonly gridSpacing: number = 50;
 
     constructor() {
         // Setup components array
@@ -47,6 +55,35 @@ export default class Sheet {
             this.components = [...this.components, this.activeComponent];
             this.active = false;
         }
+    }
+
+    /**
+     * Deletes a component in the sheet.
+     * 
+     * This will not error out if the component cannot be found
+     */
+    deleteComponent(cpt: Component) {
+        // shallow copy of components
+        let newComponents = this.components.slice();
+        const index = this.components.indexOf(cpt);
+        if (index > -1) {
+            newComponents.splice(index, 1);
+        }
+        this.components = newComponents;
+    }
+
+    /**
+     * Converts a pixel based position to grid position
+     */
+    toGrid(pixelPos: Position): Position {
+        return pixelPos.map((v) => Math.floor(v / this.gridSpacing)) as Position;
+    }
+
+    /**
+     * Converts a grid position to a pixel based position
+     */
+    toPixels(gridPos: Position): Position {
+        return gridPos.map((v) => v * this.gridSpacing) as Position;
     }
 
     /**

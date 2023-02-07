@@ -24,7 +24,7 @@ export default function Schematic(props) {
     function handleMouseMove(event) {
         if (sheet.active) {
             // TODO: Include grid snapping
-            sheet.activeComponent.position = [event.clientY, event.clientX];
+            sheet.activeComponent.position = sheet.toGrid([event.clientX, event.clientY]);
         }
     }
 
@@ -37,8 +37,23 @@ export default function Schematic(props) {
         }
     }
 
+    // SVG based grid adapted from:
+    // https://stackoverflow.com/questions/14208673/how-to-draw-grid-using-html5-and-canvas-or-svg
     return (<>
-        <section class="h-full w-full overflow-scroll" onMouseMove={handleMouseMove} onClick={handleMouseClick}>
+        <section 
+            class={`h-full w-full overflow-scroll ${sheet.active? "cursor-grabbing" : "cursor-auto"}`} 
+            onMouseMove={handleMouseMove} 
+            onClick={handleMouseClick}
+        >
+            <svg class="h-full w-full">
+                <defs>
+                    <pattern id="grid" width={sheet.gridSpacing} height={sheet.gridSpacing} patternUnits="userSpaceOnUse">
+                        <path d={`M ${sheet.gridSpacing} 0 L 0 0 0 ${sheet.gridSpacing}`} fill="none" stroke="gray" stroke-width="1" />
+                    </pattern>
+                </defs>
+                    
+                <rect width="100%" height="100%" fill="url(#grid)" />
+            </svg>
             <Show when={sheet.active}>
                 {sheet.activeComponent.forDisplay()}
             </Show>
