@@ -123,15 +123,6 @@ export default abstract class Component {
     }
 
     /**
-     * Returns a SOLID JS represenation of a context menu for the component
-     */
-    forContextMenu(event?) {
-        return (<>
-
-        </>);
-    }
-
-    /**
      * Returns a SOLID JS representation of the component for the sidebar
      */
     forSidebar() {
