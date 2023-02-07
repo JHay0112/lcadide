@@ -2,7 +2,7 @@
  * Canvas for drawing schematics upon
  */
 
-import { splitProps, For, Show } from "solid-js";
+import { splitProps, For, Show, onMount } from "solid-js";
 
 import Toolbar from "./toolbar";
 
@@ -16,6 +16,9 @@ export default function Schematic(props) {
     // get sheet instance from props
     const [local, _] = splitProps(props, ["sheet"]);
     let sheet: Sheet = local.sheet;
+
+    // reference to container element
+    let container;
 
     /**
      * Handles mouse movements.
@@ -37,10 +40,28 @@ export default function Schematic(props) {
         }
     }
 
+    /**
+     * Handles resizing
+     */
+    function handleResize() {
+        sheet.gridSpacing = container.clientWidth / 25;
+    }
+
+    // add event listener for resizing
+    window.addEventListener("resize", () => {
+        handleResize();
+    });
+
+    // do a resize onload
+    onMount(() => {
+        handleResize();
+    });
+
     // SVG based grid adapted from:
     // https://stackoverflow.com/questions/14208673/how-to-draw-grid-using-html5-and-canvas-or-svg
     return (<>
         <section 
+            ref={container}
             class={`h-full w-full overflow-scroll ${sheet.active? "cursor-grabbing" : "cursor-auto"}`} 
             onMouseMove={handleMouseMove} 
             onClick={handleMouseClick}
