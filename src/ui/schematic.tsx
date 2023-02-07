@@ -40,7 +40,11 @@ export default function Schematic(props) {
     // SVG based grid adapted from:
     // https://stackoverflow.com/questions/14208673/how-to-draw-grid-using-html5-and-canvas-or-svg
     return (<>
-        <section class="h-full w-full overflow-scroll" onMouseMove={handleMouseMove} onClick={handleMouseClick}>
+        <section 
+            class={`h-full w-full overflow-scroll ${sheet.active? "cursor-grabbing" : "cursor-auto"}`} 
+            onMouseMove={handleMouseMove} 
+            onClick={handleMouseClick}
+        >
             <svg class="h-full w-full">
                 <defs>
                     <pattern id="grid" width={sheet.gridSpacing} height={sheet.gridSpacing} patternUnits="userSpaceOnUse">

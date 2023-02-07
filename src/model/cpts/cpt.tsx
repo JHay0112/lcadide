@@ -88,6 +88,7 @@ export default abstract class Component {
         return (<>
             <svg 
                 height="75" width="50"
+                class="hover:cursor-grab"
                 style={`
                     stroke: ${this.color}; 
                     stroke-width: 2; 
