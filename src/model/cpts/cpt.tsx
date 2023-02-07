@@ -96,6 +96,10 @@ export default abstract class Component {
                     setDisplayContextMenu(true);
                     event.preventDefault();
                 }}
+                onClick={() => {
+                    this.delete();
+                    this.sheet.activeComponent = this;
+                }}
             >
                 <path d={this.path} />
             </svg>
@@ -104,8 +108,8 @@ export default abstract class Component {
                     class="bg-primary rounded-md p-3 drop-shadow-md text-left" 
                     style={`
                         position: absolute;
-                        top: ${contextMenuPosition()[1]}px;
-                        left: ${contextMenuPosition()[0]}px;
+                        top: ${contextMenuPosition()[1] - 3}px;
+                        left: ${contextMenuPosition()[0] - 3}px;
                     `}
                     onMouseLeave={() => {
                         setDisplayContextMenu(false);
