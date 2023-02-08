@@ -4,7 +4,7 @@
 
 import { Position } from "../../types";
 
-import Component from "./cpt";
+import Component from "./component";
 
 export default class Resistor extends Component {
 

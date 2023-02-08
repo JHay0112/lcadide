@@ -5,7 +5,7 @@
 import { splitProps } from "solid-js";
 
 import Sheet from "../model/sheet";
-import Resistor from "../model/cpts/resistor";
+import Resistor from "../model/components/resistor";
 
 /**
  * Bottom toolbar for editor interface

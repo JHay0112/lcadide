@@ -6,7 +6,7 @@ import { createSignal, Accessor, Setter } from "solid-js";
 
 import { Position } from "../types";
 
-import Component from "./cpts/cpt";
+import Component from "./components/component";
 
 /**
  * Component sheet class
