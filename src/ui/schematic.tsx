@@ -61,7 +61,7 @@ export default function Schematic(props) {
                     </pattern>
                 </defs>
                     
-                <rect width="100%" height="100%" fill="url(#grid)" />
+                <rect class="dark:invert" width="100%" height="100%" fill="url(#grid)" />
             </svg>
             <Show when={sheet.active}>
                 {sheet.activeComponent.forDisplay()}

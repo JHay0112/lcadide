@@ -98,7 +98,7 @@ export default abstract class Component {
             <svg 
                 height={this.pixelHeight} 
                 width={this.pixelWidth}
-                class={this.sheet.active? "cursor-grabbing" : "cursor-grab"}
+                class={`${this.sheet.active? "cursor-grabbing" : "cursor-grab"} dark:invert`}
                 style={`
                     stroke: ${this.color}; 
                     stroke-width: 1.5; 
