@@ -22,8 +22,8 @@ export default function Editor(props) {
     let sheet: Sheet = local.sheet;
 
     return (<>
-        <Schematic sheet={sheet} class="h-screen w-full md:w-2/3 inline-block align-top" />
-        <Sidebar class="h-screen w-full md:w-1/3 inline-block align-top">
+        <Schematic sheet={sheet} class="h-screen w-full md:w-2/3 lg:w-3/4 inline-block align-top" />
+        <Sidebar class="h-screen w-full md:w-1/3 lg:w-1/4 inline-block align-top">
             <Components sheet={sheet} />
             <Terminal />
         </Sidebar>
