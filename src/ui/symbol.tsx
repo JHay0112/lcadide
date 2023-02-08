@@ -42,8 +42,8 @@ export default function Symbol(props) {
             }}
             onClick={() => {
                 if (!sheet.active) {
-                    component.delete();
-                    sheet.activeComponent = this;
+                    sheet.deleteComponent(component);
+                    sheet.activeComponent = component;
                 }
             }}
         >
@@ -61,7 +61,7 @@ export default function Symbol(props) {
                     setDisplayContextMenu(false);
                 }}
             >
-                <button class="w-full hover:opacity-80" onClick={() => {component.delete()}}>Delete</button>
+                <button class="w-full hover:opacity-80" onClick={() => {sheet.deleteComponent(component)}}>Delete</button>
                 <button class="w-full hover:opacity-80" onClick={() => {component.rotate()}}>Rotate</button>
             </aside>
         </Show>

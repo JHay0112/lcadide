@@ -95,13 +95,6 @@ export default abstract class Component {
     }
 
     /**
-     * Deletes the component.
-     */
-    delete() {
-        this.sheet.deleteComponent(this);
-    }
-
-    /**
      * Rotates the component.
      */
     rotate() {
