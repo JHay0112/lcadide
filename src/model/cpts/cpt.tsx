@@ -109,8 +109,10 @@ export default abstract class Component {
                     event.preventDefault();
                 }}
                 onClick={() => {
-                    this.delete();
-                    this.sheet.activeComponent = this;
+                    if (!this.sheet.active) {
+                        this.delete();
+                        this.sheet.activeComponent = this;
+                    }
                 }}
             >
                 <path d={this.path()} />
