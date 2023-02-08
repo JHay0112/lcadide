@@ -31,6 +31,9 @@ export default function Symbol(props) {
                 case "Delete":
                     sheet.deleteComponent(component);
                     break;
+                case "Escape":
+                    sheet.placeActiveComponent();
+                    break;
             }
         }
     });
