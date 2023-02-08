@@ -4,6 +4,7 @@
 
 import { splitProps, For, Show, onMount } from "solid-js";
 
+import Symbol from "./symbol";
 import Toolbar from "./toolbar";
 
 import Sheet from "../model/sheet";
@@ -61,13 +62,13 @@ export default function Schematic(props) {
                     </pattern>
                 </defs>
                     
-                <rect width="100%" height="100%" fill="url(#grid)" />
+                <rect class="dark:invert" width="100%" height="100%" fill="url(#grid)" />
             </svg>
             <Show when={sheet.active}>
-                {sheet.activeComponent.forDisplay()}
+                <Symbol component={sheet.activeComponent} sheet={sheet} />
             </Show>
             <For each={sheet.components}>{(component) =>
-                component.forDisplay()
+                <Symbol component={component} sheet={sheet} />
             }</For>
         </section>
         <Toolbar sheet={sheet} />
