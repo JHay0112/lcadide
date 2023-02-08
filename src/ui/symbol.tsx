@@ -13,12 +13,27 @@ import Component from "../model/components/component";
 export default function Symbol(props) {
 
     // get component object from props
-    let [local, _] = splitProps(props, ["component", "sheet"]);
-    let component: Component = local.component;
-    let sheet: Sheet = local.sheet;
+    const [local, _] = splitProps(props, ["component", "sheet"]);
+    const component: Component = local.component;
+    const sheet: Sheet = local.sheet;
 
-    let [displayContextMenu, setDisplayContextMenu] = createSignal(false);
-    let [contextMenuPosition, setContextMenuPosition] = createSignal([0, 0]);
+    const [displayContextMenu, setDisplayContextMenu] = createSignal(false);
+    const [contextMenuPosition, setContextMenuPosition] = createSignal([0, 0]);
+
+    // register a keydown event
+    // this handles keypresses that may manipulate the component
+    window.addEventListener("keydown", (event) => {
+        if (component == sheet.activeComponent) {
+            switch (event.key) {
+                case "r":
+                    component.rotate();
+                    break;
+                case "Delete":
+                    sheet.deleteComponent(component);
+                    break;
+            }
+        }
+    });
 
     return (<>
         <svg 
