@@ -44,7 +44,7 @@ export default function Schematic(props) {
      * Handles resizing
      */
     function handleResize() {
-        sheet.gridSpacing = container.clientWidth / 25;
+        sheet.gridSpacing = container.clientWidth / 40;
     }
 
     // add event listener for resizing
