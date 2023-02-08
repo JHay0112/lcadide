@@ -87,62 +87,6 @@ export default abstract class Component {
     abstract path(): string;
 
     /**
-     * Returns an SVG representation of the component for the canvas
-     */
-    forDisplay() {
-
-        let [displayContextMenu, setDisplayContextMenu] = createSignal(false);
-        let [contextMenuPosition, setContextMenuPosition] = createSignal([0, 0]);
-
-        return (<>
-            <svg 
-                height={this.pixelHeight} 
-                width={this.pixelWidth}
-                class={`${this.sheet.active? "cursor-grabbing" : "cursor-grab"} dark:invert`}
-                style={`
-                    stroke: ${this.color}; 
-                    stroke-width: 1.5; 
-                    fill: none;
-                    position: absolute;
-                    top: ${this.sheet.toPixels(this.position)[1]}px;
-                    left: ${this.sheet.toPixels(this.position)[0]}px;
-                    rotate: ${90*this.orientation}deg;
-                `}
-                shape-rendering="auto"
-                onContextMenu={(event) => {
-                    setContextMenuPosition([event.clientX, event.clientY]);
-                    setDisplayContextMenu(true);
-                    event.preventDefault();
-                }}
-                onClick={() => {
-                    if (!this.sheet.active) {
-                        this.delete();
-                        this.sheet.activeComponent = this;
-                    }
-                }}
-            >
-                <path d={this.path()} />
-            </svg>
-            <Show when={displayContextMenu()}>
-                <aside 
-                    class="bg-primary rounded-md p-3 drop-shadow-md text-left z-50" 
-                    style={`
-                        position: absolute;
-                        top: ${contextMenuPosition()[1] - 3}px;
-                        left: ${contextMenuPosition()[0] - 3}px;
-                    `}
-                    onMouseLeave={() => {
-                        setDisplayContextMenu(false);
-                    }}
-                >
-                    <button class="w-full hover:opacity-80" onClick={() => {this.delete()}}>Delete</button>
-                    <button class="w-full hover:opacity-80" onClick={() => {this.rotate()}}>Rotate</button>
-                </aside>
-            </Show>
-        </>);  
-    }
-
-    /**
      * Generates a string representation of the component for lcapy
      */
     forLcapy(): string {
