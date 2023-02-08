@@ -35,12 +35,6 @@ export default abstract class Component {
     public abstract readonly name: string;
 
     /**
-     * SVG path description of the component.
-     * Limited to fit withing a 75h x 50w box.
-     */
-    public abstract readonly path: string;
-
-    /**
      * Describes the position of nodes 
      * (points at which other components may connect)
      * relative to the position of the component.
@@ -82,14 +76,17 @@ export default abstract class Component {
     }
 
     /**
+     * Produces an SVG path describing the graphical representation of the component.
+     */
+    abstract path(): string;
+
+    /**
      * Returns an SVG representation of the component for the canvas
      */
     forDisplay() {
 
         let [displayContextMenu, setDisplayContextMenu] = createSignal(false);
         let [contextMenuPosition, setContextMenuPosition] = createSignal([0, 0]);
-
-        let pixelPos = this.sheet.toPixels(this.position);
 
         return (<>
             <svg 
@@ -101,8 +98,8 @@ export default abstract class Component {
                     stroke-width: 1.5; 
                     fill: none;
                     position: absolute;
-                    top: ${pixelPos[1]}px;
-                    left: ${pixelPos[0]}px;
+                    top: ${this.sheet.toPixels(this.position)[1]}px;
+                    left: ${this.sheet.toPixels(this.position)[0]}px;
                     rotate: ${90*this.orientation}deg;
                 `}
                 shape-rendering="auto"
@@ -116,7 +113,7 @@ export default abstract class Component {
                     this.sheet.activeComponent = this;
                 }}
             >
-                <path d={this.path} />
+                <path d={this.path()} />
             </svg>
             <Show when={displayContextMenu()}>
                 <aside 
