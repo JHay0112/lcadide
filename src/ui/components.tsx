@@ -19,11 +19,24 @@ export default function Components(props) {
 
     return (<>
         <section class="w-full h-full p-3 overflow-y-scroll">
-            <Show when={sheet.components.length > 0} fallback={
+            <Show when={sheet.components.length > 0 || sheet.active} fallback={
                 <p>Add components to edit...</p>
             }>
+
                 <button class="w-full text-center" onClick={() => {setEdit(!edit())}}>Edit</button>
-                <For each={sheet.components}>{(cpt) =>
+
+                <Show when={sheet.active}>
+                    <article class="bg-secondary text-secondary shadow-md rounded-sm my-1 p-3">
+                        <p>{sheet.activeComponent.name}{sheet.activeComponent.id}</p>
+                        <Equation class="w-full text-secondary">
+                            <Show when={sheet.activeComponent.value != ""} fallback={0}>
+                                {sheet.activeComponent.value}
+                            </Show>\ \left[{sheet.activeComponent.unit}\right]
+                        </Equation>
+                    </article>
+                </Show>
+
+                <For each={sheet.components.reverse()}>{(cpt) =>
                     <article class="bg-primary text-primary shadow-md rounded-sm my-1 p-3">
                         <Switch>
                             <Match when={edit()}>
@@ -41,7 +54,9 @@ export default function Components(props) {
                             <Match when={!edit()}>
                                 <p>{cpt.name}{cpt.id}</p>
                                 <Equation class="w-full">
-                                    <Show when={cpt.value != ""} fallback={0}>{cpt.value}</Show>\ \left[{cpt.unit}\right]
+                                    <Show when={cpt.value != ""} fallback={0}>
+                                        {cpt.value}
+                                    </Show>\ \left[{cpt.unit}\right]
                                 </Equation>
                             </Match>
                         </Switch>
