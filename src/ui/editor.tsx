@@ -30,13 +30,13 @@ export default function Editor(props) {
             class={`h-screen inline-block align-top w-full ${collapsed()? "" : "md:w-2/3 lg:w-3/4"} transition-all`} 
         />
         <Sidebar 
-            class={`h-screen inline-block align-top ${collapsed()? "w-0" : "w-full md:w-1/3 lg:w-1/4"} transition-all`}
+            class={`h-screen inline-block align-top w-full ${collapsed()? "md:w-0" : "md:w-1/3 lg:w-1/4"} transition-all`}
         >
             <Components sheet={sheet} />
             <Terminal />
         </Sidebar>
         <button
-            class={`invisible md:block bg-secondary text-secondary p-3 transition-all absolute top-0 
+            class={`invisible md:visible bg-secondary text-secondary p-3 transition-all absolute top-0 
                 rounded-bl-md font-mono justify-center
                 ${collapsed()? "right-0" : "md:right-1/3 lg:right-1/4"}
             `}
