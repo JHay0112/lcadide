@@ -92,7 +92,7 @@ export default abstract class Component {
             <svg 
                 height={this.pixelHeight} 
                 width={this.pixelWidth}
-                class="hover:cursor-grab"
+                class={this.sheet.active? "cursor-grabbing" : "cursor-grab"}
                 style={`
                     stroke: ${this.color}; 
                     stroke-width: 1.5; 
