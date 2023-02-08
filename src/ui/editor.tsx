@@ -8,6 +8,7 @@ import Sidebar from "./sidebar";
 import Schematic from "./schematic";
 
 import Sheet from "../model/sheet";
+import Terminal from "../py/terminal";
 
 /**
  * Editor
@@ -20,11 +21,12 @@ export default function Editor(props) {
     let sheet: Sheet = local.sheet;
 
     return (<>
-        <section class="h-screen w-full md:w-2/3 inline-block align-top">
-            <Schematic sheet={sheet} />
-        </section>
-        <aside class="h-screen w-full md:w-1/3 inline-block align-top">  
-            <Sidebar />
-        </aside>
+        <Schematic sheet={sheet} class="h-screen w-full md:w-2/3 inline-block align-top" />
+        <Sidebar class="h-screen w-full md:w-1/3 inline-block align-top">
+            <section>
+                Sheet componenents
+            </section>
+            <Terminal />
+        </Sidebar>
     </>);
 }

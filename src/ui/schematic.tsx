@@ -14,7 +14,7 @@ import Sheet from "../model/sheet";
 export default function Schematic(props) {
 
     // get sheet instance from props
-    const [local, _] = splitProps(props, ["sheet"]);
+    const [local, _] = splitProps(props, ["sheet", "class"]);
     let sheet: Sheet = local.sheet;
 
     /**
@@ -41,7 +41,7 @@ export default function Schematic(props) {
     // https://stackoverflow.com/questions/14208673/how-to-draw-grid-using-html5-and-canvas-or-svg
     return (<>
         <section 
-            class={`h-full w-full overflow-scroll ${sheet.active? "cursor-grabbing" : "cursor-auto"}`} 
+            class={`overflow-scroll ${sheet.active? "cursor-grabbing" : "cursor-auto"} ${local.class}`} 
             onMouseMove={handleMouseMove} 
             onClick={handleMouseClick}
         >
