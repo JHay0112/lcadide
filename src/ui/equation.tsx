@@ -2,7 +2,7 @@
  * Handles loading LaTeX formatted expressions.
  */
 
-import { children, onMount } from "solid-js";
+import { children, onMount, splitProps } from "solid-js";
 
 import katex from "katex";
 
@@ -20,6 +20,9 @@ export default function Equation(props) {
     // load in children of equation
     // this is the LaTeX formatted string
     const c = children(() => props.children);
+    
+    // bring in styling
+    const [local, _] = splitProps(props, ["class"]);
 
     // element to render the LaTeX into
     let renderTarget;
@@ -30,8 +33,8 @@ export default function Equation(props) {
     });
 
     return (<>
-        <article>
-            <p ref={renderTarget}></p>
+        <article class={local.class}>
+            <p class={local.class} ref={renderTarget}></p>
         </article>
     </>);
 }

@@ -6,6 +6,7 @@ import { splitProps } from "solid-js";
 
 import Sidebar from "./sidebar";
 import Schematic from "./schematic";
+import Components from "./components";
 
 import Sheet from "../model/sheet";
 import Terminal from "../py/terminal";
@@ -23,9 +24,7 @@ export default function Editor(props) {
     return (<>
         <Schematic sheet={sheet} class="h-screen w-full md:w-2/3 inline-block align-top" />
         <Sidebar class="h-screen w-full md:w-1/3 inline-block align-top">
-            <section>
-                Sheet componenents
-            </section>
+            <Components sheet={sheet} />
             <Terminal />
         </Sidebar>
     </>);

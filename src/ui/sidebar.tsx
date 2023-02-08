@@ -16,7 +16,7 @@ export default function Sidebar(props) {
     return (<>
         <aside class={local.class}>
             <For each={c.toArray()}>{(child, _) =>
-                <article class={`dark h-full md:h-1/${c.toArray().length} w-full`}>
+                <article style={`height: ${100/c.toArray().length}%`} class="w-full">
                     {child}
                 </article>
             }</For>
