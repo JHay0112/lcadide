@@ -58,10 +58,12 @@ export default class Sheet {
 
     /**
      * Deletes a component in the sheet.
+     * Places any active components before deletion.
      * 
      * This will not error out if the component cannot be found
      */
     deleteComponent(cpt: Component) {
+        this.placeActiveComponent();
         // shallow copy of components
         let newComponents = this.components.slice();
         const index = this.components.indexOf(cpt);

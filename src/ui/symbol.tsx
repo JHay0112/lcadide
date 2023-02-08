@@ -23,7 +23,7 @@ export default function Symbol(props) {
     // register a keydown event
     // this handles keypresses that may manipulate the component
     window.addEventListener("keydown", (event) => {
-        if (component == sheet.activeComponent) {
+        if (component == sheet.activeComponent && sheet.active) {
             switch (event.key) {
                 case "r":
                     component.rotate();
