@@ -2,7 +2,7 @@
  * Provides an interface for looking at components
  */
 
-import { splitProps, For, createSignal, Show } from "solid-js";
+import { splitProps, For, createSignal, Show, Switch, Match } from "solid-js";
 import Sheet from "../model/sheet";
 import Equation from "./equation";
 
@@ -25,14 +25,26 @@ export default function Components(props) {
                 <button class="w-full text-center" onClick={() => {setEdit(!edit())}}>Edit</button>
                 <For each={sheet.components}>{(cpt) =>
                     <article class="bg-primary text-primary shadow-md rounded-sm my-1 p-3">
-                        <p>{cpt.name}{cpt.id}</p>
-                        <Show when={edit()} fallback={
-                            <input class="w-full bg-primary" onInput={(e) => {cpt.value = e.currentTarget.value}} value={cpt.value}></input>
-                        }>
-                            <Equation class="w-full">
-                                <Show when={cpt.value != ""} fallback={0}>{cpt.value}</Show>\ \left[{cpt.unit}\right]
-                            </Equation>
-                        </Show>
+                        <Switch>
+                            <Match when={edit()}>
+                                <label>{cpt.name}</label><input 
+                                    class="bg-primary text-primary"
+                                    onInput={(e) => cpt.id = e.currentTarget.value}
+                                    value={cpt.id}
+                                ></input>
+                                <input 
+                                    class="w-full bg-primary text-primary" 
+                                    onInput={(e) => {cpt.value = e.currentTarget.value}} 
+                                    value={cpt.value}
+                                ></input>
+                            </Match>
+                            <Match when={!edit()}>
+                                <p>{cpt.name}{cpt.id}</p>
+                                <Equation class="w-full">
+                                    <Show when={cpt.value != ""} fallback={0}>{cpt.value}</Show>\ \left[{cpt.unit}\right]
+                                </Equation>
+                            </Match>
+                        </Switch>
                     </article>
                 }</For>
             </Show>
