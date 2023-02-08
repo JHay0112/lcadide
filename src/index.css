@@ -16,6 +16,9 @@
     .text-secondary {
         @apply text-neutral-100 dark:text-stone-900;
     }
+    .text-error {
+        @apply text-red-500;
+    }
 
     .h-primary {
         @apply text-sky-700 dark:text-sky-300;

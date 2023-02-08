@@ -17,15 +17,16 @@ export default function Terminal() {
     const [output, setOutput] = createSignal([]);
 
     return (<>
-            <Show when={!py.loading} fallback={<p>Loading Pyodide Shell...</p>}>
-                <section ref={parent} class="w-full h-full bg-primary text-primary p-3 overflow-y-scroll font-mono">
-                    <section class="w-full whitespace-pre-wrap">
+        <Show when={!py.loading} fallback={<p>Loading Pyodide Shell...</p>}>
+            <section class="w-full h-full dark">
+                <article ref={parent} class="w-full h-full bg-primary text-primary p-3 overflow-y-scroll font-mono">
+                    <header class="w-full whitespace-pre-wrap">
                         <p>Python (Pyodide 0.22.1) Shell</p>
                         <br />
                         <For each={output()}>{(line, _) => 
                             <p>{line}</p>
                         }</For>
-                    </section>
+                    </header>
                     <form action="javascript:void(0)" class="flex" onSubmit={() => {
                         switch(input.value) {
                             case "exit()":
@@ -54,7 +55,8 @@ export default function Terminal() {
                         <input type="text" ref={input} class="bg-primary text-primary float-left border-b-2 border-white border-solid outline-none flex-1" value="" />
                         <input type="submit" class="invisible" value="" />
                     </form>
-                </section>
-            </Show>
+                </article>
+            </section>
+        </Show>
     </>);
 }

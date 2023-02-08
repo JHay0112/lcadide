@@ -14,7 +14,7 @@ import Sheet from "../model/sheet";
 export default function Schematic(props) {
 
     // get sheet instance from props
-    const [local, _] = splitProps(props, ["sheet"]);
+    const [local, _] = splitProps(props, ["sheet", "class"]);
     let sheet: Sheet = local.sheet;
 
     // reference to container element
@@ -40,21 +40,9 @@ export default function Schematic(props) {
         }
     }
 
-    /**
-     * Handles resizing
-     */
-    function handleResize() {
-        sheet.gridSpacing = container.clientWidth / 25;
-    }
-
-    // add event listener for resizing
-    window.addEventListener("resize", () => {
-        handleResize();
-    });
-
     // do a resize onload
     onMount(() => {
-        handleResize();
+        sheet.gridSpacing = container.clientWidth / 40;
     });
 
     // SVG based grid adapted from:
@@ -62,7 +50,7 @@ export default function Schematic(props) {
     return (<>
         <section 
             ref={container}
-            class={`h-full w-full overflow-scroll ${sheet.active? "cursor-grabbing" : "cursor-auto"}`} 
+            class={`overflow-scroll ${sheet.active? "cursor-grabbing" : "cursor-auto"} ${local.class}`} 
             onMouseMove={handleMouseMove} 
             onClick={handleMouseClick}
         >

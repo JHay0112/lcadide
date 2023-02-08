@@ -4,11 +4,12 @@
 
 import { Position } from "../../types";
 
-import Component from "./cpt";
+import Component from "./component";
 
 export default class Resistor extends Component {
 
     name = "R";
+    unit = "\\Omega";
     
     nodes: Position[] = [
         [Resistor.WIDTH/2, 0              ],
@@ -18,7 +19,7 @@ export default class Resistor extends Component {
     path() {
         return `
             M ${this.pixelWidth/2} ,  0
-            l   0                  , ${this.pixelHeight/2.75}
+            l   0                  , ${(this.pixelHeight - 35)/2}
             l  20                  ,  5
             l -40                  ,  5
             l  40                  ,  5

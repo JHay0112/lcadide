@@ -2,21 +2,24 @@
  * Defines a generic sidebar
  */
 
-import Terminal from "../py/terminal";
+import { children, For, splitProps } from "solid-js";
 
 /**
  * Editor sidebar
- * Includes a list of the current components (TODO)
- * and the terminal emulator
  */
-export default function Sidebar() {
+export default function Sidebar(props) {
+
+    let [local, _] = splitProps(props, ["class"]);
+    // get component children
+    const c = children(() => props.children);
 
     return (<>
-        <section class="h-full md:h-1/2 w-full">
-            Components list...
-        </section>
-        <section class="h-full md:h-1/2 w-full dark">
-            <Terminal />
-        </section>
+        <aside class={local.class}>
+            <For each={c.toArray()}>{(child, _) =>
+                <article style={`height: ${100/c.toArray().length}%`} class="w-full">
+                    {child}
+                </article>
+            }</For>
+        </aside>
     </>);
 }

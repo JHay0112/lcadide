@@ -35,6 +35,12 @@ export default abstract class Component {
     public abstract readonly name: string;
 
     /**
+     * Units associated with the device,
+     * String with LaTeX formatting.
+     */
+    public abstract readonly unit: string;
+
+    /**
      * Describes the position of nodes 
      * (points at which other components may connect)
      * relative to the position of the component.
@@ -68,8 +74,8 @@ export default abstract class Component {
 
     constructor(sheet: Sheet) {
         this.sheet = sheet;
-        [this._value, this._setValue] = createSignal("");
         [this._id, this._setId] = createSignal(String(Component._nextId++));
+        [this._value, this._setValue] = createSignal("");
         [this._color, this._setColor] = createSignal("#252525");
         [this._position, this._setPosition] = createSignal([-255, -255]);
         [this._orientation, this._setOrientation] = createSignal(Orientation.VERTICAL);
@@ -92,7 +98,7 @@ export default abstract class Component {
             <svg 
                 height={this.pixelHeight} 
                 width={this.pixelWidth}
-                class="hover:cursor-grab"
+                class={this.sheet.active? "cursor-grabbing" : "cursor-grab"}
                 style={`
                     stroke: ${this.color}; 
                     stroke-width: 1.5; 
@@ -109,8 +115,10 @@ export default abstract class Component {
                     event.preventDefault();
                 }}
                 onClick={() => {
-                    this.delete();
-                    this.sheet.activeComponent = this;
+                    if (!this.sheet.active) {
+                        this.delete();
+                        this.sheet.activeComponent = this;
+                    }
                 }}
             >
                 <path d={this.path()} />
