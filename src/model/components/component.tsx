@@ -143,16 +143,6 @@ export default abstract class Component {
     }
 
     /**
-     * Returns a SOLID JS representation of the component for the sidebar
-     */
-    forSidebar() {
-        // TODO
-        return (<>
-            
-        </>);
-    }
-
-    /**
      * Generates a string representation of the component for lcapy
      */
     forLcapy(): string {
