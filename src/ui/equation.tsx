@@ -2,9 +2,10 @@
  * Handles loading LaTeX formatted expressions.
  */
 
-import { children, onMount, splitProps } from "solid-js";
+import { children, createSignal, onMount, splitProps } from "solid-js";
 
 import katex from "katex";
+import { render } from "solid-js/web";
 
 /**
  * Renders LaTeX expressions with KaTeX
@@ -24,17 +25,26 @@ export default function Equation(props) {
     // bring in styling
     const [local, _] = splitProps(props, ["class"]);
 
+    // track errors
+    const [error, setError] = createSignal(false);
+
     // element to render the LaTeX into
     let renderTarget;
 
     // render LaTeX into renderTarget once loaded
     onMount(() => {
-        katex.render(c() as string, renderTarget);
+        try {
+            katex.render(c() as string, renderTarget);
+            setError(false);
+        } catch(e) {
+            renderTarget.innerHTML = "LaTeX Error!";
+            setError(true);
+        }
     });
 
     return (<>
         <article class={local.class}>
-            <p class={local.class} ref={renderTarget}></p>
+            <p class={`${error()? "text-error" : "text-primary"} ${local.class}`} ref={renderTarget}></p>
         </article>
     </>);
 }
