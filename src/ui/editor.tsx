@@ -22,7 +22,7 @@ export default function Editor(props) {
     let sheet: Sheet = local.sheet;
 
     // track sidebar collapse state
-    const [collapsed, setCollapsed] = createSignal(false);
+    const [collapsed, setCollapsed] = createSignal(true);
 
     return (<>
         <Schematic 
@@ -36,7 +36,7 @@ export default function Editor(props) {
             <Terminal />
         </Sidebar>
         <button
-            class={`none md:block h-primary bg-primary p-3 transition-all absolute top-0 
+            class={`none md:block bg-secondary text-secondary p-3 transition-all absolute top-0 
                 rounded-bl-md font-mono justify-center
                 ${collapsed()? "right-0" : "md:right-1/3 lg:right-1/4"}
             `}
