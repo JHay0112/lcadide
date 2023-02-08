@@ -29,7 +29,9 @@ export default function Components(props) {
                         <Show when={edit()} fallback={
                             <input class="w-full bg-primary" onInput={(e) => {cpt.value = e.currentTarget.value}} value={cpt.value}></input>
                         }>
-                            <Equation class="w-full">{cpt.value}</Equation>
+                            <Equation class="w-full">
+                                <Show when={cpt.value != ""} fallback={0}>{cpt.value}</Show>\ \left[{cpt.unit}\right]
+                            </Equation>
                         </Show>
                     </article>
                 }</For>

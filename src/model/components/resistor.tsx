@@ -9,6 +9,7 @@ import Component from "./component";
 export default class Resistor extends Component {
 
     name = "R";
+    unit = "\\Omega";
     
     nodes: Position[] = [
         [Resistor.WIDTH/2, 0              ],

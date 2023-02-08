@@ -34,7 +34,7 @@ export default function Equation(props) {
     // render LaTeX into renderTarget once loaded
     onMount(() => {
         try {
-            katex.render(c() as string, renderTarget);
+            katex.render(c.toArray().join(""), renderTarget);
             setError(false);
         } catch(e) {
             renderTarget.innerHTML = "LaTeX Error!";
