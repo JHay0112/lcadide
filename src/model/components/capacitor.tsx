@@ -18,8 +18,8 @@ export default class Capacitor extends Component {
 
     path() {
 
-        const PLATE_SEP = 10;
-        const PLATE_WIDTH = this.pixelWidth/2;
+        const PLATE_SEP = 5;
+        const PLATE_WIDTH = 2*this.pixelWidth/3;
 
         return `
             M ${this.pixelWidth/2} ,  0
