@@ -51,7 +51,7 @@ export default abstract class Component {
      */
     public abstract readonly nodes: Position[];
 
-    private static _nextId: number = 0;
+    private static nextId: number = 1;
     private _id: Accessor<string>;
     private _setId: Setter<string>;
 
@@ -74,7 +74,7 @@ export default abstract class Component {
 
     constructor(sheet: Sheet) {
         this.sheet = sheet;
-        [this._id, this._setId] = createSignal(String(Component._nextId++));
+        [this._id, this._setId] = createSignal(String(Component.nextId++));
         [this._value, this._setValue] = createSignal("");
         [this._color, this._setColor] = createSignal("#252525");
         [this._position, this._setPosition] = createSignal([-255, -255]);
