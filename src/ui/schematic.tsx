@@ -70,7 +70,7 @@ export default function Schematic(props) {
             <For each={sheet.components}>{(component) =>
                 <Symbol component={component} sheet={sheet} />
             }</For>
-            <Toolbar sheet={sheet} />
         </section>
+        <Toolbar sheet={sheet} />
     </>);
 }
