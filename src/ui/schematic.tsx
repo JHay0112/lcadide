@@ -51,7 +51,7 @@ export default function Schematic(props) {
     return (<>
         <section 
             ref={container}
-            class={`overflow-scroll ${sheet.active? "cursor-grabbing" : "cursor-auto"} ${local.class}`} 
+            class={`${sheet.active? "cursor-grabbing" : "cursor-auto"} ${local.class} overflow-y-hidden`} 
             onMouseMove={handleMouseMove} 
             onClick={handleMouseClick}
         >
@@ -70,7 +70,7 @@ export default function Schematic(props) {
             <For each={sheet.components}>{(component) =>
                 <Symbol component={component} sheet={sheet} />
             }</For>
+            <Toolbar sheet={sheet} />
         </section>
-        <Toolbar sheet={sheet} />
     </>);
 }
