@@ -42,7 +42,7 @@ export default function Schematic(props) {
 
     // do a resize onload
     onMount(() => {
-        sheet.gridSpacing = container.clientWidth / 40;
+        sheet.gridSpacing = Math.max(container.clientWidth / 80, 20);
     });
 
     // SVG based grid adapted from:
