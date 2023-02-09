@@ -20,26 +20,6 @@ export default function Schematic(props) {
     // reference to container element
     let container;
 
-    /**
-     * Handles mouse movements.
-     * This will update the position of the active component wrt the mouse.
-     */
-    function handleMouseMove(event) {
-        if (sheet.active) {
-            // TODO: Include grid snapping
-            sheet.activeComponent.position = sheet.toGrid([event.clientX, event.clientY]);
-        }
-    }
-
-    /**
-     * Handles mouse clicks
-     */
-    function handleMouseClick(event) {
-        if (sheet.active) {
-            sheet.placeActiveComponent();
-        }
-    }
-
     // do a resize onload
     onMount(() => {
         sheet.gridSpacing = Math.max(container.clientWidth / 80, 20);
@@ -51,8 +31,16 @@ export default function Schematic(props) {
         <section 
             ref={container}
             class={`${sheet.active? "cursor-grabbing" : "cursor-auto"} ${local.class} overflow-y-hidden`} 
-            onMouseMove={handleMouseMove} 
-            onClick={handleMouseClick}
+            onMouseMove={(event) => {
+                if (sheet.active) {
+                sheet.activeComponent.position = sheet.toGrid([event.clientX, event.clientY]);
+                }
+            }} 
+            onMouseUp={() => {
+                if (sheet.active) {
+                    sheet.placeActiveComponent();
+                }
+            }}
         >
             <svg class="h-full w-full">
                 <defs>
