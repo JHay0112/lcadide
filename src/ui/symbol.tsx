@@ -58,8 +58,8 @@ export default function Symbol(props) {
                 setDisplayContextMenu(true);
                 event.preventDefault();
             }}
-            onMouseDown={() => {
-                if (!sheet.active) {
+            onMouseDown={(event) => {
+                if (!sheet.active && event.button == 0) { // button == 0 -> main button
                     sheet.deleteComponent(component);
                     sheet.activeComponent = component;
                 }
