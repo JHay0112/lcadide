@@ -5,7 +5,6 @@
 import { splitProps, For, Show, onMount } from "solid-js";
 
 import Symbol from "./symbol";
-import Toolbar from "./toolbar";
 
 import Sheet from "../model/sheet";
 
@@ -71,6 +70,5 @@ export default function Schematic(props) {
                 <Symbol component={component} sheet={sheet} />
             }</For>
         </section>
-        <Toolbar sheet={sheet} />
     </>);
 }

@@ -7,6 +7,7 @@ import { createSignal, splitProps } from "solid-js";
 import Sidebar from "./sidebar";
 import Schematic from "./schematic";
 import Components from "./components";
+import Toolbar from "./toolbar";
 
 import Sheet from "../model/sheet";
 import Terminal from "../py/terminal";
@@ -29,6 +30,7 @@ export default function Editor(props) {
             sheet={sheet} 
             class={`h-screen inline-block align-top w-full ${collapsed()? "" : "md:w-2/3 lg:w-3/4"} transition-all`} 
         />
+        <Toolbar sheet={sheet} class={`w-full ${collapsed()? "" : "md:w-2/3 lg:w-3/4"}`} />
         <Sidebar 
             class={`h-screen inline-block align-top w-full ${collapsed()? "md:w-0" : "md:w-1/3 lg:w-1/4"} transition-all`}
         >

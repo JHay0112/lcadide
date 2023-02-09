@@ -19,7 +19,7 @@ export default function Toolbar(props) {
     let sheet: Sheet = local.sheet;
 
     return (<>
-        <section class="text-secondary bg-secondary absolute inset-x-0 bottom-0 w-full md:w-2/3 lg:w-3/4 text-center transition-all">
+        <section class={`text-secondary bg-secondary absolute inset-x-0 bottom-0 text-center transition-all ${local.class}`}>
             <button class="px-4 py-2 transition-all hover:bg-primary hover:text-primary mx-2" onClick={() => {
                 sheet.activeComponent = new Resistor(sheet)
             }}>R</button>
