@@ -68,7 +68,7 @@ export default class Sheet {
 
                 let nodeInstances = this._nodeInstances().copy();
                 if (nodeInstances.has(pos)) {
-                    nodeInstances.set(pos, this._nodeInstances().get(pos) + 1);
+                    nodeInstances.set(pos, nodeInstances.get(pos) + 1);
                 } else {
                     nodeInstances.set(pos, 1);
                 }
