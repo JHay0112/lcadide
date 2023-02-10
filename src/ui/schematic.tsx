@@ -2,7 +2,7 @@
  * Canvas for drawing schematics upon
  */
 
-import { splitProps, For, Show, onMount, Switch, Match } from "solid-js";
+import { splitProps, For, Show, onMount } from "solid-js";
 
 import Symbol from "./symbol";
 
@@ -70,14 +70,9 @@ export default function Schematic(props) {
                         left: ${sheet.toPixels(node)[0] - 2.5}px;
                     `}
                 >
-                    <Switch>
-                        <Match when={sheet.connections(node) == 1}>
-                            <circle cx="2.5" cy="2.5" r="2.5" style="stroke: black; fill: white;" />
-                        </Match>
-                        <Match when={sheet.connections(node) > 2}>
-                            <circle cx="2.5" cy="2.5" r="2.5" style="stroke: black; fill: black;" />
-                        </Match>
-                    </Switch>
+                    <Show when={sheet.connections(node) > 2 || sheet.connections(node) == 1}>
+                        <circle cx="2.5" cy="2.5" r="2.5" style={`stroke: black; fill: ${sheet.connections(node) > 2? "black" : "white"};`} />
+                    </Show>
                 </svg>
             }</For>
         </section>
