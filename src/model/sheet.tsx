@@ -28,6 +28,7 @@ export default class Sheet {
     private _setGridSpacing: Setter<number>;
 
     private _nodeInstances: Accessor<PositionMap<number>>;
+    private _setNodeInstances: Setter<PositionMap<number>>;
 
     constructor() {
         // Setup components array
@@ -35,7 +36,7 @@ export default class Sheet {
         [this._active, this._setActive] = createSignal(false);
         [this._activeComponent, this._setActiveComponent] = createSignal(undefined);
         [this._gridSpacing, this._setGridSpacing] = createSignal(25);
-        this._nodeInstances = createSignal(new PositionMap<number>())[0];
+        [this._nodeInstances, this._setNodeInstances] = createSignal(new PositionMap<number>());
         this.active = false;
     }
 
@@ -65,11 +66,13 @@ export default class Sheet {
                     this.activeComponent.position[1] + node[1]
                 ]; // TODO: factor in component rotation!
 
-                if (this._nodeInstances().has(pos)) {
-                    this._nodeInstances().set(pos, this._nodeInstances().get(pos) + 1);
+                let nodeInstances = this._nodeInstances().copy();
+                if (nodeInstances.has(pos)) {
+                    nodeInstances.set(pos, this._nodeInstances().get(pos) + 1);
                 } else {
-                    this._nodeInstances().set(pos, 1);
+                    nodeInstances.set(pos, 1);
                 }
+                this._setNodeInstances(nodeInstances);
             });
         }
     }
@@ -98,11 +101,13 @@ export default class Sheet {
                     this.activeComponent.position[1] + node[1]
                 ]; // TODO: factor in component rotation!
 
-                if (this._nodeInstances().get(pos) <= 1) {
-                    this._nodeInstances().delete(pos);
+                let nodeInstances = this._nodeInstances().copy();
+                if (nodeInstances.get(pos) <= 1) {
+                    nodeInstances.delete(pos);
                 } else {
-                    this._nodeInstances().set(pos, this._nodeInstances().get(pos) - 1);
+                    nodeInstances.set(pos, nodeInstances.get(pos) - 1);
                 }
+                this._setNodeInstances(nodeInstances);
             });
         }
         this.components = newComponents;

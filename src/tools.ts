@@ -53,4 +53,12 @@ export class PositionMap<T> {
         });
         return k;
     }
+
+    copy(): PositionMap<T> {
+        let newMap = new PositionMap<T>();
+        this.keys().forEach((key) => {
+            newMap.set(key, this.get(key));
+        });
+        return newMap;
+    }
 }
