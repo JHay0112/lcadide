@@ -108,7 +108,13 @@ export default abstract class Component {
     /**
      * Symbolic or numerical value of the component.
      */
-    get value()              {return this._value()}
+    get value() {
+        if (this._value() === "" || this._value() === undefined || this._value() === null) {
+            return `${this.name}_{${this.id}}`;
+        } else {
+            return this._value();
+        }
+    }
     set value(value: string) {this._setValue(value)}
 
     /**
