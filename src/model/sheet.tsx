@@ -5,16 +5,9 @@
 import { createSignal, Accessor, Setter } from "solid-js";
 
 import { Position } from "../types";
+import { PositionMap } from "../tools";
 
 import Component from "./components/component";
-
-/**
- * Provides a "hash" function for positions.
- * Same position will give same "hash".
- */
-function hash(pos: Position): string {
-    return String(pos[0]).concat(" ").concat(String(pos[1]));
-}
 
 /**
  * Component sheet class
@@ -37,7 +30,7 @@ export default class Sheet {
     /**
      * Tracks the number of instances of a node in the sheet.
      */
-    private _nodeInstances = new Map<string, number>();
+    private _nodeInstances = new PositionMap<number>();
 
     constructor() {
         // Setup components array
@@ -74,15 +67,15 @@ export default class Sheet {
                     this.activeComponent.position[1] + node[1]
                 ]; // TODO: factor in component rotation!
 
-                if (this._nodeInstances.has(hash(pos))) {
-                    this._nodeInstances.set(hash(pos), this._nodeInstances.get(hash(pos)) + 1);
+                if (this._nodeInstances.has(pos)) {
+                    this._nodeInstances.set(pos, this._nodeInstances.get(pos) + 1);
                 } else {
-                    this._nodeInstances.set(hash(pos), 1);
+                    this._nodeInstances.set(pos, 1);
                 }
             });
         }
 
-        console.log(this._nodeInstances);
+        console.log(this._nodeInstances.keys());
     }
 
     /**
@@ -109,10 +102,10 @@ export default class Sheet {
                     this.activeComponent.position[1] + node[1]
                 ]; // TODO: factor in component rotation!
 
-                if (this._nodeInstances.get(hash(pos)) <= 1) {
-                    this._nodeInstances.delete(hash(pos));
+                if (this._nodeInstances.get(pos) <= 1) {
+                    this._nodeInstances.delete(pos);
                 } else {
-                    this._nodeInstances.set(hash(pos), this._nodeInstances.get(hash(pos)) - 1);
+                    this._nodeInstances.set(pos, this._nodeInstances.get(pos) - 1);
                 }
             });
         }
