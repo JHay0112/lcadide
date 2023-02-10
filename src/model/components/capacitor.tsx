@@ -11,7 +11,7 @@ export default class Capacitor extends Component {
     name = "C";
     unit = "F";
     
-    nodes: Position[] = [
+    _nodes: Position[] = [
         [Capacitor.WIDTH/2, 0              ],
         [Capacitor.WIDTH/2, Capacitor.HEIGHT]
     ];

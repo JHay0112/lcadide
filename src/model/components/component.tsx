@@ -2,7 +2,7 @@
  * Handles circuit components
  */
 
-import { createSignal, Accessor, Setter, Show } from "solid-js";
+import { createSignal, Accessor, Setter } from "solid-js";
 
 import { Color, Orientation, Position } from "../../types";
 
@@ -49,7 +49,7 @@ export default abstract class Component {
      * that the first listed node is "positive" and the second
      * listed node is "negative".
      */
-    public abstract readonly nodes: Position[];
+    protected abstract readonly _nodes: Position[];
 
     private static nextId: number = 1;
     private _id: Accessor<string>;
@@ -144,4 +144,23 @@ export default abstract class Component {
      * This avoids exposing the sheet attribute publicly.
      */
     get pixelWidth()  {return this.sheet.gridSpacing * Component.WIDTH}
+
+    /**
+     * The nodes of the device.
+     * If the component has been rotated these will be adjusted so to match.
+     */
+    get nodes() {
+        let outNodes: Position[] = [];
+        if (this.orientation == Orientation.HORIZONTAL) {
+            this._nodes.forEach((node) => {
+                outNodes = [...outNodes, [
+                    node[1] - 1, 
+                    node[0] + 1
+                ]];
+            });
+        } else {
+            outNodes = this._nodes;
+        }
+        return outNodes;
+    }
 }
