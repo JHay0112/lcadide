@@ -49,7 +49,7 @@ export default abstract class Component {
      * that the first listed node is "positive" and the second
      * listed node is "negative".
      */
-    public abstract readonly nodes: Position[];
+    public abstract nodes: Position[];
 
     private static nextId: number = 1;
     private _id: Accessor<string>;
@@ -98,7 +98,14 @@ export default abstract class Component {
      * Rotates the component.
      */
     rotate() {
-        this.orientation = (this.orientation + 1) % 2;
+        this._setOrientation((this.orientation + 1) % 2);
+
+        // flip all the nodes
+        let newNodes: Position[] = [];
+        this.nodes.forEach((node) => {
+            newNodes = [...newNodes, [node[1], node[0]]];
+        });
+        this.nodes = newNodes;
     }
 
     /**
@@ -131,8 +138,7 @@ export default abstract class Component {
     /**
      * The orientation of the component.
      */
-    get orientation()                 {return this._orientation()}
-    set orientation(ori: Orientation) {this._setOrientation(ori)}
+    get orientation() {return this._orientation()}
 
     /**
      * The graphical height of the component.

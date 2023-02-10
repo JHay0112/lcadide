@@ -6,6 +6,7 @@ import { splitProps, createSignal, Show } from "solid-js";
 
 import Sheet from "../model/sheet";
 import Component from "../model/components/component";
+import { Orientation } from "../types";
 
 /**
  * SVG component symbols.
@@ -48,9 +49,9 @@ export default function Symbol(props) {
                 stroke-width: 1.5; 
                 fill: none;
                 position: absolute;
-                top: ${sheet.toPixels(component.position)[1]}px;
-                left: ${sheet.toPixels(component.position)[0]}px;
-                rotate: ${90*component.orientation}deg;
+                top: ${sheet.toPixels(component.position)[1] - (Orientation.HORIZONTAL == component.orientation? sheet.gridSpacing : 0)}px;
+                left: ${sheet.toPixels(component.position)[0] + (Orientation.HORIZONTAL == component.orientation? sheet.gridSpacing : 0)}px;
+                transform: rotate(${90*component.orientation}deg);
             `}
             shape-rendering="auto"
             onContextMenu={(event) => {
