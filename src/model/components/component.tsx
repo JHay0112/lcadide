@@ -90,9 +90,12 @@ export default abstract class Component {
 
     /**
      * Rotates the component.
+     * Forces a refresh of the component in sheet.
      */
     rotate() {
+        this.sheet.deregisterNodes(this.nodes);
         this._setOrientation((this.orientation + 1) % 2);
+        this.sheet.registerNodes(this.nodes);
     }
 
     /**
