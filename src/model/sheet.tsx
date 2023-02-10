@@ -9,6 +9,14 @@ import { Position } from "../types";
 import Component from "./components/component";
 
 /**
+ * Provides a "hash" function for positions.
+ * Same position will give same "hash".
+ */
+function hash(pos: Position): string {
+    return String(pos[0]).concat(" ").concat(String(pos[1]));
+}
+
+/**
  * Component sheet class
  * Handles the list of components
  */
@@ -25,6 +33,11 @@ export default class Sheet {
 
     private _gridSpacing: Accessor<number>;
     private _setGridSpacing: Setter<number>;
+
+    /**
+     * Tracks the number of instances of a node in the sheet.
+     */
+    private _nodeInstances = new Map<string, number>();
 
     constructor() {
         // Setup components array
@@ -53,7 +66,23 @@ export default class Sheet {
         if (this.active) {
             this.components = [...this.components, this.activeComponent];
             this.active = false;
+
+            // add in the nodes from the active component
+            this.activeComponent.nodes.forEach((node) => {
+                const pos: Position = [
+                    this.activeComponent.position[0] + node[0],
+                    this.activeComponent.position[1] + node[1]
+                ]; // TODO: factor in component rotation!
+
+                if (this._nodeInstances.has(hash(pos))) {
+                    this._nodeInstances.set(hash(pos), this._nodeInstances.get(hash(pos)) + 1);
+                } else {
+                    this._nodeInstances.set(hash(pos), 1);
+                }
+            });
         }
+
+        console.log(this._nodeInstances);
     }
 
     /**
@@ -67,8 +96,25 @@ export default class Sheet {
         // shallow copy of components
         let newComponents = this.components.slice();
         const index = this.components.indexOf(cpt);
+
         if (index > -1) {
+
+            const oldComponent = newComponents[index];
             newComponents.splice(index, 1);
+            // decrement or remove nodes from node instances
+            oldComponent.nodes.forEach((node) => {
+
+                const pos: Position = [
+                    this.activeComponent.position[0] + node[0],
+                    this.activeComponent.position[1] + node[1]
+                ]; // TODO: factor in component rotation!
+
+                if (this._nodeInstances.get(hash(pos)) <= 1) {
+                    this._nodeInstances.delete(hash(pos));
+                } else {
+                    this._nodeInstances.set(hash(pos), this._nodeInstances.get(hash(pos)) - 1);
+                }
+            });
         }
         this.components = newComponents;
     }
