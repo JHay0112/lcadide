@@ -52,6 +52,36 @@ export default class Sheet {
     }
 
     /**
+     * Registers the nodes of a component with the sheet.
+     */
+    registerNodes(nodes: Position[]) {
+        nodes.forEach((node) => {
+            let nodeInstances = this._nodeInstances().copy();
+            if (nodeInstances.has(node)) {
+                nodeInstances.set(node, nodeInstances.get(node) + 1);
+            } else {
+                nodeInstances.set(node, 1);
+            }
+            this._setNodeInstances(nodeInstances);
+        });
+    }
+
+    /**
+     * Deregister the nodes of a component with the sheet
+     */
+    deregisterNodes(nodes: Position[]) {
+        nodes.forEach((node) => {
+            let nodeInstances = this._nodeInstances().copy();
+            if (nodeInstances.get(node) <= 1) {
+                nodeInstances.delete(node);
+            } else {
+                nodeInstances.set(node, nodeInstances.get(node) - 1);
+            }
+            this._setNodeInstances(nodeInstances);
+        });
+    }
+
+    /**
      * Places the active component down in its current position.
      */
     placeActiveComponent() {
@@ -60,15 +90,7 @@ export default class Sheet {
             this.active = false;
 
             // add in the nodes from the active component
-            this.activeComponent.nodes.forEach((node) => {
-                let nodeInstances = this._nodeInstances().copy();
-                if (nodeInstances.has(node)) {
-                    nodeInstances.set(node, nodeInstances.get(node) + 1);
-                } else {
-                    nodeInstances.set(node, 1);
-                }
-                this._setNodeInstances(nodeInstances);
-            });
+            this.registerNodes(this.activeComponent.nodes);
         }
     }
 
@@ -89,15 +111,7 @@ export default class Sheet {
             const oldComponent = newComponents[index];
             newComponents.splice(index, 1);
             // decrement or remove nodes from node instances
-            oldComponent.nodes.forEach((node) => {
-                let nodeInstances = this._nodeInstances().copy();
-                if (nodeInstances.get(node) <= 1) {
-                    nodeInstances.delete(node);
-                } else {
-                    nodeInstances.set(node, nodeInstances.get(node) - 1);
-                }
-                this._setNodeInstances(nodeInstances);
-            });
+            this.deregisterNodes(oldComponent.nodes);
         }
         this.components = newComponents;
     }
