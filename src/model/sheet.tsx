@@ -27,10 +27,7 @@ export default class Sheet {
     private _gridSpacing: Accessor<number>;
     private _setGridSpacing: Setter<number>;
 
-    /**
-     * Tracks the number of instances of a node in the sheet.
-     */
-    private _nodeInstances = new PositionMap<number>();
+    private _nodeInstances: Accessor<PositionMap<number>>;
 
     constructor() {
         // Setup components array
@@ -38,6 +35,7 @@ export default class Sheet {
         [this._active, this._setActive] = createSignal(false);
         [this._activeComponent, this._setActiveComponent] = createSignal(undefined);
         [this._gridSpacing, this._setGridSpacing] = createSignal(25);
+        this._nodeInstances = createSignal(new PositionMap<number>())[0];
         this.active = false;
     }
 
@@ -67,10 +65,10 @@ export default class Sheet {
                     this.activeComponent.position[1] + node[1]
                 ]; // TODO: factor in component rotation!
 
-                if (this._nodeInstances.has(pos)) {
-                    this._nodeInstances.set(pos, this._nodeInstances.get(pos) + 1);
+                if (this._nodeInstances().has(pos)) {
+                    this._nodeInstances().set(pos, this._nodeInstances().get(pos) + 1);
                 } else {
-                    this._nodeInstances.set(pos, 1);
+                    this._nodeInstances().set(pos, 1);
                 }
             });
         }
@@ -82,7 +80,7 @@ export default class Sheet {
      * 
      * This will not error out if the component cannot be found
      */
-    deleteComponent(cpt: Component) {
+    delete(cpt: Component) {
         this.placeActiveComponent();
         // shallow copy of components
         let newComponents = this.components.slice();
@@ -100,14 +98,25 @@ export default class Sheet {
                     this.activeComponent.position[1] + node[1]
                 ]; // TODO: factor in component rotation!
 
-                if (this._nodeInstances.get(pos) <= 1) {
-                    this._nodeInstances.delete(pos);
+                if (this._nodeInstances().get(pos) <= 1) {
+                    this._nodeInstances().delete(pos);
                 } else {
-                    this._nodeInstances.set(pos, this._nodeInstances.get(pos) - 1);
+                    this._nodeInstances().set(pos, this._nodeInstances().get(pos) - 1);
                 }
             });
         }
         this.components = newComponents;
+    }
+
+    /**
+     * Gets the number of connections at a grid position.
+     */
+    connections(pos: Position): number {
+        if (this._nodeInstances().has(pos)) {
+            return this._nodeInstances().get(pos);
+        } else {
+            return 0;
+        }
     }
 
     /**
@@ -155,4 +164,9 @@ export default class Sheet {
      */
     get gridSpacing()                {return this._gridSpacing()}
     set gridSpacing(spacing: number) {this._setGridSpacing(spacing)}
+
+    /**
+     * All nodes included in the sheet
+     */
+    get nodes() {return this._nodeInstances().keys()}
 }
