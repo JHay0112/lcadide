@@ -7,6 +7,7 @@ import { splitProps } from "solid-js";
 import Sheet from "../model/sheet";
 
 import Resistor from "../model/components/resistor";
+import Inductor from "../model/components/inductor";
 import Capacitor from "../model/components/capacitor";
 
 /**
@@ -21,10 +22,13 @@ export default function Toolbar(props) {
     return (<>
         <section class={`text-secondary bg-secondary absolute inset-x-0 bottom-0 text-center transition-all ${local.class}`}>
             <button class="px-4 py-2 transition-all hover:bg-primary hover:text-primary mx-2" onClick={() => {
-                sheet.activeComponent = new Resistor(sheet)
+                sheet.activeComponent = new Resistor(sheet);
             }}>R</button>
             <button class="px-4 py-2 transition-all hover:bg-primary hover:text-primary mx-2" onClick={() => {
-                sheet.activeComponent = new Capacitor(sheet)
+                sheet.activeComponent = new Inductor(sheet);
+            }}>L</button>
+            <button class="px-4 py-2 transition-all hover:bg-primary hover:text-primary mx-2" onClick={() => {
+                sheet.activeComponent = new Capacitor(sheet);
             }}>C</button>
         </section>
     </>);
