@@ -56,7 +56,10 @@ export default function Components(props) {
                                 <Equation class="w-full">
                                     <Show when={cpt.value != ""} fallback={0}>
                                         {cpt.value}
-                                    </Show>\ \left[{cpt.unit}\right]
+                                    </Show>
+                                    <Show when={!isNaN((Number(cpt.value)))}>
+                                        \ \left[{cpt.unit}\right]
+                                    </Show>
                                 </Equation>
                             </Match>
                         </Switch>
