@@ -74,8 +74,6 @@ export default class Sheet {
                 }
             });
         }
-
-        console.log(this._nodeInstances.keys());
     }
 
     /**
