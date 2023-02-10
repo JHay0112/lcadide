@@ -61,16 +61,11 @@ export default class Sheet {
 
             // add in the nodes from the active component
             this.activeComponent.nodes.forEach((node) => {
-                const pos: Position = [
-                    this.activeComponent.position[0] + node[0],
-                    this.activeComponent.position[1] + node[1]
-                ]; // TODO: factor in component rotation!
-
                 let nodeInstances = this._nodeInstances().copy();
-                if (nodeInstances.has(pos)) {
-                    nodeInstances.set(pos, nodeInstances.get(pos) + 1);
+                if (nodeInstances.has(node)) {
+                    nodeInstances.set(node, nodeInstances.get(node) + 1);
                 } else {
-                    nodeInstances.set(pos, 1);
+                    nodeInstances.set(node, 1);
                 }
                 this._setNodeInstances(nodeInstances);
             });
@@ -95,17 +90,11 @@ export default class Sheet {
             newComponents.splice(index, 1);
             // decrement or remove nodes from node instances
             oldComponent.nodes.forEach((node) => {
-
-                const pos: Position = [
-                    this.activeComponent.position[0] + node[0],
-                    this.activeComponent.position[1] + node[1]
-                ]; // TODO: factor in component rotation!
-
                 let nodeInstances = this._nodeInstances().copy();
-                if (nodeInstances.get(pos) <= 1) {
-                    nodeInstances.delete(pos);
+                if (nodeInstances.get(node) <= 1) {
+                    nodeInstances.delete(node);
                 } else {
-                    nodeInstances.set(pos, nodeInstances.get(pos) - 1);
+                    nodeInstances.set(node, nodeInstances.get(node) - 1);
                 }
                 this._setNodeInstances(nodeInstances);
             });
