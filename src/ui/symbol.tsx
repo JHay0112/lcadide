@@ -29,7 +29,7 @@ export default function Symbol(props) {
                     component.rotate();
                     break;
                 case "Delete":
-                    sheet.deleteComponent(component);
+                    sheet.delete(component);
                     break;
                 case "Escape":
                     sheet.placeActiveComponent();
@@ -60,7 +60,7 @@ export default function Symbol(props) {
             }}
             onMouseDown={(event) => {
                 if (!sheet.active && event.button == 0) { // button == 0 -> main button
-                    sheet.deleteComponent(component);
+                    sheet.delete(component);
                     sheet.activeComponent = component;
                 }
             }}
@@ -79,7 +79,7 @@ export default function Symbol(props) {
                     setDisplayContextMenu(false);
                 }}
             >
-                <button class="w-full hover:opacity-80" onClick={() => {sheet.deleteComponent(component)}}>Delete</button>
+                <button class="w-full hover:opacity-80" onClick={() => {sheet.delete(component)}}>Delete</button>
                 <button class="w-full hover:opacity-80" onClick={() => {component.rotate()}}>Rotate</button>
             </aside>
         </Show>

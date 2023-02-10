@@ -5,6 +5,7 @@
 import { createSignal, Accessor, Setter } from "solid-js";
 
 import { Position } from "../types";
+import { PositionMap } from "../tools";
 
 import Component from "./components/component";
 
@@ -26,12 +27,16 @@ export default class Sheet {
     private _gridSpacing: Accessor<number>;
     private _setGridSpacing: Setter<number>;
 
+    private _nodeInstances: Accessor<PositionMap<number>>;
+    private _setNodeInstances: Setter<PositionMap<number>>;
+
     constructor() {
         // Setup components array
         [this._components, this._setComponents] = createSignal([]);
         [this._active, this._setActive] = createSignal(false);
         [this._activeComponent, this._setActiveComponent] = createSignal(undefined);
         [this._gridSpacing, this._setGridSpacing] = createSignal(25);
+        [this._nodeInstances, this._setNodeInstances] = createSignal(new PositionMap<number>());
         this.active = false;
     }
 
@@ -53,6 +58,17 @@ export default class Sheet {
         if (this.active) {
             this.components = [...this.components, this.activeComponent];
             this.active = false;
+
+            // add in the nodes from the active component
+            this.activeComponent.nodes.forEach((node) => {
+                let nodeInstances = this._nodeInstances().copy();
+                if (nodeInstances.has(node)) {
+                    nodeInstances.set(node, nodeInstances.get(node) + 1);
+                } else {
+                    nodeInstances.set(node, 1);
+                }
+                this._setNodeInstances(nodeInstances);
+            });
         }
     }
 
@@ -62,15 +78,39 @@ export default class Sheet {
      * 
      * This will not error out if the component cannot be found
      */
-    deleteComponent(cpt: Component) {
+    delete(cpt: Component) {
         this.placeActiveComponent();
         // shallow copy of components
         let newComponents = this.components.slice();
         const index = this.components.indexOf(cpt);
+
         if (index > -1) {
+
+            const oldComponent = newComponents[index];
             newComponents.splice(index, 1);
+            // decrement or remove nodes from node instances
+            oldComponent.nodes.forEach((node) => {
+                let nodeInstances = this._nodeInstances().copy();
+                if (nodeInstances.get(node) <= 1) {
+                    nodeInstances.delete(node);
+                } else {
+                    nodeInstances.set(node, nodeInstances.get(node) - 1);
+                }
+                this._setNodeInstances(nodeInstances);
+            });
         }
         this.components = newComponents;
+    }
+
+    /**
+     * Gets the number of connections at a grid position.
+     */
+    connections(pos: Position): number {
+        if (this._nodeInstances().has(pos)) {
+            return this._nodeInstances().get(pos);
+        } else {
+            return 0;
+        }
     }
 
     /**
@@ -118,4 +158,9 @@ export default class Sheet {
      */
     get gridSpacing()                {return this._gridSpacing()}
     set gridSpacing(spacing: number) {this._setGridSpacing(spacing)}
+
+    /**
+     * All nodes included in the sheet
+     */
+    get nodes() {return this._nodeInstances().keys()}
 }

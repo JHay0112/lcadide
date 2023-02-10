@@ -11,7 +11,7 @@ export default class Resistor extends Component {
     name = "R";
     unit = "\\Omega";
     
-    nodes: Position[] = [
+    _nodes: Position[] = [
         [Resistor.WIDTH/2, 0              ],
         [Resistor.WIDTH/2, Resistor.HEIGHT]
     ];

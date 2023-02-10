@@ -11,7 +11,7 @@ export default class Inductor extends Component {
     name = "R";
     unit = "\\Omega";
     
-    nodes: Position[] = [
+    _nodes: Position[] = [
         [Inductor.WIDTH/2, 0              ],
         [Inductor.WIDTH/2, Inductor.HEIGHT]
     ];

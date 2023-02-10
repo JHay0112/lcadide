@@ -2,7 +2,7 @@
  * Handles circuit components
  */
 
-import { createSignal, Accessor, Setter, Show } from "solid-js";
+import { createSignal, Accessor, Setter } from "solid-js";
 
 import { Color, Orientation, Position } from "../../types";
 
@@ -41,15 +41,9 @@ export default abstract class Component {
     public abstract readonly unit: string;
 
     /**
-     * Describes the position of nodes 
-     * (points at which other components may connect)
-     * relative to the position of the component.
-     * 
-     * For single port (two-node) components the convention holds
-     * that the first listed node is "positive" and the second
-     * listed node is "negative".
+     * The nodes of the device relative to the device origin.
      */
-    public abstract readonly nodes: Position[];
+    protected abstract readonly _nodes: Position[];
 
     private static nextId: number = 1;
     private _id: Accessor<string>;
@@ -98,7 +92,7 @@ export default abstract class Component {
      * Rotates the component.
      */
     rotate() {
-        this.orientation = (this.orientation + 1) % 2;
+        this._setOrientation((this.orientation + 1) % 2);
     }
 
     /**
@@ -131,8 +125,7 @@ export default abstract class Component {
     /**
      * The orientation of the component.
      */
-    get orientation()                 {return this._orientation()}
-    set orientation(ori: Orientation) {this._setOrientation(ori)}
+    get orientation() {return this._orientation()}
 
     /**
      * The graphical height of the component.
@@ -145,4 +138,31 @@ export default abstract class Component {
      * This avoids exposing the sheet attribute publicly.
      */
     get pixelWidth()  {return this.sheet.gridSpacing * Component.WIDTH}
+
+    /**
+     * The nodes of the device given with absolute grid coordinates.
+     * If the component has been rotated these will be adjusted so to match.
+     */
+    get nodes() {
+
+        let outNodes: Position[] = [];
+
+        if (this.orientation == Orientation.HORIZONTAL) {
+            this._nodes.forEach((node) => {
+                outNodes = [...outNodes, [
+                    node[1] - 1 + this.position[0], 
+                    node[0] + 1 + this.position[1]
+                ]];
+            });
+        } else {
+            this._nodes.forEach((node) => {
+                outNodes = [...outNodes, [
+                    node[0] + this.position[0],
+                    node[1] + this.position[1]
+                ]];
+            });
+        }
+
+        return outNodes;
+    }
 }

@@ -51,11 +51,29 @@ export default function Schematic(props) {
                     
                 <rect class="dark:invert" width="100%" height="100%" fill="url(#grid)" />
             </svg>
+
             <Show when={sheet.active}>
                 <Symbol component={sheet.activeComponent} sheet={sheet} />
             </Show>
+
             <For each={sheet.components}>{(component) =>
                 <Symbol component={component} sheet={sheet} />
+            }</For>
+
+            <For each={sheet.nodes}>{(node) =>
+                <svg 
+                    height="5"
+                    width="5"
+                    style={`   
+                        position: absolute;
+                        top: ${sheet.toPixels(node)[1] - 2.5}px;
+                        left: ${sheet.toPixels(node)[0] - 2.5}px;
+                    `}
+                >
+                    <Show when={sheet.connections(node) > 2 || sheet.connections(node) == 1}>
+                        <circle cx="2.5" cy="2.5" r="2.5" style={`stroke: black; fill: ${sheet.connections(node) > 2? "black" : "white"};`} />
+                    </Show>
+                </svg>
             }</For>
         </section>
     </>);
