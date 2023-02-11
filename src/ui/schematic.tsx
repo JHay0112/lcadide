@@ -4,9 +4,11 @@
 
 import { splitProps, For, Show, onMount } from "solid-js";
 
-import Symbol from "./symbol";
+import { Orientation } from "../types";
 
 import Sheet from "../model/sheet";
+
+import Symbol from "./symbol";
 
 /**
  * Canvas that draws schematics from a sheet
@@ -33,7 +35,17 @@ export default function Schematic(props) {
             class={`${sheet.active? "cursor-grabbing" : "cursor-auto"} ${local.class} overflow-y-hidden`} 
             onMouseMove={(event) => {
                 if (sheet.active) {
-                sheet.activeComponent.position = sheet.toGrid([event.clientX, event.clientY]);
+                    if (sheet.activeComponent.orientation == Orientation.HORIZONTAL) {
+                        sheet.activeComponent.position = sheet.toGrid([
+                            event.clientX - sheet.activeComponent.pixelHeight/2 + 10, 
+                            event.clientY - sheet.activeComponent.pixelWidth/2 + 10
+                        ]);
+                    } else {
+                        sheet.activeComponent.position = sheet.toGrid([
+                            event.clientX - sheet.activeComponent.pixelWidth/2 + 10, 
+                            event.clientY - sheet.activeComponent.pixelHeight/2 + 10
+                        ]);
+                    }
                 }
             }} 
             onMouseUp={() => {
