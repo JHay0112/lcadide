@@ -10,6 +10,7 @@ import Resistor from "../model/components/resistor";
 import Inductor from "../model/components/inductor";
 import Capacitor from "../model/components/capacitor";
 import VoltageSource from "../model/components/voltage_source";
+import CurrentSource from "../model/components/current_source";
 
 /**
  * Icon/button for a tool
@@ -54,6 +55,9 @@ export default function Toolbar(props) {
             <Tool onClick={() => {
                 sheet.activeComponent = new VoltageSource(sheet);
             }}>V</Tool>
+            <Tool onClick={() => {
+                sheet.activeComponent = new CurrentSource(sheet);
+            }}>I</Tool>
         </section>
     </>);
 }
