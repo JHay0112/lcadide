@@ -6,6 +6,8 @@ import { createSignal, Accessor, Setter } from "solid-js";
 
 import { Color, Orientation, Position } from "../../types";
 
+import { unitPrefix } from "../../tools";
+
 import Sheet from "../sheet";
 
 /**
@@ -61,6 +63,9 @@ export default abstract class Component {
     private _orientation: Accessor<Orientation>;
     private _setOrientation: Setter<Orientation>;
 
+    private _prefix: Accessor<string>;
+    private _setPrefix: Setter<string>;
+
     /**
      * The sheet that the component is a part of.
      */
@@ -69,10 +74,11 @@ export default abstract class Component {
     constructor(sheet: Sheet) {
         this.sheet = sheet;
         [this._id, this._setId] = createSignal(String(Component.nextId++));
-        [this._value, this._setValue] = createSignal("");
+        [this._value, this._setValue] = createSignal();
         [this._color, this._setColor] = createSignal("#252525");
         [this._position, this._setPosition] = createSignal([-255, -255]);
         [this._orientation, this._setOrientation] = createSignal(Orientation.VERTICAL);
+        [this._prefix, this._setPrefix] = createSignal("");
     }
 
     /**
@@ -108,8 +114,28 @@ export default abstract class Component {
     /**
      * Symbolic or numerical value of the component.
      */
-    get value()              {return this._value()}
-    set value(value: string) {this._setValue(value)}
+    get value() {
+        if (this._value() === undefined || this._value() === null) {
+            return `${this.name}_{${this.id}}`;
+        } else {
+            return this._value();
+        }
+    }
+    set value(value: string) {
+        // check if value ends with a power of 10
+        const index = value.search(/(\*10\^{-?\d*})$/);
+        if (index != -1) {
+            const power = value.slice(index + 5, -1);
+            this.prefix = unitPrefix(Number(power));
+            if (this.prefix != "") {
+                this._setValue(value.slice(0, index));
+            } else {
+                this._setValue(value);
+            }
+        } else {
+            this._setValue(value);
+        }
+    }
 
     /**
      * Stroke colour for the component.
@@ -125,6 +151,13 @@ export default abstract class Component {
      */
     get position()              {return this._position()}
     set position(pos: Position) {this._setPosition(pos)}
+
+    /**
+     * Unit prefix.
+     * LaTeX formatted string.
+     */
+    get prefix() {return this._prefix()}
+    private set prefix(p: string) {this._setPrefix(p)} 
 
     /**
      * The orientation of the component.
