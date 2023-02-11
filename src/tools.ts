@@ -79,7 +79,7 @@ export function unitPrefix(exp: number): string {
         case 6:  return "M";   // mega
         case 3:  return "k";   // kilo
         case -3: return "m";   // milli
-        case -6: return "\mu"; // micro
+        case -6: return "\\mu"; // micro
         case -9: return "n";   // nano
         case -12: return "p";  // pico
         case -15: return "f";  // femto
