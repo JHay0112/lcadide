@@ -8,8 +8,8 @@ import Component from "./component";
 
 export default class Inductor extends Component {
 
-    name = "R";
-    unit = "\\Omega";
+    name = "L";
+    unit = "H";
     
     _nodes: Position[] = [
         [Inductor.WIDTH/2, 0              ],
