@@ -92,7 +92,6 @@ export default class Sheet {
             // add in the nodes from the active component
             this.registerNodes(this.activeComponent.nodes);
         }
-        console.log(this.forLcapy());
     }
 
     /**
