@@ -18,7 +18,7 @@ export default class CurrentSource extends Component {
 
     path() {
 
-        const RADIUS = 20;
+        const RADIUS = 18;
         const OFFSET = 5;
 
         return `
