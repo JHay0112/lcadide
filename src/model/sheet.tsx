@@ -46,7 +46,7 @@ export default class Sheet {
     forLcapy(): string {
         let out: string = "\n";
         for (let component of this.components) {
-            out.concat(component.forLcapy().concat("\n"));
+            out = out.concat(component.forLcapy(), "\n");
         }
         return out;
     }
@@ -92,6 +92,7 @@ export default class Sheet {
             // add in the nodes from the active component
             this.registerNodes(this.activeComponent.nodes);
         }
+        console.log(this.forLcapy());
     }
 
     /**
@@ -125,6 +126,22 @@ export default class Sheet {
         } else {
             return 0;
         }
+    }
+
+    /**
+     * Supplies a node with a unique identifier.
+     * If the node cannot be found in the sheet -1 will be returned.
+     */
+    identify(node: Position): number {
+        // TODO: Account for grounding
+        // or setting a node name?
+        let id = -1;
+        this.nodes.forEach((sheetNode, i) => {
+            if (node[0] == sheetNode[0] && node[1] == sheetNode[1]) {
+                id = i + 1; // exclude zero, which is for ground
+            }
+        });
+        return id;
     }
 
     /**

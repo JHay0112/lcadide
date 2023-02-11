@@ -90,8 +90,13 @@ export default abstract class Component {
      * Generates a string representation of the component for lcapy
      */
     forLcapy(): string {
-        // TODO
-        return this.name;
+        let outStr = `${this.name}${this.id}`;
+        this.nodes.forEach((node) => {
+            const index = this.sheet.identify(node);
+            outStr = outStr.concat(` ${index}`);
+        });
+        outStr = outStr.concat(` {${this.value}};`)
+        return outStr;
     }
 
     /**
