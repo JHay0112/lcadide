@@ -34,7 +34,7 @@ export default function Components(props) {
                             </Show>
                         </Equation>
                         <Equation class="text-secondary float-right inline-block">
-                            \left[{sheet.activeComponent.prefix}{sheet.activeComponent.unit}\right]
+                            \left[{sheet.activeComponent.prefix} {sheet.activeComponent.unit}\right]
                         </Equation>
                     </article>
                 </Show>
@@ -54,7 +54,7 @@ export default function Components(props) {
                                         onInput={(e) => {cpt.value = e.currentTarget.value}} 
                                         value={cpt.value}
                                     ></input>
-                                    <Equation class="inline-block float-right">\left[{cpt.prefix}{cpt.unit}\right]</Equation>
+                                    <Equation class="inline-block float-right">\left[{cpt.prefix} {cpt.unit}\right]</Equation>
                                 </div>
                             </Match>
                             <Match when={!edit()}>
@@ -65,7 +65,7 @@ export default function Components(props) {
                                     </Show>
                                 </Equation>
                                 <Equation class="inline-block float-right">
-                                    \left[{cpt.prefix}{cpt.unit}\right]
+                                    \left[{cpt.prefix} {cpt.unit}\right]
                                 </Equation>
                             </Match>
                         </Switch>
