@@ -31,7 +31,7 @@ export default function Components(props) {
                         <Equation class="w-full text-secondary">
                             <Show when={sheet.activeComponent.value != ""} fallback={0}>
                                 {sheet.activeComponent.value}
-                            </Show>\ \left[{sheet.activeComponent.unit}\right]
+                            </Show>\ \left[{sheet.activeComponent.prefix}{sheet.activeComponent.unit}\right]
                         </Equation>
                     </article>
                 </Show>
@@ -45,21 +45,21 @@ export default function Components(props) {
                                     onInput={(e) => cpt.id = e.currentTarget.value}
                                     value={cpt.id}
                                 ></input>
-                                <input 
-                                    class="w-full bg-primary text-primary" 
-                                    onInput={(e) => {cpt.value = e.currentTarget.value}} 
-                                    value={cpt.value}
-                                ></input>
+                                <div>
+                                    <input 
+                                        class="bg-primary text-primary inline-block" 
+                                        onInput={(e) => {cpt.value = e.currentTarget.value}} 
+                                        value={cpt.value}
+                                    ></input>
+                                    <Equation class="inline-block">\left[{cpt.prefix}{cpt.unit}\right]</Equation>
+                                </div>
                             </Match>
                             <Match when={!edit()}>
                                 <p>{cpt.name}{cpt.id}</p>
                                 <Equation class="w-full">
                                     <Show when={cpt.value != ""} fallback={0}>
                                         {cpt.value}
-                                    </Show>
-                                    <Show when={!isNaN((Number(cpt.value)))}>
-                                        \ \left[{cpt.unit}\right]
-                                    </Show>
+                                    </Show>\ \left[{cpt.prefix}{cpt.unit}\right]
                                 </Equation>
                             </Match>
                         </Switch>

@@ -2,10 +2,9 @@
  * Handles loading LaTeX formatted expressions.
  */
 
-import { children, createSignal, onMount, splitProps } from "solid-js";
+import { children, createEffect, createSignal, splitProps } from "solid-js";
 
 import katex from "katex";
-import { render } from "solid-js/web";
 
 /**
  * Renders LaTeX expressions with KaTeX
@@ -32,7 +31,7 @@ export default function Equation(props) {
     let renderTarget;
 
     // render LaTeX into renderTarget once loaded
-    onMount(() => {
+    createEffect(() => {
         try {
             katex.render(c.toArray().join(""), renderTarget);
             setError(false);
