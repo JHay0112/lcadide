@@ -28,10 +28,13 @@ export default function Components(props) {
                 <Show when={sheet.active}>
                     <article class="bg-secondary text-secondary shadow-md rounded-sm my-1 p-3">
                         <p>{sheet.activeComponent.name}{sheet.activeComponent.id}</p>
-                        <Equation class="w-full text-secondary">
+                        <Equation class="text-secondary inline-block">
                             <Show when={sheet.activeComponent.value != ""} fallback={0}>
                                 {sheet.activeComponent.value}
-                            </Show>\ \left[{sheet.activeComponent.prefix}{sheet.activeComponent.unit}\right]
+                            </Show>
+                        </Equation>
+                        <Equation class="text-secondary float-right inline-block">
+                            \left[{sheet.activeComponent.prefix}{sheet.activeComponent.unit}\right]
                         </Equation>
                     </article>
                 </Show>
@@ -51,15 +54,18 @@ export default function Components(props) {
                                         onInput={(e) => {cpt.value = e.currentTarget.value}} 
                                         value={cpt.value}
                                     ></input>
-                                    <Equation class="inline-block">\left[{cpt.prefix}{cpt.unit}\right]</Equation>
+                                    <Equation class="inline-block float-right">\left[{cpt.prefix}{cpt.unit}\right]</Equation>
                                 </div>
                             </Match>
                             <Match when={!edit()}>
                                 <p>{cpt.name}{cpt.id}</p>
-                                <Equation class="w-full">
+                                <Equation class="inline-block">
                                     <Show when={cpt.value != ""} fallback={0}>
                                         {cpt.value}
-                                    </Show>\ \left[{cpt.prefix}{cpt.unit}\right]
+                                    </Show>
+                                </Equation>
+                                <Equation class="inline-block float-right">
+                                    \left[{cpt.prefix}{cpt.unit}\right]
                                 </Equation>
                             </Match>
                         </Switch>
