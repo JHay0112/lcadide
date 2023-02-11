@@ -9,6 +9,7 @@ import Sheet from "../model/sheet";
 import Resistor from "../model/components/resistor";
 import Inductor from "../model/components/inductor";
 import Capacitor from "../model/components/capacitor";
+import VoltageSource from "../model/components/voltage_source";
 
 /**
  * Bottom toolbar for editor interface
@@ -30,6 +31,9 @@ export default function Toolbar(props) {
             <button class="px-4 py-2 transition-all hover:bg-primary hover:text-primary mx-2" onClick={() => {
                 sheet.activeComponent = new Capacitor(sheet);
             }}>C</button>
+            <button class="px-4 py-2 transition-all hover:bg-primary hover:text-primary mx-2" onClick={() => {
+                sheet.activeComponent = new VoltageSource(sheet);
+            }}>V</button>
         </section>
     </>);
 }
