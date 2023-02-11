@@ -41,6 +41,11 @@ export default function Schematic(props) {
                     sheet.placeActiveComponent();
                 }
             }}
+            onMouseLeave={() => {
+                if (sheet.active) {
+                    sheet.placeActiveComponent();
+                }
+            }}
         >
             <svg class="h-full w-full">
                 <defs>
