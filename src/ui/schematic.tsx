@@ -69,6 +69,7 @@ export default function Schematic(props) {
                         top: ${sheet.toPixels(node)[1] - 2.5}px;
                         left: ${sheet.toPixels(node)[0] - 2.5}px;
                     `}
+                    class="dark:invert"
                 >
                     <Show when={sheet.connections(node) > 2 || sheet.connections(node) == 1}>
                         <circle cx="2.5" cy="2.5" r="2.5" style={`stroke: black; fill: ${sheet.connections(node) > 2? "black" : "white"};`} />
