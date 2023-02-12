@@ -9,21 +9,21 @@ import { children, createSignal, splitProps, Show } from "solid-js";
  * 
  * @param title: string 
  *  The title of the popup
- * @param show: boolean 
+ * @param when: boolean 
  *  Whether the popup should be displayed
  */
 export default function Popup(props) {
     // get children
     const c = children(() => props.children);
     // get title
-    const [local, _] = splitProps(props, ["title", "show"]);
+    const [local, _] = splitProps(props, ["title", "when"]);
     const title: string = local.title;
-    const show: boolean = local.show;
+    const when: boolean = local.when;
     // track visibility
     let [visibile, setVisible] = createSignal(true);
 
     return (<>
-        <Show when={visibile() && show}>
+        <Show when={visibile() && when}>
             <div class="absolute w-screen h-screen bg-opacity-70 bg-neutral-800 z-50 flex items-center justify-center">
                 <div class="w-10/12 h-10/12 md:w-8/12 bg-primary relative bottom-10 p-4 rounded-md">
                     <header class="mb-3">
