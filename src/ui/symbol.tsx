@@ -68,7 +68,7 @@ export default function Symbol(props) {
             <path d={component.path()} />
         </svg>
         <Show when={displayContextMenu()}>
-            <Popup title={component.name} onExit={() => {setDisplayContextMenu(false)}}>
+            <Popup title={`${component.name}${component.id}`} onExit={() => {setDisplayContextMenu(false)}}>
                 <button class="w-full hover:opacity-80" onClick={() => {sheet.delete(component)}}>Delete</button>
                 <button class="w-full hover:opacity-80" onClick={() => {component.rotate()}}>Rotate</button>
             </Popup>
