@@ -8,20 +8,20 @@ import Component from "./component";
 
 export default class Ground extends Component {
 
-    WIDTH = 2;
-    HEIGHT = 1;
+    width = 2;
+    height = 1;
 
     name = "G";
     unit = "";
     
     _nodes: Position[] = [
-        [Ground.WIDTH/2, 0]
+        [this.width/2, 0]
     ];
 
     path() {
 
         const WIDTH = 15;
-        const HEIGHT = 14;
+        const HEIGHT = 12;
 
         return `
             M ${this.pixelWidth/2} , 0

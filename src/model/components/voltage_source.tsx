@@ -8,12 +8,15 @@ import Component from "./component";
 
 export default class VoltageSource extends Component {
 
+    width = 2;
+    height = 4;
+
     name = "V";
     unit = "V";
     
     _nodes: Position[] = [
-        [VoltageSource.WIDTH/2, 0              ],
-        [VoltageSource.WIDTH/2, VoltageSource.HEIGHT]
+        [this.width/2, 0],
+        [this.width/2, this.height]
     ];
 
     path() {
