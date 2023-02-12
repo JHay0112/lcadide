@@ -9,7 +9,7 @@ import Component from "./component";
 export default class Ground extends Component {
 
     width = 2;
-    height = 1;
+    height = 2;
 
     name = "G";
     unit = "";
@@ -21,7 +21,7 @@ export default class Ground extends Component {
     path() {
 
         const WIDTH = 15;
-        const HEIGHT = 12;
+        const HEIGHT = this.pixelHeight * 0.25;
 
         return `
             M ${this.pixelWidth/2} , 0
