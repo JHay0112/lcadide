@@ -11,6 +11,7 @@ import Inductor from "../model/components/inductor";
 import Capacitor from "../model/components/capacitor";
 import VoltageSource from "../model/components/voltage_source";
 import CurrentSource from "../model/components/current_source";
+import Ground from "../model/components/ground";
 
 /**
  * Icon/button for a tool
@@ -58,6 +59,9 @@ export default function Toolbar(props) {
             <Tool onClick={() => {
                 sheet.activeComponent = new CurrentSource(sheet);
             }}>I</Tool>
+            <Tool onClick={() => {
+                sheet.activeComponent = new Ground(sheet);
+            }}>G</Tool>
         </section>
     </>);
 }

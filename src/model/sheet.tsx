@@ -8,6 +8,7 @@ import { Position } from "../types";
 import { PositionMap } from "../tools";
 
 import Component from "./components/component";
+import Ground from "./components/ground";
 
 /**
  * Component sheet class
@@ -27,8 +28,8 @@ export default class Sheet {
     private _gridSpacing: Accessor<number>;
     private _setGridSpacing: Setter<number>;
 
-    private _nodeInstances: Accessor<PositionMap<number>>;
-    private _setNodeInstances: Setter<PositionMap<number>>;
+    private _nodeInstances: Accessor<PositionMap<Component[]>>;
+    private _setNodeInstances: Setter<PositionMap<Component[]>>;
 
     constructor() {
         // Setup components array
@@ -36,7 +37,7 @@ export default class Sheet {
         [this._active, this._setActive] = createSignal(false);
         [this._activeComponent, this._setActiveComponent] = createSignal(undefined);
         [this._gridSpacing, this._setGridSpacing] = createSignal(25);
-        [this._nodeInstances, this._setNodeInstances] = createSignal(new PositionMap<number>());
+        [this._nodeInstances, this._setNodeInstances] = createSignal(new PositionMap<Component[]>());
         this.active = false;
     }
 
@@ -46,7 +47,9 @@ export default class Sheet {
     forLcapy(): string {
         let out: string = "\n";
         for (let component of this.components) {
-            out = out.concat(component.forLcapy(), "\n");
+            if (!(component instanceof Ground)) {
+                out = out.concat(component.forLcapy(), "\n");
+            }
         }
         return out;
     }
@@ -54,13 +57,13 @@ export default class Sheet {
     /**
      * Registers the nodes of a component with the sheet.
      */
-    registerNodes(nodes: Position[]) {
-        nodes.forEach((node) => {
+    register(cpt: Component) {
+        cpt.nodes.forEach((node) => {
             let nodeInstances = this._nodeInstances().copy();
             if (nodeInstances.has(node)) {
-                nodeInstances.set(node, nodeInstances.get(node) + 1);
+                nodeInstances.set(node, [...nodeInstances.get(node), cpt]);
             } else {
-                nodeInstances.set(node, 1);
+                nodeInstances.set(node, [cpt]);
             }
             this._setNodeInstances(nodeInstances);
         });
@@ -69,13 +72,26 @@ export default class Sheet {
     /**
      * Deregister the nodes of a component with the sheet
      */
-    deregisterNodes(nodes: Position[]) {
-        nodes.forEach((node) => {
+    deregister(cpt: Component) {
+        cpt.nodes.forEach((node) => {
             let nodeInstances = this._nodeInstances().copy();
-            if (nodeInstances.get(node) <= 1) {
+            if (nodeInstances.get(node).length <= 1) {
                 nodeInstances.delete(node);
             } else {
-                nodeInstances.set(node, nodeInstances.get(node) - 1);
+                const cpts = nodeInstances.get(node);
+                let index = -1;
+                cpts.forEach((registeredCpt, i) => {
+                    if (
+                        registeredCpt.name == cpt.name &&
+                        registeredCpt.id   == cpt.id
+                    ) {
+                        index = i;
+                    }
+                });
+                if (index != -1) {
+                    cpts.splice(index, 1);
+                }
+                nodeInstances.set(node, cpts);
             }
             this._setNodeInstances(nodeInstances);
         });
@@ -90,7 +106,7 @@ export default class Sheet {
             this.active = false;
 
             // add in the nodes from the active component
-            this.registerNodes(this.activeComponent.nodes);
+            this.register(this.activeComponent);
         }
     }
 
@@ -111,7 +127,7 @@ export default class Sheet {
             const oldComponent = newComponents[index];
             newComponents.splice(index, 1);
             // decrement or remove nodes from node instances
-            this.deregisterNodes(oldComponent.nodes);
+            this.deregister(oldComponent);
         }
         this.components = newComponents;
     }
@@ -121,7 +137,7 @@ export default class Sheet {
      */
     connections(pos: Position): number {
         if (this._nodeInstances().has(pos)) {
-            return this._nodeInstances().get(pos);
+            return this._nodeInstances().get(pos).length;
         } else {
             return 0;
         }
@@ -132,8 +148,11 @@ export default class Sheet {
      * If the node cannot be found in the sheet -1 will be returned.
      */
     identify(node: Position): number {
-        // TODO: Account for grounding
-        // or setting a node name?
+        // check if grounded first
+        if (this.isGround(node)) {
+            return 0;
+        }
+        // else go through and find where this node falls in node hierarchy
         let id = -1;
         this.nodes.forEach((sheetNode, i) => {
             if (node[0] == sheetNode[0] && node[1] == sheetNode[1]) {
@@ -141,6 +160,19 @@ export default class Sheet {
             }
         });
         return id;
+    }
+
+    /**
+     * Determines if a node is connected to a ground
+     */
+    isGround(node: Position): boolean {
+        let grounded = false;
+        this._nodeInstances().get(node).forEach((cpt) => {
+            if (cpt instanceof Ground) {
+                grounded = true;
+            }
+        });
+        return grounded;
     }
 
     /**

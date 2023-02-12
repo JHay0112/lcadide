@@ -23,12 +23,12 @@ export default abstract class Component {
     /**
      * Component graphical as a multiple of the grid spacing.
      */
-    public static readonly HEIGHT: number = 4;
+    protected abstract readonly height: number;
 
     /**
      * Component graphical width as a multiple of the grid spacing.
      */
-    public static readonly WIDTH: number = 2;
+    protected abstract readonly width: number;
 
     /**
      * Lcapy component identifier
@@ -173,13 +173,13 @@ export default abstract class Component {
      * The graphical height of the component.
      * This avoids exposing the sheet attribute publicly.
      */
-    get pixelHeight() {return this.sheet.gridSpacing * Component.HEIGHT}
+    get pixelHeight() {return this.sheet.gridSpacing * this.height}
 
     /**
      * The graphical width of the component.
      * This avoids exposing the sheet attribute publicly.
      */
-    get pixelWidth()  {return this.sheet.gridSpacing * Component.WIDTH}
+    get pixelWidth()  {return this.sheet.gridSpacing * this.width}
 
     /**
      * The nodes of the device given with absolute grid coordinates.

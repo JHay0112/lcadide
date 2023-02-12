@@ -8,12 +8,15 @@ import Component from "./component";
 
 export default class CurrentSource extends Component {
 
+    width = 2;
+    height = 4;
+
     name = "I";
     unit = "A";
     
     _nodes: Position[] = [
-        [CurrentSource.WIDTH/2, 0              ],
-        [CurrentSource.WIDTH/2, CurrentSource.HEIGHT]
+        [this.width/2, 0],
+        [this.width/2, this.height]
     ];
 
     path() {

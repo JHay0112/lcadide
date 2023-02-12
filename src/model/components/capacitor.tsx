@@ -8,12 +8,15 @@ import Component from "./component";
 
 export default class Capacitor extends Component {
 
+    width = 2;
+    height = 4;
+
     name = "C";
     unit = "F";
     
     _nodes: Position[] = [
-        [Capacitor.WIDTH/2, 0              ],
-        [Capacitor.WIDTH/2, Capacitor.HEIGHT]
+        [this.width/2, 0],
+        [this.width/2, this.height]
     ];
 
     path() {

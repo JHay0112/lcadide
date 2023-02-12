@@ -8,12 +8,15 @@ import Component from "./component";
 
 export default class Inductor extends Component {
 
+    width = 2;
+    height = 4;
+
     name = "L";
     unit = "H";
     
     _nodes: Position[] = [
-        [Inductor.WIDTH/2, 0              ],
-        [Inductor.WIDTH/2, Inductor.HEIGHT]
+        [this.width/2, 0],
+        [this.width/2, this.height]
     ];
 
     path() {
