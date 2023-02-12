@@ -4,6 +4,8 @@
 
 import { splitProps, createSignal, Show } from "solid-js";
 
+import Popup from "./popup";
+
 import Sheet from "../model/sheet";
 import Component from "../model/components/component";
 
@@ -18,7 +20,6 @@ export default function Symbol(props) {
     const sheet: Sheet = local.sheet;
 
     const [displayContextMenu, setDisplayContextMenu] = createSignal(false);
-    const [contextMenuPosition, setContextMenuPosition] = createSignal([0, 0]);
 
     // register a keydown event
     // this handles keypresses that may manipulate the component
@@ -54,7 +55,6 @@ export default function Symbol(props) {
             `}
             shape-rendering="auto"
             onContextMenu={(event) => {
-                setContextMenuPosition([event.clientX, event.clientY]);
                 setDisplayContextMenu(true);
                 event.preventDefault();
             }}
@@ -68,20 +68,10 @@ export default function Symbol(props) {
             <path d={component.path()} />
         </svg>
         <Show when={displayContextMenu()}>
-            <aside 
-                class="bg-primary rounded-md p-3 drop-shadow-md text-left z-50" 
-                style={`
-                    position: absolute;
-                    top: ${contextMenuPosition()[1] - 3}px;
-                    left: ${contextMenuPosition()[0] - 3}px;
-                `}
-                onMouseLeave={() => {
-                    setDisplayContextMenu(false);
-                }}
-            >
+            <Popup title={component.name} onExit={() => {setDisplayContextMenu(false)}}>
                 <button class="w-full hover:opacity-80" onClick={() => {sheet.delete(component)}}>Delete</button>
                 <button class="w-full hover:opacity-80" onClick={() => {component.rotate()}}>Rotate</button>
-            </aside>
+            </Popup>
         </Show>
     </>);  
 }
