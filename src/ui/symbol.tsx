@@ -2,7 +2,7 @@
  * Produces component symbols for components.
  */
 
-import { splitProps, createSignal, Show } from "solid-js";
+import { splitProps, createSignal, Show, onMount, For } from "solid-js";
 
 import Popup from "./popup";
 import Equation from "./equation";
@@ -10,6 +10,15 @@ import Equation from "./equation";
 import Sheet from "../model/sheet";
 import Component from "../model/components/component";
 import Ground from "../model/components/ground";
+
+/**
+ * Defines the action a user can take on the component.
+ */
+interface Action {
+    name: string;
+    useable: () => boolean;
+    callback: () => void;
+};
 
 /**
  * SVG component symbols.
@@ -23,22 +32,40 @@ export default function Symbol(props) {
 
     const [displayContextMenu, setDisplayContextMenu] = createSignal(false);
 
+    // define actions to be implemented
+    let actions = new Map<string, Action>();
+    actions.set("r", {
+        name: "Rotate",
+        useable: () => {
+            return !(component instanceof Ground);
+        },
+        callback: () => {
+            component.rotate();
+        }
+    });
+    actions.set("Delete", {
+        name: "Delete",
+        useable: () => {return true},
+        callback: () => {
+            sheet.delete(component);
+        }
+    });
+
     // register a keydown event
     // this handles keypresses that may manipulate the component
-    window.addEventListener("keydown", (event) => {
-        if (component == sheet.activeComponent && sheet.active) {
-            switch (event.key) {
-                case "r":
-                    component.rotate();
-                    break;
-                case "Delete":
-                    sheet.delete(component);
-                    break;
-                case "Escape":
+    onMount(() => {
+        window.addEventListener("keydown", (event) => {
+            if (component == sheet.activeComponent && sheet.active) {
+                if (event.key == "Escape") {
                     sheet.placeActiveComponent();
-                    break;
+                } else if (actions.has(event.key)) {
+                    const action = actions.get(event.key);
+                    if (action.useable()) {
+                        action.callback();
+                    }
+                }
             }
-        }
+        });
     });
 
     return (<>
@@ -81,8 +108,19 @@ export default function Symbol(props) {
                     `}</Equation>
                 </article>
                 <aside class="w-full md:w-1/4 md:inline-block bg-secondary text-secondary p-4 rounded-md flex flex-col m-auto">
-                    <button class="w-full hover:opacity-80" onClick={() => {sheet.delete(component)}}>Delete</button>
-                    <button class="w-full hover:opacity-80" onClick={() => {component.rotate()}}>Rotate</button>
+                    <For each={Array.from(actions.entries())}>{([key, action]) =>
+                        <button 
+                            class={`w-full ${action.useable()? "hover:opacity-80" : "opacity-30"}`}
+                            onClick={() => {
+                                if (action.useable()) {
+                                    action.callback();
+                                }
+                            }}
+                        >
+                            <span class={`float-left ${action.useable()? "" : "line-through"}`}>{action.name}</span>
+                            <span class="float-right opacity-50">{key}</span>
+                        </button>
+                    }</For>
                 </aside>
             </Popup>
         </Show>
