@@ -102,10 +102,14 @@ export default function Symbol(props) {
                 onExit={() => {setDisplayContextMenu(false)}} 
                 class="flex"
             >
-                <article class="w-full md:w-3/4 md:inline-block flex flex-col m-auto">
-                    <Equation class="p-4">{`
-                        ${component.name}_{${component.id}}=${component.value}
-                    `}</Equation>
+                <article class="w-full p-4 md:w-3/4 md:inline-block flex flex-col m-auto">
+                    <Show when={!(component instanceof Ground)} fallback={
+                        <p>Ground node has no value...</p>
+                    }>
+                        <Equation>{`
+                            ${component.name}_{${component.id}}=${component.value}
+                        `}</Equation>
+                    </Show>
                 </article>
                 <aside class="w-full md:w-1/4 md:inline-block bg-secondary text-secondary p-4 rounded-md flex flex-col m-auto">
                     <For each={Array.from(actions.entries())}>{([key, action]) =>
