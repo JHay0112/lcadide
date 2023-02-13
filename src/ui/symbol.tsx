@@ -66,7 +66,7 @@ export default function Symbol(props) {
         }
     ]
     // maps actions to keys
-    const keybinds: Map<string, number> = new Map();
+    let keybinds: Map<string, number> = new Map();
     actions.forEach((action, i) => {
         if (
             action.key != "" || 
