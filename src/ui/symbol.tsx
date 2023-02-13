@@ -2,10 +2,24 @@
  * Produces component symbols for components.
  */
 
-import { splitProps, createSignal, Show } from "solid-js";
+import { splitProps, createSignal, onMount, For, Switch, Match, Show } from "solid-js";
+
+import Popup from "./popup";
+import Equation from "./equation";
 
 import Sheet from "../model/sheet";
 import Component from "../model/components/component";
+import Ground from "../model/components/ground";
+
+/**
+ * Defines the action a user can take on the component.
+ */
+interface Action {
+    name: string;
+    key: string;
+    useable: () => boolean;
+    callback: () => void;
+};
 
 /**
  * SVG component symbols.
@@ -18,24 +32,66 @@ export default function Symbol(props) {
     const sheet: Sheet = local.sheet;
 
     const [displayContextMenu, setDisplayContextMenu] = createSignal(false);
-    const [contextMenuPosition, setContextMenuPosition] = createSignal([0, 0]);
+    const [edit, setEdit] = createSignal(false);
+
+    // define actions to be implemented
+    const actions: Action[] = [
+        {
+            name: "Rotate",
+            key: "r",
+            useable: () => {return !(component instanceof Ground)},
+            callback: () => {
+                component.rotate();
+            }
+        },
+        {
+            name: "Delete",
+            key: "Delete",
+            useable: () => {return true},
+            callback: () => {
+                sheet.delete(component);
+            }
+        },
+        {
+            name: "Edit",
+            key: "",
+            useable: () => {return !(component instanceof Ground) && !edit()},
+            callback: () => {setEdit(true)}
+        },
+        {
+            name: "Save",
+            key: "",
+            useable: () => {return !(component instanceof Ground) && edit()},
+            callback: () => {setEdit(false)}
+        }
+    ]
+    // maps actions to keys
+    let keybinds: Map<string, number> = new Map();
+    actions.forEach((action, i) => {
+        if (
+            action.key != "" || 
+            action.key !== undefined || 
+            action.key !== null
+        ) {
+            keybinds.set(action.key, i);
+        }
+    });
 
     // register a keydown event
     // this handles keypresses that may manipulate the component
-    window.addEventListener("keydown", (event) => {
-        if (component == sheet.activeComponent && sheet.active) {
-            switch (event.key) {
-                case "r":
-                    component.rotate();
-                    break;
-                case "Delete":
-                    sheet.delete(component);
-                    break;
-                case "Escape":
+    onMount(() => {
+        window.addEventListener("keydown", (event) => {
+            if (component == sheet.activeComponent && sheet.active) {
+                if (event.key == "Escape") {
                     sheet.placeActiveComponent();
-                    break;
+                } else if (keybinds.has(event.key)) {
+                    const action = actions[keybinds.get(event.key)];
+                    if (action.useable()) {
+                        action.callback();
+                    }
+                }
             }
-        }
+        });
     });
 
     return (<>
@@ -54,7 +110,6 @@ export default function Symbol(props) {
             `}
             shape-rendering="auto"
             onContextMenu={(event) => {
-                setContextMenuPosition([event.clientX, event.clientY]);
                 setDisplayContextMenu(true);
                 event.preventDefault();
             }}
@@ -68,20 +123,52 @@ export default function Symbol(props) {
             <path d={component.path()} />
         </svg>
         <Show when={displayContextMenu()}>
-            <aside 
-                class="bg-primary rounded-md p-3 drop-shadow-md text-left z-50" 
-                style={`
-                    position: absolute;
-                    top: ${contextMenuPosition()[1] - 3}px;
-                    left: ${contextMenuPosition()[0] - 3}px;
-                `}
-                onMouseLeave={() => {
-                    setDisplayContextMenu(false);
-                }}
+            <Popup 
+                title={`${component.name}${component.id}`} 
+                onExit={() => {setDisplayContextMenu(false)}} 
+                class="flex"
             >
-                <button class="w-full hover:opacity-80" onClick={() => {sheet.delete(component)}}>Delete</button>
-                <button class="w-full hover:opacity-80" onClick={() => {component.rotate()}}>Rotate</button>
-            </aside>
+                <article class="w-full p-4 md:w-3/4 md:inline-block flex flex-col m-auto">
+                    <Switch>
+                        <Match when={component instanceof Ground}>
+                            <p>Ground nodes have no value...</p>
+                        </Match>
+                        <Match when={!edit()}>
+                            <Equation>{`
+                                ${component.name}_{${component.id}}=${component.value}\ \\left[${component.prefix} ${component.unit}\\right]
+                            `}</Equation>
+                        </Match>
+                        <Match when={edit()}>
+                            <form class="w-full h-full">
+                                <Equation class="inline-block">{`${component.name}_{${component.id}}=`}</Equation>
+                                <input 
+                                    class="inline-block" 
+                                    value={component.value}
+                                    onInput={(event) => {
+                                        component.value = event.currentTarget.value;
+                                    }}
+                                ></input>
+                                <Equation class="inline-block">{`\ \\left[${component.prefix} ${component.unit}\\right]`}</Equation>
+                            </form>
+                        </Match>
+                    </Switch>
+                </article>
+                <aside class="w-full md:w-1/4 md:inline-block bg-secondary text-secondary p-4 rounded-md flex flex-col m-auto">
+                    <For each={actions}>{(action) =>
+                        <button 
+                            class={`w-full ${action.useable()? "hover:opacity-80" : "opacity-30 hover:cursor-default"}`}
+                            onClick={() => {
+                                if (action.useable()) {
+                                    action.callback();
+                                }
+                            }}
+                        >
+                            <span class="float-left">{action.name}</span>
+                            <span class="float-right opacity-50">{action.key}</span>
+                        </button>
+                    }</For>
+                </aside>
+            </Popup>
         </Show>
     </>);  
 }

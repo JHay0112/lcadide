@@ -105,9 +105,9 @@ export default abstract class Component {
      */
     rotate() {
         const active = this.sheet.active && this == this.sheet.activeComponent;
-        if (!active) this.sheet.deregisterNodes(this.nodes);
+        if (!active) this.sheet.deregister(this);
         this._setOrientation((this.orientation + 1) % 2);
-        if (!active) this.sheet.registerNodes(this.nodes);
+        if (!active) this.sheet.register(this);
     }
 
     /**
