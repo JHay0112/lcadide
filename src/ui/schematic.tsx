@@ -83,13 +83,18 @@ export default function Schematic(props) {
                     width="5"
                     style={`   
                         position: absolute;
-                        top: ${sheet.toPixels(node)[1] - 2.5}px;
-                        left: ${sheet.toPixels(node)[0] - 2.5}px;
+                        top: ${sheet.toPixels(node)[1] - 3}px;
+                        left: ${sheet.toPixels(node)[0] - 3}px;
                     `}
                     class="dark:invert"
                 >
-                    <Show when={sheet.connections(node) > 2 || sheet.connections(node) == 1}>
-                        <circle cx="2.5" cy="2.5" r="2.5" style={`stroke: black; fill: ${sheet.connections(node) > 2? "black" : "white"};`} />
+                    <Show 
+                        when={sheet.connections(node) > 2 || sheet.connections(node) == 1}
+                        fallback={
+                            <circle cx="2.5" cy="2.5" r="0.5" style={`stroke: black; fill: ${sheet.connections(node) > 2? "black" : "white"};`} />
+                        }
+                    >
+                        <circle cx="2.5" cy="2.5" r="2" style={`stroke: black; fill: ${sheet.connections(node) > 2? "black" : "white"};`} />
                     </Show>
                 </svg>
             }</For>
