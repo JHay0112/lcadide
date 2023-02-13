@@ -22,7 +22,7 @@ export default function Popup(props) {
     const cls: string = local.class;
 
     return (<>
-        <div class="absolute top-0 left-0 w-screen h-screen bg-opacity-90 bg-neutral-900 z-50 flex items-center justify-center">
+        <div class="absolute top-0 left-0 w-screen h-screen bg-opacity-70 bg-neutral-900 z-50 flex items-center justify-center">
             <div class="w-10/12 h-10/12 md:w-8/12 bg-primary relative bottom-10 p-4 rounded-md">
                 <header class="mb-3">
                     <h1 class="inline-block p-2">{title}</h1>
