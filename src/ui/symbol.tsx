@@ -5,9 +5,11 @@
 import { splitProps, createSignal, Show } from "solid-js";
 
 import Popup from "./popup";
+import Equation from "./equation";
 
 import Sheet from "../model/sheet";
 import Component from "../model/components/component";
+import Ground from "../model/components/ground";
 
 /**
  * SVG component symbols.
@@ -68,9 +70,20 @@ export default function Symbol(props) {
             <path d={component.path()} />
         </svg>
         <Show when={displayContextMenu()}>
-            <Popup title={`${component.name}${component.id}`} onExit={() => {setDisplayContextMenu(false)}}>
-                <button class="w-full hover:opacity-80" onClick={() => {sheet.delete(component)}}>Delete</button>
-                <button class="w-full hover:opacity-80" onClick={() => {component.rotate()}}>Rotate</button>
+            <Popup 
+                title={`${component.name}${component.id}`} 
+                onExit={() => {setDisplayContextMenu(false)}} 
+                class="flex"
+            >
+                <article class="w-full md:w-3/4 md:inline-block flex flex-col m-auto">
+                    <Equation class="p-4">{`
+                        ${component.name}_{${component.id}}=${component.value}
+                    `}</Equation>
+                </article>
+                <aside class="w-full md:w-1/4 md:inline-block bg-secondary text-secondary p-4 rounded-md flex flex-col m-auto">
+                    <button class="w-full hover:opacity-80" onClick={() => {sheet.delete(component)}}>Delete</button>
+                    <button class="w-full hover:opacity-80" onClick={() => {component.rotate()}}>Rotate</button>
+                </aside>
             </Popup>
         </Show>
     </>);  

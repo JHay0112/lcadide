@@ -16,9 +16,10 @@ export default function Popup(props) {
     // get children
     const c = children(() => props.children);
     // get title
-    const [local, _] = splitProps(props, ["title", "onExit"]);
+    const [local, _] = splitProps(props, ["title", "onExit", "class"]);
     const title: string = local.title;
     const onExit: () => void = local.onExit;
+    const cls: string = local.class;
 
     return (<>
         <div class="absolute top-0 left-0 w-screen h-screen bg-opacity-90 bg-neutral-900 z-50 flex items-center justify-center">
@@ -31,7 +32,7 @@ export default function Popup(props) {
                     >X</button>
                     <hr class="w-full" />
                 </header>
-                <article class="p-2">
+                <article class={cls}>
                     {c()}
                 </article>
             </div>
