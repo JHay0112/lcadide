@@ -10,6 +10,7 @@ import Equation from "./equation";
 import Sheet from "../model/sheet";
 import Component from "../model/components/component";
 import Ground from "../model/components/ground";
+import Wire from "../model/components/wire";
 
 /**
  * Defines the action a user can take on the component.
@@ -55,7 +56,7 @@ export default function Symbol(props) {
         {
             name: "Edit",
             key: "",
-            useable: () => {return !(component instanceof Ground) && !edit()},
+            useable: () => {return !(component instanceof Ground || component instanceof Wire) && !edit()},
             callback: () => {setEdit(true)}
         },
         {
@@ -130,7 +131,7 @@ export default function Symbol(props) {
             >
                 <article class="w-full p-4 md:w-3/4 md:inline-block flex flex-col m-auto">
                     <Switch>
-                        <Match when={component instanceof Ground}>
+                        <Match when={component instanceof Ground || component instanceof Wire}>
                             <p>Ground nodes have no value...</p>
                         </Match>
                         <Match when={!edit()}>

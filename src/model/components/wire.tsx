@@ -8,8 +8,8 @@ import Component from "./component";
 
 export default class Wire extends Component {
 
-    width = 1;
-    height = 1;
+    width = 2;
+    height = 4;
 
     name = "W";
     unit = "";
