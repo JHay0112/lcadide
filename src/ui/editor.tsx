@@ -33,9 +33,9 @@ export default function Editor(props) {
         <Sidebar 
             class={`h-screen inline-block align-top w-full ${collapsed()? "md:w-0" : "md:w-1/3 lg:w-1/4"} transition-all`}
         >
-            <div class="p-4">
-                <p>Settings...</p>
-            </div>
+            <section class="p-4">
+                <p>Settings dialogue to be implemented...</p>
+            </section>
             <Terminal />
         </Sidebar>
         <button
