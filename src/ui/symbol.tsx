@@ -139,17 +139,15 @@ export default function Symbol(props) {
                             `}</Equation>
                         </Match>
                         <Match when={edit()}>
-                            <form class="w-full h-full">
-                                <Equation class="inline-block">{`${component.name}_{${component.id}}=`}</Equation>
-                                <input 
-                                    class="inline-block" 
-                                    value={component.value}
-                                    onInput={(event) => {
-                                        component.value = event.currentTarget.value;
-                                    }}
-                                ></input>
-                                <Equation class="inline-block">{`\ \\left[${component.prefix} ${component.unit}\\right]`}</Equation>
-                            </form>
+                            <Equation class="inline-block">{`${component.name}_{${component.id}}=`}</Equation>
+                            <input 
+                                class="inline-block" 
+                                value={component.value}
+                                onInput={(event) => {
+                                    component.value = event.currentTarget.value;
+                                }}
+                            ></input>
+                            <Equation class="inline-block">{`\ \\left[${component.prefix} ${component.unit}\\right]`}</Equation>
                         </Match>
                     </Switch>
                 </article>
