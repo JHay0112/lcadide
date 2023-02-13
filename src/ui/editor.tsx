@@ -6,7 +6,6 @@ import { createSignal, splitProps } from "solid-js";
 
 import Sidebar from "./sidebar";
 import Schematic from "./schematic";
-import Components from "./components";
 import Toolbar from "./toolbar";
 
 import Sheet from "../model/sheet";
@@ -34,7 +33,9 @@ export default function Editor(props) {
         <Sidebar 
             class={`h-screen inline-block align-top w-full ${collapsed()? "md:w-0" : "md:w-1/3 lg:w-1/4"} transition-all`}
         >
-            <Components sheet={sheet} />
+            <div class="p-4">
+                <p>Settings...</p>
+            </div>
             <Terminal />
         </Sidebar>
         <button
