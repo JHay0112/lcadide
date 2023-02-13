@@ -2,7 +2,7 @@
  * Produces component symbols for components.
  */
 
-import { splitProps, createSignal, Show, onMount, For } from "solid-js";
+import { splitProps, createSignal, onMount, For, Switch, Match, Show } from "solid-js";
 
 import Popup from "./popup";
 import Equation from "./equation";
@@ -16,6 +16,7 @@ import Ground from "../model/components/ground";
  */
 interface Action {
     name: string;
+    key: string;
     useable: () => boolean;
     callback: () => void;
 };
@@ -31,23 +32,48 @@ export default function Symbol(props) {
     const sheet: Sheet = local.sheet;
 
     const [displayContextMenu, setDisplayContextMenu] = createSignal(false);
+    const [edit, setEdit] = createSignal(false);
 
     // define actions to be implemented
-    let actions = new Map<string, Action>();
-    actions.set("r", {
-        name: "Rotate",
-        useable: () => {
-            return !(component instanceof Ground);
+    const actions: Action[] = [
+        {
+            name: "Rotate",
+            key: "r",
+            useable: () => {return !(component instanceof Ground)},
+            callback: () => {
+                component.rotate();
+            }
         },
-        callback: () => {
-            component.rotate();
+        {
+            name: "Delete",
+            key: "Delete",
+            useable: () => {return true},
+            callback: () => {
+                sheet.delete(component);
+            }
+        },
+        {
+            name: "Edit",
+            key: "",
+            useable: () => {return !(component instanceof Ground) && !edit()},
+            callback: () => {setEdit(true)}
+        },
+        {
+            name: "Save",
+            key: "",
+            useable: () => {return !(component instanceof Ground) && edit()},
+            callback: () => {setEdit(false)}
         }
-    });
-    actions.set("Delete", {
-        name: "Delete",
-        useable: () => {return true},
-        callback: () => {
-            sheet.delete(component);
+    ]
+    // maps actions to keys
+    const keybinds: Map<string, number> = new Map();
+    actions.forEach((action, i) => {
+        if (
+            action.key != "" || 
+            action.key !== undefined || 
+            action.key !== null
+        ) {
+            keybinds.set(action.key, i);
         }
     });
 
@@ -58,8 +84,8 @@ export default function Symbol(props) {
             if (component == sheet.activeComponent && sheet.active) {
                 if (event.key == "Escape") {
                     sheet.placeActiveComponent();
-                } else if (actions.has(event.key)) {
-                    const action = actions.get(event.key);
+                } else if (keybinds.has(event.key)) {
+                    const action = actions[keybinds.get(event.key)];
                     if (action.useable()) {
                         action.callback();
                     }
@@ -103,26 +129,42 @@ export default function Symbol(props) {
                 class="flex"
             >
                 <article class="w-full p-4 md:w-3/4 md:inline-block flex flex-col m-auto">
-                    <Show when={!(component instanceof Ground)} fallback={
-                        <p>Ground node has no value...</p>
-                    }>
-                        <Equation>{`
-                            ${component.name}_{${component.id}}=${component.value}
-                        `}</Equation>
-                    </Show>
+                    <Switch>
+                        <Match when={component instanceof Ground}>
+                            <p>Ground nodes have no value...</p>
+                        </Match>
+                        <Match when={!edit()}>
+                            <Equation>{`
+                                ${component.name}_{${component.id}}=${component.value}\ \\left[${component.prefix} ${component.unit}\\right]
+                            `}</Equation>
+                        </Match>
+                        <Match when={edit()}>
+                            <form class="w-full h-full">
+                                <Equation class="inline-block">{`${component.name}_{${component.id}}=`}</Equation>
+                                <input 
+                                    class="inline-block" 
+                                    value={component.value}
+                                    onInput={(event) => {
+                                        component.value = event.currentTarget.value;
+                                    }}
+                                ></input>
+                                <Equation class="inline-block">{`\ \\left[${component.prefix} ${component.unit}\\right]`}</Equation>
+                            </form>
+                        </Match>
+                    </Switch>
                 </article>
                 <aside class="w-full md:w-1/4 md:inline-block bg-secondary text-secondary p-4 rounded-md flex flex-col m-auto">
-                    <For each={Array.from(actions.entries())}>{([key, action]) =>
+                    <For each={actions}>{(action) =>
                         <button 
-                            class={`w-full ${action.useable()? "hover:opacity-80" : "opacity-30"}`}
+                            class={`w-full ${action.useable()? "hover:opacity-80" : "opacity-30 hover:cursor-default"}`}
                             onClick={() => {
                                 if (action.useable()) {
                                     action.callback();
                                 }
                             }}
                         >
-                            <span class={`float-left ${action.useable()? "" : "line-through"}`}>{action.name}</span>
-                            <span class="float-right opacity-50">{key}</span>
+                            <span class="float-left">{action.name}</span>
+                            <span class="float-right opacity-50">{action.key}</span>
                         </button>
                     }</For>
                 </aside>
