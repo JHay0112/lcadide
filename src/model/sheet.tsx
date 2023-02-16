@@ -5,7 +5,7 @@
 import { createSignal, Accessor, Setter } from "solid-js";
 
 import { Position } from "../types";
-import { PositionMap } from "../tools/position_map";
+import PositionMap from "../tools/position_map";
 
 import Component from "./components/component";
 import Ground from "./components/ground";

@@ -5,9 +5,9 @@
 /**
  * Bidirectional single-to-many map.
  */
-export class BiMap<T> {
+export default class BiMap<T> {
 
-    private map: Map<T, Array<T>> = new Map();
+    protected readonly map: Map<T, Array<T>> = new Map();
 
     /**
      * Determines if the key exists in the map.
@@ -56,6 +56,8 @@ export class BiMap<T> {
                 const i = list.indexOf(key);
                 this.map.set(partner, list.splice(i, 1));
             });
+            // finally delete the key
+            this.map.delete(key);
         }
     }
 

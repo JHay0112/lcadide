@@ -10,7 +10,7 @@ import { Position } from "../types";
  * This should behave in the same way as a typical Map object
  * but bases position equality on the numbers and not the position instance
  */
-export class PositionMap<T> {
+export default class PositionMap<T> {
 
     private map = new Map<number, Map<number, T>>();
 
