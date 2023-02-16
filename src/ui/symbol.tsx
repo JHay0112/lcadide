@@ -10,6 +10,7 @@ import Equation from "./equation";
 import Sheet from "../model/sheet";
 import Component from "../model/components/component";
 import Ground from "../model/components/ground";
+import Wire from "../model/components/wire";
 
 /**
  * Defines the action a user can take on the component.
@@ -39,7 +40,7 @@ export default function Symbol(props) {
         {
             name: "Rotate",
             key: "r",
-            useable: () => {return !(component instanceof Ground)},
+            useable: () => {return true},
             callback: () => {
                 component.rotate();
             }
@@ -55,13 +56,13 @@ export default function Symbol(props) {
         {
             name: "Edit",
             key: "",
-            useable: () => {return !(component instanceof Ground) && !edit()},
+            useable: () => {return !(component instanceof Ground || component instanceof Wire) && !edit()},
             callback: () => {setEdit(true)}
         },
         {
             name: "Save",
             key: "",
-            useable: () => {return !(component instanceof Ground) && edit()},
+            useable: () => {return !edit()},
             callback: () => {setEdit(false)}
         }
     ]
@@ -109,7 +110,8 @@ export default function Symbol(props) {
                 position: absolute;
                 top: ${sheet.toPixels(component.position)[1]}px;
                 left: ${sheet.toPixels(component.position)[0]}px;
-                rotate: ${90*component.orientation}deg;
+                rotate: ${-90*component.orientation}deg;
+                transform-origin: center;
             `}
             shape-rendering="auto"
             onContextMenu={(event) => {
@@ -144,7 +146,7 @@ export default function Symbol(props) {
                     }}
                 >
                     <Switch>
-                        <Match when={component instanceof Ground}>
+                        <Match when={component instanceof Ground || component instanceof Wire}>
                             <p>Ground nodes have no value...</p>
                         </Match>
                         <Match when={!edit()}>

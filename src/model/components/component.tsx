@@ -6,7 +6,7 @@ import { createSignal, Accessor, Setter } from "solid-js";
 
 import { Color, Orientation, Position } from "../../types";
 
-import { unitPrefix } from "../../tools";
+import { unitPrefix } from "../../tools/prefixes";
 
 import Sheet from "../sheet";
 
@@ -150,9 +150,6 @@ export default abstract class Component {
 
     /**
      * The position of the component.
-     * Node positions are derived from this with
-     * axes extending to the right (x) and down (y)
-     * from the component "position";
      */
     get position()              {return this._position()}
     set position(pos: Position) {this._setPosition(pos)}
@@ -191,16 +188,20 @@ export default abstract class Component {
 
         if (this.orientation == Orientation.HORIZONTAL) {
             this._nodes.forEach((node) => {
+                const middleRelative = [
+                    node[0] - this.width/2,
+                    node[1] - this.height/2
+                ];
                 outNodes = [...outNodes, [
-                    node[1] - 1 + this.position[0], 
-                    node[0] + 1 + this.position[1]
+                    this.position[0] + middleRelative[1] + this.width/2, 
+                    this.position[1] + middleRelative[0] + this.height/2
                 ]];
             });
         } else {
             this._nodes.forEach((node) => {
                 outNodes = [...outNodes, [
-                    node[0] + this.position[0],
-                    node[1] + this.position[1]
+                    this.position[0] + node[0],
+                    this.position[1] + node[1]
                 ]];
             });
         }
