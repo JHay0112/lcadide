@@ -6,7 +6,7 @@ import { createSignal, Accessor, Setter } from "solid-js";
 
 import { Color, Orientation, Position } from "../../types";
 
-import { unitPrefix } from "../../tools";
+import { unitPrefix } from "../../tools/prefixes";
 
 import Sheet from "../sheet";
 
