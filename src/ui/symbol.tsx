@@ -133,8 +133,15 @@ export default function Symbol(props) {
             >
                 <article 
                     class="w-full p-4 md:w-3/4 md:inline-block flex flex-col m-auto"
-                    onClick={() => {setEdit(true)}}
-                    onKeyDown={(event) => {if (event.key == "Enter") {setEdit(false)}}}
+                    onClick={() => {
+                        setEdit(true);
+                        valueInput.focus();
+                    }}
+                    onKeyDown={(event) => {
+                        if (event.key == "Enter") {
+                            setEdit(false);
+                        }
+                    }}
                 >
                     <Switch>
                         <Match when={component instanceof Ground}>
@@ -148,6 +155,7 @@ export default function Symbol(props) {
                         <Match when={edit()}>
                             <Equation class="inline-block">{`${component.name}_{${component.id}}=`}</Equation>
                             <input 
+                                ref={valueInput}
                                 class="inline-block" 
                                 value={component.value}
                                 onInput={(event) => {
