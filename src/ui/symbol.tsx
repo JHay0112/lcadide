@@ -40,7 +40,7 @@ export default function Symbol(props) {
         {
             name: "Rotate",
             key: "r",
-            useable: () => {return !(component instanceof Ground)},
+            useable: () => {return true},
             callback: () => {
                 component.rotate();
             }
@@ -62,7 +62,7 @@ export default function Symbol(props) {
         {
             name: "Save",
             key: "",
-            useable: () => {return !(component instanceof Ground) && edit()},
+            useable: () => {return !edit()},
             callback: () => {setEdit(false)}
         }
     ]
@@ -107,7 +107,8 @@ export default function Symbol(props) {
                 position: absolute;
                 top: ${sheet.toPixels(component.position)[1]}px;
                 left: ${sheet.toPixels(component.position)[0]}px;
-                rotate: ${90*component.orientation}deg;
+                rotate: ${-90*component.orientation}deg;
+                transform-origin: center;
             `}
             shape-rendering="auto"
             onContextMenu={(event) => {
