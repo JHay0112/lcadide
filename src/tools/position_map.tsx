@@ -10,7 +10,7 @@ import { Position } from "../types";
  * This should behave in the same way as a typical Map object
  * but bases position equality on the numbers and not the position instance
  */
-export default class PositionMap<T> {
+export class PositionMap<T> {
 
     private map = new Map<number, Map<number, T>>();
 
@@ -61,4 +61,77 @@ export default class PositionMap<T> {
         });
         return newMap;
     }
+}
+
+/**
+ * Bidirectional single-to-many map for positions.
+ */
+export class PositionBiMap {
+
+    private readonly map: PositionMap<Position[]> = new PositionMap();
+
+    /**
+     * Determines if the key exists in the map.
+     */
+    has(key: Position): boolean {
+        return this.map.has(key);
+    }
+
+    /**
+     * Adds a new bidirectional pairing.
+     */
+    add(key: Position, value: Position) {
+        // first add for the "key"
+        if (this.has(key)) {
+            this.map.set(key, [...this.map.get(key), value]);
+        } else {
+            this.map.set(key, [value]);
+        }
+
+        // and then for the "value"
+        if (this.has(value)) {
+            this.map.set(value, [...this.map.get(value), key]);
+        } else {
+            this.map.set(value, [key]);
+        }
+    }
+
+    /**
+     * Produces a list of values that the key is associated with
+     */
+    get(key: Position): Position[] {
+        return this.map.get(key);
+    }
+
+    /**
+     * Deletes a key from all entries
+     */
+    delete(key: Position) {
+        // if the key exists
+        if (this.has(key)) {
+            // find its partners
+            const partners = this.get(key);
+            // go through each and remove the key from their list
+            partners.forEach((partner) => {
+
+                let list = this.get(partner).slice();
+                let i = -1;
+
+                list.forEach((pos, j) => {
+                    if (
+                        pos[0] == key[0] &&
+                        pos[1] == key[1]
+                    ) {
+                        i = j;
+                    }  
+                });
+
+                list.splice(i, 1);
+                this.map.set(partner, list);
+            });
+            // finally delete the key
+            this.map.delete(key);
+        }
+    }
+
 }
