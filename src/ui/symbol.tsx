@@ -77,6 +77,9 @@ export default function Symbol(props) {
         }
     });
 
+    // reference to value input box
+    let valueInput;
+
     // register a keydown event
     // this handles keypresses that may manipulate the component
     onMount(() => {
@@ -128,7 +131,11 @@ export default function Symbol(props) {
                 onExit={() => {setDisplayContextMenu(false)}} 
                 class="flex"
             >
-                <article class="w-full p-4 md:w-3/4 md:inline-block flex flex-col m-auto">
+                <article 
+                    class="w-full p-4 md:w-3/4 md:inline-block flex flex-col m-auto"
+                    onClick={() => {setEdit(true)}}
+                    onKeyDown={(event) => {if (event.key == "Enter") {setEdit(false)}}}
+                >
                     <Switch>
                         <Match when={component instanceof Ground}>
                             <p>Ground nodes have no value...</p>
