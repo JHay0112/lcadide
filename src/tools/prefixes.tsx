@@ -28,3 +28,30 @@ export function unitPrefix(exp: number): string {
         default: return "";
     }
 }
+
+/**
+ * Maps a unit prefix to an exponent value.
+ * If no prefix is associated with the value,
+ * it returns the value 0.
+ */
+export function prefixValue(prefix: string): number {
+    switch(prefix) {
+        case "Y": return 24;
+        case "Z": return 21;
+        case "E": return 18;
+        case "P": return 15;
+        case "T": return 12;
+        case "G": return 9;
+        case "M": return 6;
+        case "k": return 3;
+        case "m": return -3;
+        case "\\mu": return -6;
+        case "n": return -9;
+        case "p": return -12;
+        case "f": return -15;
+        case "a": return -18;
+        case "z": return -21;
+        case "y": return -23;
+        default:  return 0;
+    }
+}

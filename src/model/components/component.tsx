@@ -6,7 +6,7 @@ import { createSignal, Accessor, Setter } from "solid-js";
 
 import { Color, Orientation, Position } from "../../types";
 
-import { unitPrefix } from "../../tools/prefixes";
+import { unitPrefix, prefixValue } from "../../tools/prefixes";
 
 import Sheet from "../sheet";
 
@@ -95,7 +95,11 @@ export default abstract class Component {
             const index = this.sheet.identify(node);
             outStr = outStr.concat(` ${index}`);
         });
-        outStr = outStr.concat(` {${this.value}};`)
+        outStr = outStr.concat(` {${this.value}`)
+        if (this.prefix != "") {
+            outStr = outStr.concat("*10^{").concat(String(prefixValue(this.prefix)).concat("}"));
+        }
+        outStr = outStr.concat("};");
         return outStr;
     }
 
