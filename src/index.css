@@ -23,4 +23,8 @@
     .h-primary {
         @apply text-sky-700 dark:text-sky-300;
     }
+
+    a {
+        @apply h-primary hover:opacity-80 underline;
+    }
 }

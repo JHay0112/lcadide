@@ -58,17 +58,55 @@ const LoadingScreen = () => {
     </>);
 }
 
-const App: Component = () => {
+/**
+ * Welcome popup,
+ * used to update users on the state of Lcadide.
+ * TODO: Only show to new users or when updated.
+ */
+const WelcomePopup = () => {
 
     const [showGreeting, setShowGreeting] = createSignal(true);
 
+    return(<>
+        <Show when={showGreeting()}><Popup title="Kia ora!" onExit={() => {setShowGreeting(false)}} class="p-2 text-justify">
+            <p>
+                Lcadide is a browser-based circuit design tool that uses the symbolic circuit analysis tool 
+                <a href="https://github.com/mph-/lcapy" target="_blank">Lcapy</a> for simulation.
+                This means that circuits built with Lcadide and simulated with Lcapy give exact equations for the voltage and
+                current across components, much like a human can.
+            </p>
+            <br />
+            <p>
+                Please note that Lcadide may take some time (~1 minute) to load. This is because it is bringing in external 
+                Python dependencies (including <a href="https://github.com/mph-/lcapy" target="_blank">Lcapy</a>) to run in your
+                browser. For those curious about how this is achieved, and how Python tools are run in your browser, please visit 
+                <a href="https://github.com/pyodide/pyodide" target="_blank">Pyodide</a>.
+            </p>
+            <br />
+            <p>
+                Lcadide is currently in early development. This means you will often run into bugs and incomplete features.
+                If you wish to report these (please do, it helps us find and fix them) please visit the 
+                <a href="https://github.com/JHay0112/lcadide/issues" target="_blank">issue and feature tracker</a>. 
+                We are also open to feature requests and new ideas, these should be submitted through 
+                <a href="https://github.com/JHay0112/lcadide/issues" target="_blank">issue and feature tracker</a> too.
+            </p>
+            <br />
+            <p>
+                For those of you keen to contribute to Lcadide, please visit the 
+                <a href="https://github.com/JHay0112/lcadide" target="_blank">Github repository</a>.
+                We also have an experimental dark theme, click <a href="javascript:toggleTheme()">here</a> to enable it.
+            </p>
+        </Popup></Show>
+    </>);
+}
+
+const App: Component = () => {
+
     return (<>
         <Suspense fallback={<LoadingScreen />}>
-            <Show when={showGreeting()}><Popup title="Warning!" onExit={() => {setShowGreeting(false)}}>
-                Lcadide is still currently in early development.
-            </Popup></Show>
             <Editor sheet={sheet} />
         </Suspense>
+        <WelcomePopup />
     </>);
 };
 
