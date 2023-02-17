@@ -2,11 +2,13 @@ import {
     Component,
     lazy,
     Suspense,
-    createSignal
+    createSignal,
+    Show
 } from 'solid-js';
 
 import py from './py/lcapy';
 import Sheet from './model/sheet';
+import Popup from './ui/popup';
 
 /**
  * Loading ellipses spinner
@@ -57,8 +59,14 @@ const LoadingScreen = () => {
 }
 
 const App: Component = () => {
+
+    const [showGreeting, setShowGreeting] = createSignal(true);
+
     return (<>
         <Suspense fallback={<LoadingScreen />}>
+            <Show when={showGreeting()}><Popup title="Warning!" onExit={() => {setShowGreeting(false)}}>
+                Lcadide is still currently in early development.
+            </Popup></Show>
             <Editor sheet={sheet} />
         </Suspense>
     </>);

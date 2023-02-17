@@ -31,14 +31,14 @@ export default function Popup(props) {
                         onClick={() => {onExit()}}
                     >
                         <svg 
-                            width="20" height="20"
+                            width="18" height="18"
                             class="stroke-[#252525] dark:invert hover:opacity-50"
                         >
                             <path d="
                                 M 0, 0
-                                L 20, 20
-                                M 0, 20
-                                L 20, 0
+                                L 18, 18
+                                M 0, 18
+                                L 18, 0
                             "></path>
                         </svg>
                     </button>
