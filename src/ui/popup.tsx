@@ -29,7 +29,19 @@ export default function Popup(props) {
                     <button 
                         class="float-right inline-block p-2 font-mono align-middle" 
                         onClick={() => {onExit()}}
-                    >X</button>
+                    >
+                        <svg 
+                            width="18" height="18"
+                            class="stroke-[#252525] dark:invert hover:opacity-50"
+                        >
+                            <path d="
+                                M 0, 0
+                                L 18, 18
+                                M 0, 18
+                                L 18, 0
+                            "></path>
+                        </svg>
+                    </button>
                     <hr class="w-full" />
                 </header>
                 <article class={cls}>
