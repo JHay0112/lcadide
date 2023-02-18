@@ -9,6 +9,7 @@ import PositionMap from "../tools/position_map";
 
 import Component from "./components/component";
 import Ground from "./components/ground";
+import Wire from "./wire";
 
 /**
  * Component sheet class
@@ -16,20 +17,20 @@ import Ground from "./components/ground";
  */
 export default class Sheet {
 
-    private _components: Accessor<Component[]>; 
-    private _setComponents: Setter<Component[]>;
+    private _components: Accessor<Array<Component | Wire>>; 
+    private _setComponents: Setter<Array<Component | Wire>>;
 
     private _active: Accessor<boolean>;
     private _setActive: Setter<boolean>;
 
-    private _activeComponent: Accessor<Component>;
-    private _setActiveComponent: Setter<Component>;
+    private _activeComponent: Accessor<Component | Wire>;
+    private _setActiveComponent: Setter<Component | Wire>;
 
     private _gridSpacing: Accessor<number>;
     private _setGridSpacing: Setter<number>;
 
-    private _nodeInstances: Accessor<PositionMap<Component[]>>;
-    private _setNodeInstances: Setter<PositionMap<Component[]>>;
+    private _nodeInstances: Accessor<PositionMap<Array<Component | Wire>>>;
+    private _setNodeInstances: Setter<PositionMap<Array<Component | Wire>>>;
 
     constructor() {
         // Setup components array
@@ -37,7 +38,7 @@ export default class Sheet {
         [this._active, this._setActive] = createSignal(false);
         [this._activeComponent, this._setActiveComponent] = createSignal(undefined);
         [this._gridSpacing, this._setGridSpacing] = createSignal(25);
-        [this._nodeInstances, this._setNodeInstances] = createSignal(new PositionMap<Component[]>());
+        [this._nodeInstances, this._setNodeInstances] = createSignal(new PositionMap<Array<Component | Wire>>());
         this.active = false;
     }
 
@@ -47,7 +48,7 @@ export default class Sheet {
     forLcapy(): string {
         let out: string = "\n";
         for (let component of this.components) {
-            if (!(component instanceof Ground)) {
+            if (!(component instanceof Ground || component instanceof Wire)) {
                 out = out.concat(component.forLcapy(), "\n");
             }
         }
@@ -57,9 +58,16 @@ export default class Sheet {
     /**
      * Registers the nodes of a component with the sheet.
      */
-    register(cpt: Component) {
+    register(cpt: Component| Wire) {
 
-        cpt.nodes.forEach((node) => {
+        let nodes: Position[];
+        if (cpt instanceof Wire) {
+            nodes = [cpt.start, cpt.end];
+        } else {
+            nodes = cpt.nodes;
+        }
+
+        nodes.forEach((node) => {
 
             let nodeInstances = this._nodeInstances().copy();
 
@@ -76,9 +84,16 @@ export default class Sheet {
     /**
      * Deregister the nodes of a component with the sheet
      */
-    deregister(cpt: Component) {
+    deregister(cpt: Component | Wire) {
 
-        cpt.nodes.forEach((node) => {
+        let nodes: Position[];
+        if (cpt instanceof Wire) {
+            nodes = [cpt.start, cpt.end];
+        } else {
+            nodes = cpt.nodes;
+        }
+
+        nodes.forEach((node) => {
 
             let nodeInstances = this._nodeInstances().copy();
 
@@ -124,7 +139,7 @@ export default class Sheet {
      * 
      * This will not error out if the component cannot be found
      */
-    delete(cpt: Component) {
+    delete(cpt: Component | Wire) {
         this.placeActiveComponent();
         // shallow copy of components
         let newComponents = this.components.slice();
@@ -200,8 +215,8 @@ export default class Sheet {
     /**
      * List of components included in the sheet.
      */
-    get components()                   {return this._components()}
-    set components(value: Component[]) {this._setComponents(value)}
+    get components()                               {return this._components()}
+    set components(value: Array<Component | Wire>) {this._setComponents(value)}
 
     /**
      * Tracks whether a component is currently considered "active".
@@ -216,7 +231,7 @@ export default class Sheet {
      * Assignment automatically sets the active flag...
      */
     get activeComponent() {return this._activeComponent()}
-    set activeComponent(cpt: Component) {
+    set activeComponent(cpt: Component | Wire) {
         this._setActiveComponent(cpt)
         this.active = true;
     }

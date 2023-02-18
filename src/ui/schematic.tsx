@@ -4,11 +4,12 @@
 
 import { splitProps, For, Show, onMount } from "solid-js";
 
-import { Orientation, Position } from "../types";
+import { Orientation } from "../types";
 
 import Sheet from "../model/sheet";
 
 import Symbol from "./symbol";
+import Wire from "../model/wire";
 
 /**
  * Canvas that draws schematics from a sheet
@@ -35,17 +36,28 @@ export default function Schematic(props) {
             class={`${sheet.active? "cursor-grabbing" : "cursor-auto"} ${local.class} overflow-y-hidden`} 
             onMouseMove={(event) => {
                 if (sheet.active) {
-                    const middle = sheet.toPixels(sheet.activeComponent.middle);
-                    if (sheet.activeComponent.orientation == Orientation.HORIZONTAL) {
-                        sheet.activeComponent.position = sheet.toGrid([
-                            event.clientX - middle[1], 
-                            event.clientY - middle[0]
+                    if (sheet.activeComponent instanceof Wire) {
+                        // special case for wire positioning
+                        sheet.activeComponent.end = sheet.toGrid([
+                            event.clientX,
+                            event.clientY
                         ]);
+                        
                     } else {
-                        sheet.activeComponent.position = sheet.toGrid([
-                            event.clientX - middle[0], 
-                            event.clientY - middle[1]
-                        ]);
+
+                        const middle = sheet.toPixels(sheet.activeComponent.middle);
+
+                        if (sheet.activeComponent.orientation == Orientation.HORIZONTAL) {
+                            sheet.activeComponent.position = sheet.toGrid([
+                                event.clientX - middle[1], 
+                                event.clientY - middle[0]
+                            ]);
+                        } else {
+                            sheet.activeComponent.position = sheet.toGrid([
+                                event.clientX - middle[0], 
+                                event.clientY - middle[1]
+                            ]);
+                        }
                     }
                 }
             }} 

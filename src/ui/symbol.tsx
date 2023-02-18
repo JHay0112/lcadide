@@ -10,7 +10,7 @@ import Equation from "./equation";
 import Sheet from "../model/sheet";
 import Component from "../model/components/component";
 import Ground from "../model/components/ground";
-import Wire from "../model/components/wire";
+import Wire from "../model/wire";
 
 /**
  * Defines the action a user can take on the component.
@@ -29,7 +29,7 @@ export default function Symbol(props) {
 
     // get component object from props
     const [local, _] = splitProps(props, ["component", "sheet"]);
-    const component: Component = local.component;
+    const component: Component | Wire = local.component;
     const sheet: Sheet = local.sheet;
 
     const [edit, setEdit] = createSignal(false);
@@ -41,7 +41,9 @@ export default function Symbol(props) {
             key: "r",
             useable: () => {return !(component instanceof Wire)},
             callback: () => {
-                component.rotate();
+                if (!(component instanceof Wire)) {
+                    component.rotate();
+                }
             }
         },
         {
