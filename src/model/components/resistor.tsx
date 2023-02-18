@@ -17,8 +17,7 @@ export default class Resistor extends Component {
     name = "R";
     unit = "\\Omega";
 
-    middle: Position = [1, 2];
-    
+    _middle: Position = [1, 2];
     _nodes: Position[] = [
         [this.width/2, 0],
         [this.width/2, this.height]

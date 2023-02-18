@@ -5,7 +5,7 @@
 import { createSignal, Accessor, Setter } from "solid-js";
 
 import { Position } from "../types";
-import { PositionMap, PositionBiMap } from "../tools/position_map";
+import PositionMap from "../tools/position_map";
 
 import Component from "./components/component";
 import Ground from "./components/ground";
@@ -58,13 +58,17 @@ export default class Sheet {
      * Registers the nodes of a component with the sheet.
      */
     register(cpt: Component) {
+
         cpt.nodes.forEach((node) => {
+
             let nodeInstances = this._nodeInstances().copy();
+
             if (nodeInstances.has(node)) {
                 nodeInstances.set(node, [...nodeInstances.get(node), cpt]);
             } else {
                 nodeInstances.set(node, [cpt]);
             }
+
             this._setNodeInstances(nodeInstances);
         });
     }
@@ -73,8 +77,11 @@ export default class Sheet {
      * Deregister the nodes of a component with the sheet
      */
     deregister(cpt: Component) {
+
         cpt.nodes.forEach((node) => {
+
             let nodeInstances = this._nodeInstances().copy();
+
             if (nodeInstances.get(node).length <= 1) {
                 nodeInstances.delete(node);
             } else {
@@ -93,6 +100,7 @@ export default class Sheet {
                 }
                 nodeInstances.set(node, cpts);
             }
+
             this._setNodeInstances(nodeInstances);
         });
     }

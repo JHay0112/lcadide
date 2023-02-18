@@ -17,8 +17,7 @@ export default class Ground extends Component {
     name = "G";
     unit = "";
 
-    middle: Position = [1, 1];
-    
+    _middle: Position = [1, 1];
     _nodes: Position[] = [
         [this.width/2, 0]
     ];

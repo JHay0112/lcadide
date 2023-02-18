@@ -38,9 +38,9 @@ export default abstract class Component {
     protected abstract readonly _nodes: Position[];
 
     /**
-     * The point of rotation of the device.
+     * The point of rotation of the device relative to the device origin.
      */
-    public abstract readonly middle: Position;
+    protected abstract readonly _middle: Position;
 
     private static nextId: number = 1;
     private _id: Accessor<string>;
@@ -162,8 +162,7 @@ export default abstract class Component {
     get orientation() {return this._orientation()}
 
     /**
-     * The nodes of the device given with absolute grid coordinates.
-     * If the component has been rotated these will be adjusted so to match.
+     * The point of rotation of the component.
      */
     get nodes() {
 
@@ -186,5 +185,12 @@ export default abstract class Component {
         }
 
         return outNodes;
+    }
+
+    /**
+     * The point of rotation of the component.
+     */
+    get middle(): Position {
+        return this._middle;
     }
 }
