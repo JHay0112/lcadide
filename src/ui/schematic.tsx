@@ -4,6 +4,8 @@
 
 import { splitProps, For, Show, onMount } from "solid-js";
 
+import { Orientation, Position } from "../types";
+
 import Sheet from "../model/sheet";
 
 import Symbol from "./symbol";
@@ -33,10 +35,18 @@ export default function Schematic(props) {
             class={`${sheet.active? "cursor-grabbing" : "cursor-auto"} ${local.class} overflow-y-hidden`} 
             onMouseMove={(event) => {
                 if (sheet.active) {
-                    sheet.activeComponent.position = sheet.toGrid([
-                        event.clientX, 
-                        event.clientY
-                    ]);
+                    const middle = sheet.toPixels(sheet.activeComponent.middle);
+                    if (sheet.activeComponent.orientation == Orientation.HORIZONTAL) {
+                        sheet.activeComponent.position = sheet.toGrid([
+                            event.clientX - middle[1], 
+                            event.clientY - middle[0]
+                        ]);
+                    } else {
+                        sheet.activeComponent.position = sheet.toGrid([
+                            event.clientX - middle[0], 
+                            event.clientY - middle[1]
+                        ]);
+                    }
                 }
             }} 
             onMouseUp={() => {
