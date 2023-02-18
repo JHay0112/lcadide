@@ -3,7 +3,8 @@ import {
     lazy,
     Suspense,
     createSignal,
-    Show
+    Show,
+    onMount
 } from 'solid-js';
 
 import py from './py/lcapy';
@@ -65,7 +66,12 @@ const LoadingScreen = () => {
  */
 const WelcomePopup = () => {
 
-    const [showGreeting, setShowGreeting] = createSignal(true);
+    const [showGreeting, setShowGreeting] = createSignal(false);
+
+    onMount(async () => {
+        await new Promise(r => setTimeout(r, 1500));
+        setShowGreeting(true);
+    });
 
     return(<>
         <Show when={showGreeting()}><Popup title="Kia ora!" onExit={() => {setShowGreeting(false)}} class="p-2 text-justify">
