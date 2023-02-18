@@ -8,11 +8,16 @@ import Component from "./component";
 
 export default class Capacitor extends Component {
 
-    width = 2;
-    height = 4;
+    private readonly height = 4;
+    private readonly width = 2;
+
+    private readonly pixelHeight = this.sheet.gridSpacing * this.height;
+    private readonly pixelWidth = this.sheet.gridSpacing * this.width;
 
     name = "C";
     unit = "F";
+
+    middle: Position = [1, 2];
     
     _nodes: Position[] = [
         [this.width/2, 0],

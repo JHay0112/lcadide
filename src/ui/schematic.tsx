@@ -4,8 +4,6 @@
 
 import { splitProps, For, Show, onMount } from "solid-js";
 
-import { Orientation } from "../types";
-
 import Sheet from "../model/sheet";
 
 import Symbol from "./symbol";
@@ -35,17 +33,10 @@ export default function Schematic(props) {
             class={`${sheet.active? "cursor-grabbing" : "cursor-auto"} ${local.class} overflow-y-hidden`} 
             onMouseMove={(event) => {
                 if (sheet.active) {
-                    if (sheet.activeComponent.orientation == Orientation.HORIZONTAL) {
-                        sheet.activeComponent.position = sheet.toGrid([
-                            event.clientX - sheet.activeComponent.pixelHeight/2 + 10, 
-                            event.clientY - sheet.activeComponent.pixelWidth/2 + 10
-                        ]);
-                    } else {
-                        sheet.activeComponent.position = sheet.toGrid([
-                            event.clientX - sheet.activeComponent.pixelWidth/2 + 10, 
-                            event.clientY - sheet.activeComponent.pixelHeight/2 + 10
-                        ]);
-                    }
+                    sheet.activeComponent.position = sheet.toGrid([
+                        event.clientX, 
+                        event.clientY
+                    ]);
                 }
             }} 
             onMouseUp={() => {
@@ -60,44 +51,41 @@ export default function Schematic(props) {
             }}
         >
             <svg class="h-full w-full">
+
                 <defs>
                     <pattern id="grid" width={sheet.gridSpacing} height={sheet.gridSpacing} patternUnits="userSpaceOnUse">
                         <path d={`M ${sheet.gridSpacing} 0 L 0 0 0 ${sheet.gridSpacing}`} fill="none" stroke="gray" stroke-width="0.5" />
                     </pattern>
                 </defs>
-                    
                 <rect class="dark:invert" width="100%" height="100%" fill="url(#grid)" />
-            </svg>
 
-            <Show when={sheet.active}>
-                <Symbol component={sheet.activeComponent} sheet={sheet} />
-            </Show>
+                <Show when={sheet.active}>
+                    <Symbol component={sheet.activeComponent} sheet={sheet} />
+                </Show>
 
-            <For each={sheet.components}>{(component) =>
-                <Symbol component={component} sheet={sheet} />
-            }</For>
+                <For each={sheet.components}>{(component) =>
+                    <Symbol component={component} sheet={sheet} />
+                }</For>
 
-            <For each={sheet.nodes}>{(node) =>
-                <svg 
-                    height="5"
-                    width="5"
-                    style={`   
-                        position: absolute;
-                        top: ${sheet.toPixels(node)[1] - 3}px;
-                        left: ${sheet.toPixels(node)[0] - 3}px;
-                    `}
-                    class="dark:invert"
-                >
+                <For each={sheet.nodes}>{(node) =>
                     <Show 
                         when={sheet.connections(node) > 2 || sheet.connections(node) == 1}
-                        fallback={
-                            <circle cx="2.5" cy="2.5" r="0.5" style={`stroke: black; fill: ${sheet.connections(node) > 2? "black" : "white"};`} />
-                        }
                     >
-                        <circle cx="2.5" cy="2.5" r="2" style={`stroke: black; fill: ${sheet.connections(node) > 2? "black" : "white"};`} />
+                        <circle 
+                            cx="2.5" cy="2.5" r="2" 
+                            transform={`
+                                translate(${sheet.toPixels(node)[0] - 2.5} ${sheet.toPixels(node)[1] - 2.5})
+                            `}
+
+                            class="dark:invert"
+                            style={`   
+                                stroke: black; 
+                                fill: ${sheet.connections(node) > 2? "black" : "white"};
+                            `} 
+                        />
                     </Show>
-                </svg>
-            }</For>
+                }</For>
+            </svg>
         </section>
     </>);
 }

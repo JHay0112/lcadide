@@ -8,11 +8,16 @@ import Component from "./component";
 
 export default class CurrentSource extends Component {
 
-    width = 2;
-    height = 4;
+    private readonly height = 4;
+    private readonly width = 2;
+
+    private readonly pixelHeight = this.sheet.gridSpacing * this.height;
+    private readonly pixelWidth = this.sheet.gridSpacing * this.width;
 
     name = "I";
     unit = "A";
+
+    middle: Position = [1, 2];
     
     _nodes: Position[] = [
         [this.width/2, 0],

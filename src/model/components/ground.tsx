@@ -8,11 +8,16 @@ import Component from "./component";
 
 export default class Ground extends Component {
 
-    width = 2;
-    height = 2;
+    private readonly height = 2;
+    private readonly width = 2;
+
+    private readonly pixelHeight = this.sheet.gridSpacing * this.height;
+    private readonly pixelWidth = this.sheet.gridSpacing * this.width;
 
     name = "G";
     unit = "";
+
+    middle: Position = [1, 1];
     
     _nodes: Position[] = [
         [this.width/2, 0]
