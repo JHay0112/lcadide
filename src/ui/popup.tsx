@@ -16,10 +16,11 @@ export default function Popup(props) {
     // get children
     const c = children(() => props.children);
     // get title
-    const [local, _] = splitProps(props, ["title", "onExit", "class"]);
+    const [local, _] = splitProps(props, ["title", "onExit", "class", "ref"]);
     const title: string = local.title;
     const onExit: () => void = local.onExit;
     const cls: string = local.class;
+    const ref = local.ref;
 
     // stop scrolling
     onMount(() => {
