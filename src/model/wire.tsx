@@ -18,8 +18,7 @@ export default class Wire {
     public prefix = "";
     public unit = "";
     public color = "#252525";
-    public position: Position = [0, 0];
-    public orientation = Orientation.HORIZONTAL;
+    public orientation = Orientation.VERTICAL;
 
     private static nextId: number = 1;
     private _id: Accessor<string>;
@@ -41,10 +40,22 @@ export default class Wire {
     }
 
     path() {
-        return `
-            M ${this.start[0]}, ${this.start[1]}
-            L ${this.end[0]}, ${this.end[1]}
-        `;
+
+        const start = this.sheet.toPixels(this.start);
+        const end = this.sheet.toPixels(this.end);
+
+        // return no path if start and end not initialised
+        if (
+            (this.start[0] == -255 && this.start[1] == -255) ||
+            (this.end[0] == -255 && this.end[1] == -255)
+        ) {
+            return "";
+        } else {
+            return `
+                M 0, 0
+                L ${end[0] - start[0]}, ${end[1] - start[1]}
+            `;
+        }
     }
 
     /**
@@ -65,4 +76,6 @@ export default class Wire {
             (this.end[1] - this.start[1])/2
         ];
     }
+
+    get position() {return this.start};
 }

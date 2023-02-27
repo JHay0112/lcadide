@@ -20,6 +20,9 @@ export default function Schematic(props) {
     const [local, _] = splitProps(props, ["sheet", "class"]);
     let sheet: Sheet = local.sheet;
 
+    // tracks what stage of wire placement the user is in
+    let firstNodePlaced: boolean = false;
+
     // reference to container element
     let container;
 
@@ -27,6 +30,27 @@ export default function Schematic(props) {
     onMount(() => {
         sheet.gridSpacing = Math.max(container.clientWidth / 80, 20);
     });
+
+    // handles placing the active component
+    function placeActiveComponent(event) {
+        if (sheet.active) {
+
+            if (sheet.activeComponent instanceof Wire && !firstNodePlaced) {
+
+                if (sheet.activeComponent instanceof Wire) {
+                    sheet.activeComponent.start = sheet.toGrid([
+                        event.clientX,
+                        event.clientY
+                    ]);
+                }
+                firstNodePlaced = true;
+
+            } else {
+                sheet.placeActiveComponent();
+                firstNodePlaced = false;
+            }
+        }
+    }
 
     // SVG based grid adapted from:
     // https://stackoverflow.com/questions/14208673/how-to-draw-grid-using-html5-and-canvas-or-svg
@@ -37,16 +61,18 @@ export default function Schematic(props) {
             onMouseMove={(event) => {
                 if (sheet.active) {
                     if (sheet.activeComponent instanceof Wire) {
-                        // special case for wire positioning
-                        sheet.activeComponent.end = sheet.toGrid([
-                            event.clientX,
-                            event.clientY
-                        ]);
-                        
+                        if (firstNodePlaced) {
+                            if (sheet.activeComponent instanceof Wire) {
+                                sheet.activeComponent.end = sheet.toGrid([
+                                    event.clientX,
+                                    event.clientY
+                                ]);
+                            }
+                        }
                     } else {
 
                         const middle = sheet.toPixels(sheet.activeComponent.middle);
-
+    
                         if (sheet.activeComponent.orientation == Orientation.HORIZONTAL) {
                             sheet.activeComponent.position = sheet.toGrid([
                                 event.clientX - middle[1], 
@@ -61,16 +87,8 @@ export default function Schematic(props) {
                     }
                 }
             }} 
-            onMouseUp={() => {
-                if (sheet.active) {
-                    sheet.placeActiveComponent();
-                }
-            }}
-            onMouseLeave={() => {
-                if (sheet.active) {
-                    sheet.placeActiveComponent();
-                }
-            }}
+            onMouseUp={placeActiveComponent}
+            onMouseLeave={placeActiveComponent}
         >
             <svg class="h-full w-full">
 

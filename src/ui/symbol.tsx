@@ -63,7 +63,7 @@ export default function Symbol(props) {
         {
             name: "Save",
             key: "",
-            useable: () => {return !edit()},
+            useable: () => {return !edit() && !(component instanceof Wire)},
             callback: () => {setEdit(false)}
         }
     ]
