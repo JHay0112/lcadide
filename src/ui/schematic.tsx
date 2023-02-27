@@ -34,17 +34,27 @@ export default function Schematic(props) {
     // handles placing the active component
     function placeActiveComponent(event) {
         if (sheet.active) {
-
-            if (sheet.activeComponent instanceof Wire && !firstNodePlaced) {
-
-                if (sheet.activeComponent instanceof Wire) {
-                    sheet.activeComponent.start = sheet.toGrid([
+            if (sheet.activeComponent instanceof Wire) {
+                if (!firstNodePlaced) {
+                    sheet.activeComponent.end = sheet.toGrid([
                         event.clientX,
                         event.clientY
                     ]);
+                    firstNodePlaced = true;
+                } else {
+                    // if wire fails to initialise then do not place
+                    const start = sheet.activeComponent.start;
+                    const end = sheet.activeComponent.end;
+                    if (
+                        ((start[0] == -255) && (start[1] == -255)) ||
+                        ((end[0] == -255) && (end[1] == -255))
+                    ) {
+                        sheet.active = false;
+                    } else {
+                        sheet.placeActiveComponent();
+                    }
+                    firstNodePlaced = false;
                 }
-                firstNodePlaced = true;
-
             } else {
                 sheet.placeActiveComponent();
                 firstNodePlaced = false;
@@ -62,12 +72,10 @@ export default function Schematic(props) {
                 if (sheet.active) {
                     if (sheet.activeComponent instanceof Wire) {
                         if (firstNodePlaced) {
-                            if (sheet.activeComponent instanceof Wire) {
-                                sheet.activeComponent.end = sheet.toGrid([
-                                    event.clientX,
-                                    event.clientY
-                                ]);
-                            }
+                            sheet.activeComponent.start = sheet.toGrid([
+                                event.clientX,
+                                event.clientY
+                            ]);
                         }
                     } else {
 
