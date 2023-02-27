@@ -79,6 +79,9 @@ export default function Symbol(props) {
         }
     });
 
+    // reference to value input box
+    let valueInput;
+
     // define the context menu
     let contextMenuRef;
     const contextMenu = (<>
@@ -105,6 +108,7 @@ export default function Symbol(props) {
                         <form class="w-full h-full">
                             <Equation class="inline-block">{`${component.name}_{${component.id}}=`}</Equation>
                             <input 
+                                ref={valueInput}
                                 class="inline-block" 
                                 value={component.value}
                                 onInput={(event) => {
