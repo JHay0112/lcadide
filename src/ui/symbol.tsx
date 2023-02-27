@@ -140,7 +140,7 @@ export default function Symbol(props) {
         window.addEventListener("keydown", (event) => {
             if (component == sheet.activeComponent && sheet.active) {
                 if (event.key == "Escape") {
-                    sheet.placeActiveComponent();
+                    sheet.active = false;
                 } else if (keybinds.has(event.key)) {
                     const action = actions[keybinds.get(event.key)];
                     if (action.useable()) {
