@@ -21,16 +21,6 @@ import Sheet from "../sheet";
 export default abstract class Component {
 
     /**
-     * Component graphical as a multiple of the grid spacing.
-     */
-    protected abstract readonly height: number;
-
-    /**
-     * Component graphical width as a multiple of the grid spacing.
-     */
-    protected abstract readonly width: number;
-
-    /**
      * Lcapy component identifier
      * Typically a single character, e.g. R for resistor
      */
@@ -46,6 +36,11 @@ export default abstract class Component {
      * The nodes of the device relative to the device origin.
      */
     protected abstract readonly _nodes: Position[];
+
+    /**
+     * The point of rotation of the device relative to the device origin.
+     */
+    protected abstract readonly _middle: Position;
 
     private static nextId: number = 1;
     private _id: Accessor<string>;
@@ -69,7 +64,7 @@ export default abstract class Component {
     /**
      * The sheet that the component is a part of.
      */
-    private sheet: Sheet;
+    protected sheet: Sheet;
 
     constructor(sheet: Sheet) {
         this.sheet = sheet;
@@ -171,20 +166,7 @@ export default abstract class Component {
     get orientation() {return this._orientation()}
 
     /**
-     * The graphical height of the component.
-     * This avoids exposing the sheet attribute publicly.
-     */
-    get pixelHeight() {return this.sheet.gridSpacing * this.height}
-
-    /**
-     * The graphical width of the component.
-     * This avoids exposing the sheet attribute publicly.
-     */
-    get pixelWidth()  {return this.sheet.gridSpacing * this.width}
-
-    /**
-     * The nodes of the device given with absolute grid coordinates.
-     * If the component has been rotated these will be adjusted so to match.
+     * The point of rotation of the component.
      */
     get nodes() {
 
@@ -192,13 +174,9 @@ export default abstract class Component {
 
         if (this.orientation == Orientation.HORIZONTAL) {
             this._nodes.forEach((node) => {
-                const middleRelative = [
-                    node[0] - this.width/2,
-                    node[1] - this.height/2
-                ];
                 outNodes = [...outNodes, [
-                    this.position[0] + middleRelative[1] + this.width/2, 
-                    this.position[1] + middleRelative[0] + this.height/2
+                    this.position[0] + node[1] - this.middle[1] + this.middle[0], 
+                    this.position[1] + node[0] - this.middle[0] + this.middle[1]
                 ]];
             });
         } else {
@@ -211,5 +189,12 @@ export default abstract class Component {
         }
 
         return outNodes;
+    }
+
+    /**
+     * The point of rotation of the component.
+     */
+    get middle(): Position {
+        return this._middle;
     }
 }
