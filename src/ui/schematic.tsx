@@ -2,9 +2,9 @@
  * Canvas for drawing schematics upon
  */
 
-import { splitProps, For, Show, onMount } from "solid-js";
+import { splitProps, For, Show, onMount, createSignal } from "solid-js";
 
-import { Orientation } from "../types";
+import { Orientation, Position } from "../types";
 
 import Sheet from "../model/sheet";
 
@@ -19,6 +19,10 @@ export default function Schematic(props) {
     // get sheet instance from props
     const [local, _] = splitProps(props, ["sheet", "class"]);
     let sheet: Sheet = local.sheet;
+
+    // tracks the position of a cursor
+    let [cursorPosition, setCursorPosition] = createSignal([-255, -255] as Position);
+    let [cursorActive, setCursorActive] = createSignal(false);
 
     // tracks what stage of wire placement the user is in
     let firstNodePlaced: boolean = false;
@@ -54,13 +58,51 @@ export default function Schematic(props) {
                         sheet.placeActiveComponent();
                     }
                     firstNodePlaced = false;
+                    setCursorActive(false);
                 }
             } else {
                 sheet.placeActiveComponent();
                 firstNodePlaced = false;
+                setCursorActive(false);
             }
         }
     }
+
+    // handles mouse movements
+    function handleMouseMove(event) {
+        if (sheet.active) {
+            if (sheet.activeComponent instanceof Wire) {
+                setCursorActive(true);
+                if (firstNodePlaced) {
+                    sheet.activeComponent.start = sheet.toGrid([
+                        event.clientX,
+                        event.clientY
+                    ]);
+                }
+            } else {
+
+                const middle = sheet.toPixels(sheet.activeComponent.middle);
+
+                if (sheet.activeComponent.orientation == Orientation.HORIZONTAL) {
+                    sheet.activeComponent.position = sheet.toGrid([
+                        event.clientX - middle[1], 
+                        event.clientY - middle[0]
+                    ]);
+                } else {
+                    sheet.activeComponent.position = sheet.toGrid([
+                        event.clientX - middle[0], 
+                        event.clientY - middle[1]
+                    ]);
+                }
+            }
+        }
+
+        // update cursor grip position
+        // only when the cursor is active
+        if (cursorActive()) {
+            setCursorPosition(sheet.toGrid([event.clientX, event.clientY]));
+        }
+    } 
 
     // SVG based grid adapted from:
     // https://stackoverflow.com/questions/14208673/how-to-draw-grid-using-html5-and-canvas-or-svg
@@ -68,33 +110,7 @@ export default function Schematic(props) {
         <section 
             ref={container}
             class={`${sheet.active? "cursor-grabbing" : "cursor-auto"} ${local.class} overflow-y-hidden`} 
-            onMouseMove={(event) => {
-                if (sheet.active) {
-                    if (sheet.activeComponent instanceof Wire) {
-                        if (firstNodePlaced) {
-                            sheet.activeComponent.start = sheet.toGrid([
-                                event.clientX,
-                                event.clientY
-                            ]);
-                        }
-                    } else {
-
-                        const middle = sheet.toPixels(sheet.activeComponent.middle);
-    
-                        if (sheet.activeComponent.orientation == Orientation.HORIZONTAL) {
-                            sheet.activeComponent.position = sheet.toGrid([
-                                event.clientX - middle[1], 
-                                event.clientY - middle[0]
-                            ]);
-                        } else {
-                            sheet.activeComponent.position = sheet.toGrid([
-                                event.clientX - middle[0], 
-                                event.clientY - middle[1]
-                            ]);
-                        }
-                    }
-                }
-            }} 
+            onMouseMove={handleMouseMove} 
             onMouseUp={placeActiveComponent}
             onMouseLeave={placeActiveComponent}
         >
@@ -133,6 +149,26 @@ export default function Schematic(props) {
                         />
                     </Show>
                 }</For>
+
+                <Show when={cursorActive()}>
+                    <rect
+                        class="dark:invert"
+                        style={`
+                            stroke: black; 
+                            fill: none;
+                        `}
+
+                        width={sheet.gridSpacing/2}
+                        height={sheet.gridSpacing/2}
+
+                        transform={`
+                            translate(
+                                ${sheet.toPixels(cursorPosition())[0] - sheet.gridSpacing/4}
+                                ${sheet.toPixels(cursorPosition())[1] - sheet.gridSpacing/4}
+                            )
+                        `}
+                    />
+                </Show>
             </svg>
         </section>
     </>);
