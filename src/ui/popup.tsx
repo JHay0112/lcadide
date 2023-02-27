@@ -20,7 +20,6 @@ export default function Popup(props) {
     const title: string = local.title;
     const onExit: () => void = local.onExit;
     const cls: string = local.class;
-    const ref = local.ref;
 
     // stop scrolling
     onMount(() => {
@@ -33,7 +32,7 @@ export default function Popup(props) {
     });
 
     return (<>
-        <div ref={ref} class="absolute top-0 left-0 w-screen h-screen bg-opacity-70 bg-neutral-900 z-50 flex items-center justify-center">
+        <div ref={local.ref} class="absolute top-0 left-0 w-screen h-screen bg-opacity-70 bg-neutral-900 z-50 flex items-center justify-center">
             <article class="w-10/12 max-h-[90%] md:w-8/12 bg-primary p-4 rounded-md overflow-y-scroll">
                 <header class="mb-3">
                     <h1 class="inline-block p-2">{title}</h1>
