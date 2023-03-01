@@ -63,7 +63,7 @@ export default function Symbol(props) {
         {
             name: "Save",
             key: "",
-            useable: () => {return !edit() && !(component instanceof Wire)},
+            useable: () => {return edit() && !(component instanceof Wire)},
             callback: () => {setEdit(false)}
         }
     ]
@@ -100,12 +100,20 @@ export default function Symbol(props) {
                         <p>Wires have no value...</p>
                     </Match>
                     <Match when={!edit()}>
-                        <Equation>{`
+                        <Equation
+                            onClick={() => {
+                                setEdit(true);
+                                valueInput.focus();
+                            }}
+                        >{`
                             ${component.name}_{${component.id}}=${component.value}\ \\left[${component.prefix} ${component.unit}\\right]
                         `}</Equation>
                     </Match>
                     <Match when={edit()}>
-                        <form class="w-full h-full">
+                        <form 
+                            onSubmit={() => {setEdit(false)}} 
+                            class="w-full h-full"
+                        >
                             <Equation class="inline-block">{`${component.name}_{${component.id}}=`}</Equation>
                             <input 
                                 ref={valueInput}

@@ -42,7 +42,7 @@ export default function Equation(props) {
     });
 
     return (<>
-        <article class={local.class}>
+        <article class={local.class} onClick={props.onClick}>
             <p class={`${error()? "text-error" : "text-primary"} ${local.class}`} ref={renderTarget}></p>
         </article>
     </>);
