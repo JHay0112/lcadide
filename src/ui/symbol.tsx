@@ -2,7 +2,7 @@
  * Produces component symbols for components.
  */
 
-import { splitProps, createSignal, onMount, For, Switch, Match } from "solid-js";
+import { splitProps, createSignal, onMount, For, Switch, Match, Show } from "solid-js";
 
 import Popup from "./popup";
 import Equation from "./equation";
@@ -34,8 +34,12 @@ export default function Symbol(props) {
     const component: Component | Wire = local.component;
     const sheet: Sheet = local.sheet;
 
-    // track editing state of the circuit
+    // track editing state of the component
     const [edit, setEdit] = createSignal(false);
+
+    // track whether a value should be displayed
+    const [displayValue, setDisplayValue] = createSignal(false);
+    const [value, setValue] = createSignal("");
 
     // define actions to be implemented
     const actions: Action[] = [
@@ -104,9 +108,14 @@ export default function Symbol(props) {
                         <p>Wires have no value...</p>
                     </Match>
 
+                    {/* Display the value selected by the user */}
+                    <Match when={displayValue()}>
+                        <Equation class="m-auto align-middle">{`${value()}`}</Equation>
+                    </Match>
+
                     {/* Display the component value in latex when not editing */}
                     <Match when={!edit()}>
-                        <Equation>{`
+                        <Equation class="m-auto align-middle">{`
                             ${component.name}_{${component.id}}=${component.value}\ \\left[${component.prefix} ${component.unit}\\right]
                         `}</Equation>
                     </Match>
@@ -127,8 +136,8 @@ export default function Symbol(props) {
                 </Switch>
             </form>
 
-            {/* Sidebar, this gives actions that can be applied to the component. */}
-            <aside class="w-full md:w-1/4 md:inline-block bg-secondary text-secondary p-4 rounded-t-md flex flex-col m-auto">
+            {/* Sidebar, set of actions that can be applied to the component, and things that can be computed. */}
+            <aside class="w-full md:w-1/4 md:inline-block bg-secondary text-secondary p-4 rounded-md flex flex-col m-auto">
                 <For each={actions}>{(action) =>
                     <button 
                         class={`w-full ${action.useable()? "hover:opacity-80" : "opacity-30 hover:cursor-default"}`}
@@ -142,10 +151,6 @@ export default function Symbol(props) {
                         <span class="float-right opacity-50">{action.key}</span>
                     </button>
                 }</For>
-            </aside>
-
-            {/* Bottom buttons, these give values that can be determined about the component. */}
-            <aside class="w-full bg-secondary text-secondary p-4 flex-none rounded-b-md rounded-tl-md">
                 {/* Determine the voltage across the component.*/}
                 <button
                     onClick={() => {
@@ -155,12 +160,13 @@ export default function Symbol(props) {
                         // get output from lcapy
                         py.latest.runPython("sys.stdout = io.StringIO()");
                         try {
+                            setDisplayValue(true);
                             py.latest.runPython(`
 cct = lcapy.Circuit('''${netlist}''')
 print(lcapy.latex(cct.${component.name}${component.id}.V))
                             `);
                             const stdout = py.latest.runPython("sys.stdout.getvalue()");
-                            console.log(stdout);
+                            setValue(stdout);
                         } catch(e) {
                             console.log(e.message);
                         }
