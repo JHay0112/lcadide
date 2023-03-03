@@ -84,6 +84,7 @@ export default function Symbol(props) {
             ref={contextMenuRef}
             title={`${component.name}${component.id}`} 
             onExit={() => {document.body.removeChild(contextMenuRef)}} 
+            class="flex h-full justify-center"
         >
             <form 
                 class="w-full h-full p-4 md:w-3/4 md:inline-block flex flex-col m-auto"
@@ -110,12 +111,12 @@ export default function Symbol(props) {
 
                     {/* Display the value selected by the user */}
                     <Match when={displayValue()}>
-                        <Equation class="m-auto align-middle">{`${value()}`}</Equation>
+                        <Equation>{`${value()}`}</Equation>
                     </Match>
 
                     {/* Display the component value in latex when not editing */}
                     <Match when={!edit()}>
-                        <Equation class="m-auto align-middle">{`
+                        <Equation>{`
                             ${component.name}_{${component.id}}=${component.value}\ \\left[${component.prefix} ${component.unit}\\right]
                         `}</Equation>
                     </Match>
