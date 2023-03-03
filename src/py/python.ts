@@ -35,11 +35,11 @@ async function loadPython(): Promise<PyodideInterface> {
     await pyodide.loadPackage("micropip");
 
     await pyodide.runPythonAsync(`
-        from micropip import install
-        await install("networkx")
-        await install("IPython")
-        await install("property-cached")
-        await install("wheel")
+from micropip import install
+await install("networkx")
+await install("IPython")
+await install("property-cached")
+await install("wheel")
     `);
     
     await pyodide.loadPackage("sympy");
@@ -50,10 +50,10 @@ async function loadPython(): Promise<PyodideInterface> {
     await pyodide.loadPackage(LCAPY);
 
     pyodide.runPython(`
-        import lcapy
-        from lcapy import Circuit
-        import sys
-        import io
+import lcapy
+from lcapy import Circuit
+import sys
+import io
     `);
 
     return pyodide;

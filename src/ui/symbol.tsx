@@ -7,6 +7,8 @@ import { splitProps, createSignal, onMount, For, Switch, Match } from "solid-js"
 import Popup from "./popup";
 import Equation from "./equation";
 
+import py from "../py/python";
+
 import Sheet from "../model/sheet";
 import Component from "../model/components/component";
 import Ground from "../model/components/ground";
@@ -32,6 +34,7 @@ export default function Symbol(props) {
     const component: Component | Wire = local.component;
     const sheet: Sheet = local.sheet;
 
+    // track editing state of the circuit
     const [edit, setEdit] = createSignal(false);
 
     // define actions to be implemented
@@ -53,18 +56,6 @@ export default function Symbol(props) {
             callback: () => {
                 sheet.delete(component);
             }
-        },
-        {
-            name: "Edit",
-            key: "",
-            useable: () => {return !(component instanceof Ground || component instanceof Wire) && !edit()},
-            callback: () => {setEdit(true)}
-        },
-        {
-            name: "Save",
-            key: "",
-            useable: () => {return edit() && !(component instanceof Wire)},
-            callback: () => {setEdit(false)}
         }
     ]
     // maps actions to keys
@@ -89,46 +80,55 @@ export default function Symbol(props) {
             ref={contextMenuRef}
             title={`${component.name}${component.id}`} 
             onExit={() => {document.body.removeChild(contextMenuRef)}} 
-            class="flex"
         >
-            <article class="w-full p-4 md:w-3/4 md:inline-block flex flex-col m-auto">
+            <form 
+                class="w-full h-full p-4 md:w-3/4 md:inline-block flex flex-col m-auto"
+                onSubmit={(event) => {
+                    setEdit(false);
+                    event.preventDefault();
+                }} 
+                onClick={() => {
+                    if (!(component instanceof Ground || component instanceof Wire)) {
+                        setEdit(true);
+                        valueInput.focus(); // focus on the input box
+                    }
+                }}
+            >
                 <Switch>
+
+                    {/* Grounds and wires are degenerate cases, they have no values */}
                     <Match when={component instanceof Ground}>
                         <p>Ground nodes have no value...</p>
                     </Match>
                     <Match when={component instanceof Wire}>
                         <p>Wires have no value...</p>
                     </Match>
+
+                    {/* Display the component value in latex when not editing */}
                     <Match when={!edit()}>
-                        <Equation
-                            onClick={() => {
-                                setEdit(true);
-                                valueInput.focus();
-                            }}
-                        >{`
+                        <Equation>{`
                             ${component.name}_{${component.id}}=${component.value}\ \\left[${component.prefix} ${component.unit}\\right]
                         `}</Equation>
                     </Match>
+
+                    {/* Give an edit box when editing. */}
                     <Match when={edit()}>
-                        <form 
-                            onSubmit={() => {setEdit(false)}} 
-                            class="w-full h-full"
-                        >
-                            <Equation class="inline-block">{`${component.name}_{${component.id}}=`}</Equation>
-                            <input 
-                                ref={valueInput}
-                                class="inline-block" 
-                                value={component.value}
-                                onInput={(event) => {
-                                    component.value = event.currentTarget.value;
-                                }}
-                            ></input>
-                            <Equation class="inline-block">{`\ \\left[${component.prefix} ${component.unit}\\right]`}</Equation>
-                        </form>
+                        <Equation class="inline-block">{`${component.name}_{${component.id}}=`}</Equation>
+                        <input 
+                            ref={valueInput}
+                            class="inline-block" 
+                            value={component.value}
+                            onInput={(event) => {
+                                component.value = event.currentTarget.value;
+                            }}
+                        ></input>
+                        <Equation class="inline-block">{`\ \\left[${component.prefix} ${component.unit}\\right]`}</Equation>
                     </Match>
                 </Switch>
-            </article>
-            <aside class="w-full md:w-1/4 md:inline-block bg-secondary text-secondary p-4 rounded-md flex flex-col m-auto">
+            </form>
+
+            {/* Sidebar, this gives actions that can be applied to the component. */}
+            <aside class="w-full md:w-1/4 md:inline-block bg-secondary text-secondary p-4 rounded-t-md flex flex-col m-auto">
                 <For each={actions}>{(action) =>
                     <button 
                         class={`w-full ${action.useable()? "hover:opacity-80" : "opacity-30 hover:cursor-default"}`}
@@ -142,6 +142,30 @@ export default function Symbol(props) {
                         <span class="float-right opacity-50">{action.key}</span>
                     </button>
                 }</For>
+            </aside>
+
+            {/* Bottom buttons, these give values that can be determined about the component. */}
+            <aside class="w-full bg-secondary text-secondary p-4 flex-none rounded-b-md rounded-tl-md">
+                {/* Determine the voltage across the component.*/}
+                <button
+                    onClick={() => {
+                        // generate netlist
+                        const netlist = sheet.forLcapy();
+                        console.log(netlist);
+                        // get output from lcapy
+                        py.latest.runPython("sys.stdout = io.StringIO()");
+                        try {
+                            py.latest.runPython(`
+cct = lcapy.Circuit('''${netlist}''')
+print(lcapy.latex(cct.${component.name}${component.id}.V))
+                            `);
+                            const stdout = py.latest.runPython("sys.stdout.getvalue()");
+                            console.log(stdout);
+                        } catch(e) {
+                            console.log(e.message);
+                        }
+                    }}
+                >Voltage</button>
             </aside>
         </Popup>
     </>);

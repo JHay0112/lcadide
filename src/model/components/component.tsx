@@ -120,7 +120,7 @@ export default abstract class Component {
      */
     get value() {
         if (this._value() === undefined || this._value() === null) {
-            return `${this.name}_{${this.id}}`;
+            return `${this.name}${this.id}`;
         } else {
             return this._value();
         }
