@@ -3,7 +3,7 @@
  */
 
 import { createSignal, Show, For } from "solid-js";
-import py from "./lcapy";
+import py from "./python";
 
 /**
  * Graphical Python terminal loader
