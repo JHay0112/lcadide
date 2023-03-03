@@ -3,7 +3,7 @@
  */
 
 import { createSignal, Show, For } from "solid-js";
-import py from "./lcapy";
+import py from "./python";
 
 /**
  * Graphical Python terminal loader
@@ -36,6 +36,7 @@ export default function Terminal() {
                                 break;
                             default:
                                 setOutput([...output(), ">>> ".concat(input.value)]);
+                                py.latest.runPython("sys.stdout = io.StringIO()");
                                 try {
                                     py.latest.runPython(input.value);
                                     let stdout = py.latest.runPython("sys.stdout.getvalue()");
@@ -46,7 +47,6 @@ export default function Terminal() {
                                     // catch and print python errors
                                     setOutput([...output(), e.message]);
                                 } 
-                                py.latest.runPython("sys.stdout = io.StringIO()");
                         }
                         input.value = "";
                         parent.scrollTop = parent.scrollHeight;

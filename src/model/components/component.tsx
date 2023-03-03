@@ -92,7 +92,7 @@ export default abstract class Component {
         });
         outStr = outStr.concat(` {${this.value}`)
         if (this.prefix != "") {
-            outStr = outStr.concat("*10^{").concat(String(prefixValue(this.prefix)).concat("}"));
+            outStr = outStr.concat("*10**(").concat(String(prefixValue(this.prefix)).concat(")"));
         }
         outStr = outStr.concat("};");
         return outStr;
@@ -120,7 +120,7 @@ export default abstract class Component {
      */
     get value() {
         if (this._value() === undefined || this._value() === null) {
-            return `${this.name}_{${this.id}}`;
+            return `${this.name}${this.id}`;
         } else {
             return this._value();
         }

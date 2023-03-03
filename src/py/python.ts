@@ -54,8 +54,7 @@ import lcapy
 from lcapy import Circuit
 import sys
 import io
-sys.stdout = io.StringIO()
-`);
+    `);
 
     return pyodide;
 }

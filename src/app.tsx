@@ -7,7 +7,7 @@ import {
     onMount
 } from 'solid-js';
 
-import py from './py/lcapy';
+import py from './py/python';
 import Sheet from './model/sheet';
 import Popup from './ui/popup';
 

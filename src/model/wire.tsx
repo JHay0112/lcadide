@@ -39,6 +39,15 @@ export default class Wire {
         [this._end, this._setEnd] = createSignal([-255, -255]);
     }
 
+    forLcapy(): string {
+        let outStr = `${this.name}${this.id}`;
+        const startIndex = this.sheet.identify(this.start);
+        outStr = outStr.concat(` ${startIndex}`);
+        const endIndex = this.sheet.identify(this.end);
+        outStr = outStr.concat(` ${endIndex};`);
+        return outStr;
+    }
+
     path() {
 
         const start = this.sheet.toPixels(this.start);

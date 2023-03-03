@@ -48,7 +48,7 @@ export default class Sheet {
     forLcapy(): string {
         let out: string = "\n";
         for (let component of this.components) {
-            if (!(component instanceof Ground || component instanceof Wire)) {
+            if (!(component instanceof Ground)) {
                 out = out.concat(component.forLcapy(), "\n");
             }
         }
