@@ -19,7 +19,7 @@ import Wire from "../model/wire";
  */
 interface Action {
     name: string;
-    key: string;
+    key?: string;
     useable: () => boolean;
     callback: () => void;
 };
@@ -52,13 +52,62 @@ export default function Symbol(props) {
                     component.rotate();
                 }
             }
-        },
-        {
+        }, {
             name: "Delete",
             key: "Delete",
             useable: () => {return true},
             callback: () => {
                 sheet.delete(component);
+            }
+        }, {
+            name: "Edit",
+            useable: () => {return !(component instanceof Wire || component instanceof Ground)},
+            callback: () => {
+                setDisplayValue(false);
+                setEdit(true);
+                valueInput.focus(); // focus on the input box
+            }
+        }, {
+            name: "Voltage",
+            useable: () => {return !(component instanceof Wire || component instanceof Ground)},
+            callback: () => {
+                setDisplayValue(true);
+                // generate netlist
+                const netlist = sheet.forLcapy();
+                console.log(netlist);
+                // get output from lcapy
+                py.latest.runPython("sys.stdout = io.StringIO()");
+                try {
+                    py.latest.runPython(`
+cct = lcapy.Circuit('''${netlist}''')
+print(lcapy.latex(cct.${component.name}${component.id}.V))
+                    `);
+                    const stdout = py.latest.runPython("sys.stdout.getvalue()");
+                    setValue(stdout);
+                } catch(e) {
+                    setDisplayValue(false);
+                }
+            }
+        }, {
+            name: "Current",
+            useable: () => {return !(component instanceof Wire || component instanceof Ground)},
+            callback: () => {
+                setDisplayValue(true);
+                // generate netlist
+                const netlist = sheet.forLcapy();
+                console.log(netlist);
+                // get output from lcapy
+                py.latest.runPython("sys.stdout = io.StringIO()");
+                try {
+                    py.latest.runPython(`
+cct = lcapy.Circuit('''${netlist}''')
+print(lcapy.latex(cct.${component.name}${component.id}.I))
+                    `);
+                    const stdout = py.latest.runPython("sys.stdout.getvalue()");
+                    setValue(stdout);
+                } catch(e) {
+                    setDisplayValue(false);
+                }
             }
         }
     ]
@@ -152,27 +201,6 @@ export default function Symbol(props) {
                         <span class="float-right opacity-50">{action.key}</span>
                     </button>
                 }</For>
-                {/* Determine the voltage across the component.*/}
-                <button
-                    onClick={() => {
-                        // generate netlist
-                        const netlist = sheet.forLcapy();
-                        console.log(netlist);
-                        // get output from lcapy
-                        py.latest.runPython("sys.stdout = io.StringIO()");
-                        try {
-                            setDisplayValue(true);
-                            py.latest.runPython(`
-cct = lcapy.Circuit('''${netlist}''')
-print(lcapy.latex(cct.${component.name}${component.id}.V))
-                            `);
-                            const stdout = py.latest.runPython("sys.stdout.getvalue()");
-                            setValue(stdout);
-                        } catch(e) {
-                            console.log(e.message);
-                        }
-                    }}
-                >Voltage</button>
             </aside>
         </Popup>
     </>);
