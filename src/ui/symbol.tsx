@@ -21,7 +21,7 @@ import ErrorBox from "./error";
  */
 interface Action {
     name: string;
-    key?: string;
+    key: string;
     useable: () => boolean;
     callback: () => void;
 };
@@ -67,6 +67,7 @@ export default function Symbol(props) {
             }
         }, {
             name: "Edit",
+            key: undefined,
             useable: () => {return !(component instanceof Wire || component instanceof Ground)},
             callback: () => {
                 setDisplayValue(false);
@@ -74,7 +75,8 @@ export default function Symbol(props) {
                 valueInput.focus(); // focus on the input box
             }
         }, {
-            name: "Voltage",
+            name: "Inspect Voltage",
+            key: undefined,
             useable: () => {return !(component instanceof Wire || component instanceof Ground)},
             callback: () => {
                 setDisplayValue(true);
@@ -91,12 +93,21 @@ print(lcapy.latex(cct.${component.name}${component.id}.V))
                     setValue(stdout);
                 } catch(e) {
                     setDisplayValue(false);
-                    setErrorMessage(e.message);
+                    if (e.type == "RuntimeError") {
+                        // occurs when circuit has no ground
+                        setErrorMessage("It appears your circuit may lack a ground node, please add one before analysing.");
+                    } else if (e.type == "ValueError") {
+                        // occurs when circuit is not fully complete
+                        setErrorMessage("It appears your circuit may not be complete, please connect all components before analysing.");
+                    } else {
+                        setErrorMessage(e.message);
+                    }
                     setDisplayError(true);
                 }
             }
         }, {
-            name: "Current",
+            name: "Inspect Current",
+            key: undefined,
             useable: () => {return !(component instanceof Wire || component instanceof Ground)},
             callback: () => {
                 setDisplayValue(true);
@@ -113,7 +124,15 @@ print(lcapy.latex(cct.${component.name}${component.id}.I))
                     setValue(stdout);
                 } catch(e) {
                     setDisplayValue(false);
-                    setErrorMessage(e.message);
+                    if (e.type == "RuntimeError") {
+                        // occurs when circuit has no ground
+                        setErrorMessage("It appears your circuit may lack a ground node, please add one before analysing.");
+                    } else if (e.type == "ValueError") {
+                        // occurs when circuit is not fully complete
+                        setErrorMessage("It appears your circuit may not be complete, please connect all components before analysing.");
+                    } else {
+                        setErrorMessage(e.message);
+                    }
                     setDisplayError(true);
                 }
             }
