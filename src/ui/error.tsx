@@ -16,7 +16,7 @@ export default function ErrorBox(props) {
 
     return (<> 
         <aside class="absolute left-0 right-0 bottom-20 bg-error z-50 text-secondary p-4 rounded-md m-auto w-10/12 md:w-8/12">
-            <p class="float-left">Error:&nbsp;</p><p class="float-left break-words w-3/4">{c()}</p>
+            <p class="float-left">Error:&nbsp;</p><p class="float-left break-words w-9/10">{c()}</p>
             <button 
                 class="float-right inline-block p-1 font-mono align-middle" 
                 onClick={() => {onExit()}}
