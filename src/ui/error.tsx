@@ -2,7 +2,7 @@
  * Creates error dialogues
  */
 
-import { children } from "solid-js";
+import { children, splitProps } from "solid-js";
 
 /**
  * Pop-up error that shows near the bottom of the page.
@@ -11,15 +11,15 @@ export default function ErrorBox(props) {
     // get children
     const c = children(() => props.children);
 
-    // reference to own object
-    let self;
+    const [local, _] = splitProps(props, ["onExit"]);
+    const onExit: () => void = local.onExit;
 
     return (<> 
-        <aside ref={self} class="absolute left-0 right-0 bottom-20 bg-error z-50 text-secondary p-4 rounded-md m-auto max-w-screen-md">
+        <aside class="absolute left-0 right-0 bottom-20 bg-error z-50 text-secondary p-4 rounded-md m-auto w-10/12 md:w-8/12">
             <p class="float-left">Error:&nbsp;</p><p class="float-left break-words w-3/4">{c()}</p>
             <button 
                 class="float-right inline-block p-1 font-mono align-middle" 
-                onClick={() => {self.remove()}}
+                onClick={() => {onExit()}}
             >
                 <svg 
                     width="18" height="18"
