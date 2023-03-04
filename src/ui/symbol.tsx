@@ -2,7 +2,7 @@
  * Produces component symbols for components.
  */
 
-import { splitProps, createSignal, onMount, For, Switch, Match, Show } from "solid-js";
+import { splitProps, createSignal, onMount, For, Switch, Match, Show} from "solid-js";
 
 import Popup from "./popup";
 import Equation from "./equation";
@@ -14,12 +14,14 @@ import Component from "../model/components/component";
 import Ground from "../model/components/ground";
 import Wire from "../model/wire";
 
+import ErrorBox from "./error";
+
 /**
  * Defines the action a user can take on the component.
  */
 interface Action {
     name: string;
-    key?: string;
+    key: string;
     useable: () => boolean;
     callback: () => void;
 };
@@ -41,6 +43,10 @@ export default function Symbol(props) {
     const [displayValue, setDisplayValue] = createSignal(false);
     const [value, setValue] = createSignal("");
 
+    // track whether an error should be displayed
+    const [displayError, setDisplayError] = createSignal(false);
+    const [errorMessage, setErrorMessage] = createSignal("");
+
     // define actions to be implemented
     const actions: Action[] = [
         {
@@ -61,6 +67,7 @@ export default function Symbol(props) {
             }
         }, {
             name: "Edit",
+            key: undefined,
             useable: () => {return !(component instanceof Wire || component instanceof Ground)},
             callback: () => {
                 setDisplayValue(false);
@@ -68,13 +75,13 @@ export default function Symbol(props) {
                 valueInput.focus(); // focus on the input box
             }
         }, {
-            name: "Voltage",
+            name: "Inspect Voltage",
+            key: undefined,
             useable: () => {return !(component instanceof Wire || component instanceof Ground)},
             callback: () => {
                 setDisplayValue(true);
                 // generate netlist
                 const netlist = sheet.forLcapy();
-                console.log(netlist);
                 // get output from lcapy
                 py.latest.runPython("sys.stdout = io.StringIO()");
                 try {
@@ -86,16 +93,26 @@ print(lcapy.latex(cct.${component.name}${component.id}.V))
                     setValue(stdout);
                 } catch(e) {
                     setDisplayValue(false);
+                    if (e.type == "RuntimeError") {
+                        // occurs when circuit has no ground
+                        setErrorMessage("It appears your circuit may lack a ground node, please add one before analysing.");
+                    } else if (e.type == "ValueError") {
+                        // occurs when circuit is not fully complete
+                        setErrorMessage("It appears your circuit may not be complete, please connect all components before analysing.");
+                    } else {
+                        setErrorMessage(e.message);
+                    }
+                    setDisplayError(true);
                 }
             }
         }, {
-            name: "Current",
+            name: "Inspect Current",
+            key: undefined,
             useable: () => {return !(component instanceof Wire || component instanceof Ground)},
             callback: () => {
                 setDisplayValue(true);
                 // generate netlist
                 const netlist = sheet.forLcapy();
-                console.log(netlist);
                 // get output from lcapy
                 py.latest.runPython("sys.stdout = io.StringIO()");
                 try {
@@ -107,6 +124,16 @@ print(lcapy.latex(cct.${component.name}${component.id}.I))
                     setValue(stdout);
                 } catch(e) {
                     setDisplayValue(false);
+                    if (e.type == "RuntimeError") {
+                        // occurs when circuit has no ground
+                        setErrorMessage("It appears your circuit may lack a ground node, please add one before analysing.");
+                    } else if (e.type == "ValueError") {
+                        // occurs when circuit is not fully complete
+                        setErrorMessage("It appears your circuit may not be complete, please connect all components before analysing.");
+                    } else {
+                        setErrorMessage(e.message);
+                    }
+                    setDisplayError(true);
                 }
             }
         }
@@ -202,6 +229,13 @@ print(lcapy.latex(cct.${component.name}${component.id}.I))
                     </button>
                 }</For>
             </aside>
+
+            {/* Error display for when errors occur */}
+            <Show when={displayError()}>
+                <ErrorBox onExit={() => {setDisplayError(false)}}>
+                    {errorMessage()}
+                </ErrorBox>
+            </Show>
         </Popup>
     </>);
 
