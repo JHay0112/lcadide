@@ -106,7 +106,7 @@ export default function Schematic(props) {
 
         // update cursor grip position
         // only when the cursor is active
-        if (cursorActive()) {
+        if (cursorActive() && sheet.active && sheet.activeComponent instanceof Wire) {
             setCursorPosition(sheet.toGrid([event.clientX, event.clientY]));
         }
     } 
@@ -114,7 +114,6 @@ export default function Schematic(props) {
     onMount(() => {
         // keybindings
         window.addEventListener("keydown", (event) => {
-            console.log("Key pressed");
             switch (event.key) {
                 case "w":
                     sheet.activeComponent = new Wire(sheet);
