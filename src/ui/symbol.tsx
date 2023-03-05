@@ -51,7 +51,7 @@ export default function Symbol(props) {
     const actions: Action[] = [
         {
             name: "Rotate",
-            key: "r",
+            key: "z",
             useable: () => {return !(component instanceof Wire)},
             callback: () => {
                 if (!(component instanceof Wire)) {

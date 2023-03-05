@@ -9,7 +9,14 @@ import { Orientation, Position } from "../types";
 import Sheet from "../model/sheet";
 
 import Symbol from "./symbol";
+
 import Wire from "../model/wire";
+import Ground from "../model/components/ground";
+import Resistor from "../model/components/resistor";
+import Inductor from "../model/components/inductor";
+import Capacitor from "../model/components/capacitor";
+import VoltageSource from "../model/components/voltage_source";
+import CurrentSource from "../model/components/current_source";
 
 /**
  * Canvas that draws schematics from a sheet
@@ -99,10 +106,39 @@ export default function Schematic(props) {
 
         // update cursor grip position
         // only when the cursor is active
-        if (cursorActive()) {
+        if (cursorActive() && sheet.active && sheet.activeComponent instanceof Wire) {
             setCursorPosition(sheet.toGrid([event.clientX, event.clientY]));
         }
     } 
+
+    onMount(() => {
+        // keybindings
+        window.addEventListener("keydown", (event) => {
+            switch (event.key) {
+                case "w":
+                    sheet.activeComponent = new Wire(sheet);
+                    break;
+                case "g":
+                    sheet.activeComponent = new Ground(sheet);
+                    break;
+                case "r":
+                    sheet.activeComponent = new Resistor(sheet);
+                    break;
+                case "l":
+                    sheet.activeComponent = new Inductor(sheet);
+                    break;
+                case "c":
+                    sheet.activeComponent = new Capacitor(sheet);
+                    break;
+                case "v":
+                    sheet.activeComponent = new VoltageSource(sheet);
+                    break;
+                case "i":
+                    sheet.activeComponent = new CurrentSource(sheet);
+                    break;
+            }
+        });
+    })
 
     // SVG based grid adapted from:
     // https://stackoverflow.com/questions/14208673/how-to-draw-grid-using-html5-and-canvas-or-svg
