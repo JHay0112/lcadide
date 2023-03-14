@@ -1,11 +1,8 @@
-import {
-    Component,
-    lazy,
-    Suspense,
-    createSignal,
-    Show,
-    onMount
-} from 'solid-js';
+/**
+ * Lcadide - Circuit Shematic Editor for Symbolic Circuit Simulations
+ */
+
+import { Component, lazy, Suspense, createSignal, onMount } from 'solid-js';
 
 import py from './py/python';
 import Sheet from './model/sheet';
@@ -74,7 +71,7 @@ const WelcomePopup = () => {
     });
 
     return(<>
-        <Show when={showGreeting()}><Popup title="Kia ora!" onExit={() => {setShowGreeting(false)}} class="p-2 text-justify">
+        <Popup title="Kia ora!" when={showGreeting()} onExit={() => {setShowGreeting(false)}} class="p-2 text-justify">
             <p>
                 Lcadide is a browser-based circuit design tool that uses the symbolic circuit analysis tool 
                 <a href="https://github.com/mph-/lcapy" target="_blank">Lcapy</a> for simulation.
@@ -102,7 +99,7 @@ const WelcomePopup = () => {
                 <a href="https://github.com/JHay0112/lcadide" target="_blank">Github repository</a>.
                 We also have an experimental dark theme, click <a href="javascript:toggleTheme()">here</a> to enable it.
             </p>
-        </Popup></Show>
+        </Popup>
     </>);
 }
 

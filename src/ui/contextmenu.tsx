@@ -30,10 +30,9 @@ interface Action {
 export default function ContextMenu(props) {
 
     // get component object from props
-    const [local, _] = splitProps(props, ["component", "sheet", "onExit"]);
+    const [local, _] = splitProps(props, ["component", "sheet", "when", "onExit"]);
     const component: Component | Wire = local.component;
     const sheet: Sheet = local.sheet;
-    const onExit: () => void = local.onExit;
 
     // track editing state of the component
     const [edit, setEdit] = createSignal(false);
@@ -63,7 +62,7 @@ export default function ContextMenu(props) {
             name: "Delete",
             useable: () => {return true},
             callback: () => {
-                onExit();
+                local.onExit();
                 sheet.delete(component);
             }
         }, {
@@ -141,7 +140,8 @@ print(lcapy.latex(cct.${component.name}${component.id}.I))
     return (<>
         <Popup 
             title={`${component.name}${component.id}`} 
-            onExit={onExit} 
+            when={local.when}
+            onExit={local.onExit} 
             class="flex h-full justify-center"
         >
             <form 

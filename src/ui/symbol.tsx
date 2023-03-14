@@ -2,7 +2,7 @@
  * Produces component symbols for components.
  */
 
-import { splitProps, Show, createSignal, onMount } from "solid-js";
+import { splitProps, Show, createSignal, onMount, onCleanup } from "solid-js";
 
 import Sheet from "../model/sheet";
 import Component from "../model/components/component";
@@ -26,16 +26,19 @@ export default function Symbol(props) {
     // define the context menu
     let contextMenuRef;
     const contextMenu = (<>
-        <aside ref={contextMenuRef}>
-            <Show when={displayMenu()}>
-                <ContextMenu sheet={sheet} component={component} onExit={() => {setDisplayMenu(false)}} />
-            </Show>
-        </aside>
+        <div ref={contextMenuRef}>
+            <ContextMenu when={displayMenu()} sheet={sheet} component={component} onExit={() => {setDisplayMenu(false)}} />
+        </div>
     </>);
 
-    // add the context menu to the document when the 
+    // add the context menu to the document when mounted
     onMount(() => {
         document.body.appendChild(contextMenuRef);
+    });
+
+    // and remove context menu when dismounted
+    onCleanup(() => {
+        document.body.removeChild(contextMenuRef);
     });
 
     return (<>
