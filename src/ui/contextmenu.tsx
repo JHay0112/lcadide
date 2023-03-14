@@ -184,7 +184,7 @@ print(lcapy.latex(cct.${component.name}${component.id}.I))
                         <Equation class="inline-block">{`${component.name}_{${component.id}}=`}</Equation>
                         <input 
                             ref={valueInput}
-                            class="inline-block" 
+                            class="inline-block bg-primary text-primary" 
                             value={component.value}
                             onInput={(event) => {
                                 component.value = event.currentTarget.value;
