@@ -1,8 +1,14 @@
 /**
  * Produces component symbols for components.
+ * 
+ * Usage
+ * -----
+ * ```tsx
+ * import Symbol from "./ui/symbol"
+ * ```
  */
 
-import { splitProps, Show, createSignal, onMount, onCleanup } from "solid-js";
+import { splitProps, createSignal, onMount, onCleanup } from "solid-js";
 
 import Sheet from "../model/sheet";
 import Component from "../model/components/component";
@@ -12,6 +18,13 @@ import ContextMenu from "./contextmenu";
 
 /**
  * SVG component symbols.
+ * 
+ * Props
+ * -----
+ * @param component
+ *  The component to represent as a symbol.
+ * @param sheet
+ *  The sheet of which the component should belong.
  */
 export default function Symbol(props) {
 
