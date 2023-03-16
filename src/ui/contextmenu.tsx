@@ -199,7 +199,7 @@ print(lcapy.latex(cct.${component.name}${component.id}.I))
             <aside class="w-full md:w-1/4 md:inline-block bg-secondary text-secondary p-4 rounded-md flex flex-col m-auto">
                 <For each={actions}>{(action) =>
                     <button 
-                        class={`w-full text-left ${action.useable()? "hover:opacity-80" : "opacity-30 hover:cursor-default"}`}
+                        class={`w-full text-left pb-1 first:pt-1 ${action.useable()? "hover:opacity-80" : "opacity-30 hover:cursor-default"}`}
                         onClick={() => {
                             if (action.useable()) {
                                 action.callback();
