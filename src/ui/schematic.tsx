@@ -46,6 +46,12 @@ function placeActiveComponent(sheet: Sheet, position: Position) {
                 sheet.active = false;
             } else {
                 sheet.placeActiveComponent();
+                // wire chaining 
+                sheet.activeComponent = new Wire(sheet);
+                if (sheet.activeComponent instanceof Wire) {
+                    sheet.activeComponent.end = start;
+                    sheet.activeComponent.endPlaced = true;
+                }
             }
         }
     } else {
@@ -67,6 +73,18 @@ function placeActiveComponent(sheet: Sheet, position: Position) {
 function updateActiveComponent(sheet: Sheet, position: Position) {
     if (sheet.activeComponent instanceof Wire) {
         if (sheet.activeComponent.endPlaced) {
+            // update the wire start
+            // we only want this to occur in one dimension (wire-locking)
+            const end = sheet.toPixels(sheet.activeComponent.end);
+            const dx = Math.abs(position[0] - end[0]);
+            const dy = Math.abs(position[1] - end[1]);
+            if (dx > dy) {
+                // only extend x-dimension
+                position = [position[0], end[1]];
+            } else {
+                // only extend y-dimension
+                position = [end[0], position[1]];
+            }
             sheet.activeComponent.start = sheet.toGrid(position);
         }
     } else {
@@ -115,6 +133,13 @@ export default function Schematic(props) {
             updateActiveComponent(sheet, mousePosition());
         }
     } 
+
+    // handles place downs
+    function handleMousePress() {
+        if (sheet.active) {
+            placeActiveComponent(sheet, mousePosition());
+        }
+    }
 
     onMount(() => {
         // keybindings
@@ -165,8 +190,8 @@ export default function Schematic(props) {
             ref={container}
             class={`${sheet.active? "cursor-grabbing" : "cursor-auto"} ${local.class} overflow-y-hidden`} 
             onMouseMove={handleMouseMove} 
-            onMouseUp={() => {placeActiveComponent(sheet, mousePosition())}}
-            onMouseLeave={() => {placeActiveComponent(sheet, mousePosition())}}
+            onMouseUp={handleMousePress}
+            onMouseLeave={handleMousePress}
         >
             <svg class="h-full w-full">
 
