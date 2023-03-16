@@ -12,7 +12,7 @@ import Capacitor from "../model/components/capacitor";
 import VoltageSource from "../model/components/voltage_source";
 import CurrentSource from "../model/components/current_source";
 import Ground from "../model/components/ground";
-import Wire from "../model/wire";
+import Wire from "../model/components/wire";
 
 /**
  * Icon/button for a tool

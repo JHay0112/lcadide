@@ -10,13 +10,100 @@ import Sheet from "../model/sheet";
 
 import Symbol from "./symbol";
 
-import Wire from "../model/wire";
+import Wire from "../model/components/wire";
 import Ground from "../model/components/ground";
 import Resistor from "../model/components/resistor";
 import Inductor from "../model/components/inductor";
 import Capacitor from "../model/components/capacitor";
 import VoltageSource from "../model/components/voltage_source";
 import CurrentSource from "../model/components/current_source";
+
+/**
+ * Handler for placing the active component of the sheet.
+ * This is mainly to introduce special code of handling wire placement which is special.
+ * 
+ * Parameters
+ * ----------
+ * @param sheet 
+ *  The sheet to place down the active component of.
+ * @param position
+ *  The position to place the active component at.
+ */
+function placeActiveComponent(sheet: Sheet, position: Position) {
+    if (sheet.activeComponent instanceof Wire) {
+        if (!sheet.activeComponent.endPlaced) {
+            // place the start of the wire
+            sheet.activeComponent.end = sheet.toGrid(position);
+            sheet.activeComponent.endPlaced = true;
+        } else {
+            // if wire fails to initialise then do not place
+            const start = sheet.activeComponent.start;
+            const end = sheet.activeComponent.end;
+            if (
+                ((start[0] == -255) && (start[1] == -255)) ||
+                ((end[0] == -255) && (end[1] == -255))
+            ) {
+                sheet.active = false;
+            } else {
+                sheet.placeActiveComponent();
+                // wire chaining 
+                sheet.activeComponent = new Wire(sheet);
+                if (sheet.activeComponent instanceof Wire) {
+                    sheet.activeComponent.end = start;
+                    sheet.activeComponent.endPlaced = true;
+                }
+            }
+        }
+    } else {
+        sheet.placeActiveComponent();
+    }
+}
+
+/**
+ * Handler for updating the position of the active component of a sheet.
+ * This is mainly to introduce special code for handling the wires and orientation.
+ * 
+ * Parameters
+ * ----------
+ * @param sheet 
+ *  The sheet to move the active component of.
+ * @param position
+ *  The position to move the active component to.
+ */
+function updateActiveComponent(sheet: Sheet, position: Position) {
+    if (sheet.activeComponent instanceof Wire) {
+        if (sheet.activeComponent.endPlaced) {
+            // update the wire start
+            // we only want this to occur in one dimension (wire-locking)
+            const end = sheet.toPixels(sheet.activeComponent.end);
+            const dx = Math.abs(position[0] - end[0]);
+            const dy = Math.abs(position[1] - end[1]);
+            if (dx > dy) {
+                // only extend x-dimension
+                position = [position[0], end[1]];
+            } else {
+                // only extend y-dimension
+                position = [end[0], position[1]];
+            }
+            sheet.activeComponent.start = sheet.toGrid(position);
+        }
+    } else {
+        // non-wires (i.e. orientable components)
+        const middle = sheet.toPixels(sheet.activeComponent.middle);
+
+        if (sheet.activeComponent.orientation == Orientation.HORIZONTAL) {
+            sheet.activeComponent.position = sheet.toGrid([
+                position[0] - middle[1], 
+                position[1] - middle[0]
+            ]);
+        } else {
+            sheet.activeComponent.position = sheet.toGrid([
+                position[0] - middle[0], 
+                position[1] - middle[1]
+            ]);
+        }
+    }
+}
 
 /**
  * Canvas that draws schematics from a sheet
@@ -27,12 +114,8 @@ export default function Schematic(props) {
     const [local, _] = splitProps(props, ["sheet", "class"]);
     let sheet: Sheet = local.sheet;
 
-    // tracks the position of a cursor
-    let [cursorPosition, setCursorPosition] = createSignal([-255, -255] as Position);
-    let [cursorActive, setCursorActive] = createSignal(false);
-
-    // tracks what stage of wire placement the user is in
-    let firstNodePlaced: boolean = false;
+    // tracks the position of the moust
+    let [mousePosition, setMousePosition] = createSignal([-255, -255] as Position);
 
     // reference to container element
     let container;
@@ -42,74 +125,21 @@ export default function Schematic(props) {
         sheet.gridSpacing = Math.max(container.clientWidth / 80, 20);
     });
 
-    // handles placing the active component
-    function placeActiveComponent(event) {
-        if (sheet.active) {
-            if (sheet.activeComponent instanceof Wire) {
-                if (!firstNodePlaced) {
-                    sheet.activeComponent.end = sheet.toGrid([
-                        event.clientX,
-                        event.clientY
-                    ]);
-                    firstNodePlaced = true;
-                } else {
-                    // if wire fails to initialise then do not place
-                    const start = sheet.activeComponent.start;
-                    const end = sheet.activeComponent.end;
-                    if (
-                        ((start[0] == -255) && (start[1] == -255)) ||
-                        ((end[0] == -255) && (end[1] == -255))
-                    ) {
-                        sheet.active = false;
-                    } else {
-                        sheet.placeActiveComponent();
-                    }
-                    firstNodePlaced = false;
-                    setCursorActive(false);
-                }
-            } else {
-                sheet.placeActiveComponent();
-                firstNodePlaced = false;
-                setCursorActive(false);
-            }
-        }
-    }
-
     // handles mouse movements
     function handleMouseMove(event) {
+        // terrible, terrible side effect :(
+        setMousePosition([event.clientX, event.clientY]);
         if (sheet.active) {
-            if (sheet.activeComponent instanceof Wire) {
-                setCursorActive(true);
-                if (firstNodePlaced) {
-                    sheet.activeComponent.start = sheet.toGrid([
-                        event.clientX,
-                        event.clientY
-                    ]);
-                }
-            } else {
-
-                const middle = sheet.toPixels(sheet.activeComponent.middle);
-
-                if (sheet.activeComponent.orientation == Orientation.HORIZONTAL) {
-                    sheet.activeComponent.position = sheet.toGrid([
-                        event.clientX - middle[1], 
-                        event.clientY - middle[0]
-                    ]);
-                } else {
-                    sheet.activeComponent.position = sheet.toGrid([
-                        event.clientX - middle[0], 
-                        event.clientY - middle[1]
-                    ]);
-                }
-            }
-        }
-
-        // update cursor grip position
-        // only when the cursor is active
-        if (cursorActive() && sheet.active && sheet.activeComponent instanceof Wire) {
-            setCursorPosition(sheet.toGrid([event.clientX, event.clientY]));
+            updateActiveComponent(sheet, mousePosition());
         }
     } 
+
+    // handles place downs
+    function handleMousePress() {
+        if (sheet.active) {
+            placeActiveComponent(sheet, mousePosition());
+        }
+    }
 
     onMount(() => {
         // keybindings
@@ -136,6 +166,19 @@ export default function Schematic(props) {
                 case "i":
                     sheet.activeComponent = new CurrentSource(sheet);
                     break;
+                case "z":
+                    if (sheet.active && !(sheet.activeComponent instanceof Wire)) {
+                        sheet.activeComponent.rotate();
+                    }
+                    break;
+                case "Delete":
+                case "Escape":
+                    sheet.active = false;
+                    break;
+            }
+            if (sheet.active) {
+                // update any freshly placed components
+                updateActiveComponent(sheet, mousePosition());
             }
         });
     })
@@ -147,8 +190,8 @@ export default function Schematic(props) {
             ref={container}
             class={`${sheet.active? "cursor-grabbing" : "cursor-auto"} ${local.class} overflow-y-hidden`} 
             onMouseMove={handleMouseMove} 
-            onMouseUp={placeActiveComponent}
-            onMouseLeave={placeActiveComponent}
+            onMouseUp={handleMousePress}
+            onMouseLeave={handleMousePress}
         >
             <svg class="h-full w-full">
 
@@ -186,25 +229,23 @@ export default function Schematic(props) {
                     </Show>
                 }</For>
 
-                <Show when={cursorActive()}>
-                    <rect
-                        class="dark:invert"
-                        style={`
-                            stroke: black; 
-                            fill: none;
-                        `}
+                <Show when={sheet.active && sheet.activeComponent instanceof Wire}><rect
+                    class="dark:invert"
+                    style={`
+                        stroke: black; 
+                        fill: none;
+                    `}
 
-                        width={sheet.gridSpacing/2}
-                        height={sheet.gridSpacing/2}
+                    width={sheet.gridSpacing/2}
+                    height={sheet.gridSpacing/2}
 
-                        transform={`
-                            translate(
-                                ${sheet.toPixels(cursorPosition())[0] - sheet.gridSpacing/4}
-                                ${sheet.toPixels(cursorPosition())[1] - sheet.gridSpacing/4}
-                            )
-                        `}
-                    />
-                </Show>
+                    transform={`
+                        translate(
+                            ${sheet.toPixels(sheet.toGrid(mousePosition()))[0] - sheet.gridSpacing/4}
+                            ${sheet.toPixels(sheet.toGrid(mousePosition()))[1] - sheet.gridSpacing/4}
+                        )
+                    `}
+                /></Show>
             </svg>
         </section>
     </>);
