@@ -25,10 +25,14 @@ export default class Wire extends Component {
     private _end: Accessor<Position>;
     private _setEnd: Setter<Position>;
 
+    private _endPlaced: Accessor<boolean>;
+    private _setEndPlaced: Setter<boolean>;
+
     constructor(sheet: Sheet) {
         super(sheet);
         [this._start, this._setStart] = createSignal([-255, -255]);
         [this._end, this._setEnd] = createSignal([-255, -255]);
+        [this._endPlaced, this._setEndPlaced] = createSignal(false);
     }
 
     forLcapy(): string {
@@ -73,4 +77,7 @@ export default class Wire extends Component {
     }
 
     get position() {return this.start};
+
+    get endPlaced()                {return this._endPlaced()}
+    set endPlaced(placed: boolean) {this._setEndPlaced(placed)}
 }
