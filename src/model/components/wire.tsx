@@ -4,25 +4,20 @@
 
 import { createSignal, Accessor, Setter } from "solid-js";
 
-import { Position, Orientation } from "../types";
+import { Position } from "../../types";
 
-import Sheet from "./sheet";
+import Component from "./component";
+import Sheet from "../sheet";
 
 /**
  * Wire component
  */
-export default class Wire {
+export default class Wire extends Component {
 
     public readonly name = "W";
-    public value = "";
-    public prefix = "";
-    public unit = "";
-    public color = "#252525";
-    public orientation = Orientation.VERTICAL;
-
-    private static nextId: number = 1;
-    private _id: Accessor<string>;
-    private _setId: Setter<string>;
+    public readonly unit = "";
+    public readonly _nodes = [];
+    public readonly _middle = [0, 0] as Position;
 
     private _start: Accessor<Position>;
     private _setStart: Setter<Position>;
@@ -30,11 +25,8 @@ export default class Wire {
     private _end: Accessor<Position>;
     private _setEnd: Setter<Position>;
 
-    private sheet: Sheet;
-
     constructor(sheet: Sheet) {
-        this.sheet = sheet;
-        [this._id, this._setId] = createSignal(String(Wire.nextId++));
+        super(sheet);
         [this._start, this._setStart] = createSignal([-255, -255]);
         [this._end, this._setEnd] = createSignal([-255, -255]);
     }
@@ -66,12 +58,6 @@ export default class Wire {
             `;
         }
     }
-
-    /**
-     * Wire id. Automatically assigned.
-     */
-    get id()           {return this._id()}
-    set id(id: string) {this._setId(id)}
 
     get start()              {return this._start()}
     set start(pos: Position) {this._setStart(pos)}

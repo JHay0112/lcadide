@@ -7,7 +7,7 @@ import { createSignal, splitProps, Match, Switch, For, Show } from "solid-js";
 import py from "../py/python";
 
 import Component from "../model/components/component";
-import Wire from "../model/wire";
+import Wire from "../model/components/wire";
 import Ground from "../model/components/ground";
 import Sheet from "../model/sheet";
 

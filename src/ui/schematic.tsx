@@ -10,7 +10,7 @@ import Sheet from "../model/sheet";
 
 import Symbol from "./symbol";
 
-import Wire from "../model/wire";
+import Wire from "../model/components/wire";
 import Ground from "../model/components/ground";
 import Resistor from "../model/components/resistor";
 import Inductor from "../model/components/inductor";

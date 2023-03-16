@@ -12,7 +12,7 @@ import { splitProps, createSignal, onMount, onCleanup } from "solid-js";
 
 import Sheet from "../model/sheet";
 import Component from "../model/components/component";
-import Wire from "../model/wire";
+import Wire from "../model/components/wire";
 
 import ContextMenu from "./contextmenu";
 

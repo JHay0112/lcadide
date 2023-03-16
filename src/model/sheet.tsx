@@ -9,7 +9,7 @@ import PositionMap from "../tools/position_map";
 
 import Component from "./components/component";
 import Ground from "./components/ground";
-import Wire from "./wire";
+import Wire from "./components/wire";
 
 /**
  * Component sheet class
