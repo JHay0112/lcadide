@@ -136,6 +136,15 @@ export default function Schematic(props) {
                 case "i":
                     sheet.activeComponent = new CurrentSource(sheet);
                     break;
+                case "z":
+                    if (sheet.active && !(sheet.activeComponent instanceof Wire)) {
+                        sheet.activeComponent.rotate();
+                    }
+                    break;
+                case "Delete":
+                case "Escape":
+                    sheet.active = false;
+                    break;
             }
         });
     })
