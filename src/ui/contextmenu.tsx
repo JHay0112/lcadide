@@ -39,6 +39,7 @@ export default function ContextMenu(props) {
 
     // track whether a value should be displayed
     const [displayValue, setDisplayValue] = createSignal(false);
+    const [property, setProperty] = createSignal("");
     const [value, setValue] = createSignal("");
 
     // track whether an error should be displayed
@@ -47,6 +48,39 @@ export default function ContextMenu(props) {
 
     // reference to value input box
     let valueInput;
+
+    /**
+     * Routine for inspecting a property of the component
+     */
+    function inspect(property: string) {
+        setProperty(property);
+        setDisplayValue(true);
+        // generate netlist
+        const netlist = sheet.forLcapy();
+        // get output from lcapy
+        py.latest.runPython("sys.stdout = io.StringIO()");
+        try {
+            // truly high quality coding style
+            py.latest.runPython(`
+cct = lcapy.Circuit('''${netlist}''')
+output = lcapy.latex(lcapy.simplify(cct.${component.name}${component.id}.${property}))
+            `);
+            const output = py.latest.globals.get("output").toString();
+            setValue(output);
+        } catch(e) {
+            setDisplayValue(false);
+            if (e.type == "RuntimeError") {
+                // occurs when circuit has no ground
+                setErrorMessage("It appears your circuit may lack a ground node, please add one before analysing.");
+            } else if (e.type == "ValueError") {
+                // occurs when circuit is not fully complete
+                setErrorMessage("It appears your circuit may not be complete, please connect all components before analysing.");
+            } else {
+                setErrorMessage(e.message);
+            }
+            setDisplayError(true);
+        }
+    }
 
     // define actions to be implemented
     const actions: Action[] = [
@@ -76,63 +110,11 @@ export default function ContextMenu(props) {
         }, {
             name: "Inspect Voltage",
             useable: () => {return !(component instanceof Wire || component instanceof Ground)},
-            callback: () => {
-                setDisplayValue(true);
-                // generate netlist
-                const netlist = sheet.forLcapy();
-                // get output from lcapy
-                py.latest.runPython("sys.stdout = io.StringIO()");
-                try {
-                    py.latest.runPython(`
-cct = lcapy.Circuit('''${netlist}''')
-print(lcapy.latex(cct.${component.name}${component.id}.V))
-                    `);
-                    const stdout = py.latest.runPython("sys.stdout.getvalue()");
-                    setValue(stdout);
-                } catch(e) {
-                    setDisplayValue(false);
-                    if (e.type == "RuntimeError") {
-                        // occurs when circuit has no ground
-                        setErrorMessage("It appears your circuit may lack a ground node, please add one before analysing.");
-                    } else if (e.type == "ValueError") {
-                        // occurs when circuit is not fully complete
-                        setErrorMessage("It appears your circuit may not be complete, please connect all components before analysing.");
-                    } else {
-                        setErrorMessage(e.message);
-                    }
-                    setDisplayError(true);
-                }
-            }
+            callback: () => {inspect("v")}
         }, {
             name: "Inspect Current",
             useable: () => {return !(component instanceof Wire || component instanceof Ground)},
-            callback: () => {
-                setDisplayValue(true);
-                // generate netlist
-                const netlist = sheet.forLcapy();
-                // get output from lcapy
-                py.latest.runPython("sys.stdout = io.StringIO()");
-                try {
-                    py.latest.runPython(`
-cct = lcapy.Circuit('''${netlist}''')
-print(lcapy.latex(cct.${component.name}${component.id}.I))
-                    `);
-                    const stdout = py.latest.runPython("sys.stdout.getvalue()");
-                    setValue(stdout);
-                } catch(e) {
-                    setDisplayValue(false);
-                    if (e.type == "RuntimeError") {
-                        // occurs when circuit has no ground
-                        setErrorMessage("It appears your circuit may lack a ground node, please add one before analysing.");
-                    } else if (e.type == "ValueError") {
-                        // occurs when circuit is not fully complete
-                        setErrorMessage("It appears your circuit may not be complete, please connect all components before analysing.");
-                    } else {
-                        setErrorMessage(e.message);
-                    }
-                    setDisplayError(true);
-                }
-            }
+            callback: () => {inspect("i")}
         }
     ]
 
@@ -169,19 +151,19 @@ print(lcapy.latex(cct.${component.name}${component.id}.I))
 
                     {/* Display the value selected by the user */}
                     <Match when={displayValue()}>
-                        <Equation>{`${value()}`}</Equation>
+                        <Equation>{`${property()}_{\\text{${component.name}${component.id}}}(t) = ${value()}`}</Equation>
                     </Match>
 
                     {/* Display the component value in latex when not editing */}
                     <Match when={!edit()}>
                         <Equation>{`
-                            ${component.name}_{${component.id}}=${component.value}\ \\left[${component.prefix} ${component.unit}\\right]
+                            \\text{${component.name}${component.id}}=${component.value}\ \\left[${component.prefix} ${component.unit}\\right]
                         `}</Equation>
                     </Match>
 
                     {/* Give an edit box when editing. */}
                     <Match when={edit()}>
-                        <Equation class="inline-block">{`${component.name}_{${component.id}}=`}</Equation>
+                        <Equation class="inline-block">{`\\text{${component.name}${component.id}}=`}</Equation>
                         <input 
                             ref={valueInput}
                             class="inline-block bg-primary text-primary" 

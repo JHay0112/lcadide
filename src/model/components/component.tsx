@@ -127,7 +127,7 @@ export default abstract class Component {
     }
     set value(value: string) {
         // check if value ends with a power of 10
-        const index = value.search(/(\*10\^{-?\d*})$/);
+        const index = value.search(/(\*10\*\*-?\d*)$/);
         if (index != -1) {
             const power = value.slice(index + 5, -1);
             this.prefix = unitPrefix(Number(power));

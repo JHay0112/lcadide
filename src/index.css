@@ -35,4 +35,8 @@
     a {
         @apply h-primary hover:opacity-80 underline;
     }
+
+    .katex { 
+        font-size: 1.5em; 
+    }
 }

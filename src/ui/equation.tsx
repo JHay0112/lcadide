@@ -2,9 +2,11 @@
  * Handles loading LaTeX formatted expressions.
  */
 
-import { children, createEffect, createSignal, splitProps } from "solid-js";
+import { children, createEffect, createSignal, splitProps, Show } from "solid-js";
 
 import katex from "katex";
+
+import ErrorBox from "./error";
 
 /**
  * Renders LaTeX expressions with KaTeX
@@ -26,6 +28,7 @@ export default function Equation(props) {
 
     // track errors
     const [error, setError] = createSignal(false);
+    const [errorMessage, setErrorMessage] = createSignal("");
 
     // element to render the LaTeX into
     let renderTarget;
@@ -37,13 +40,20 @@ export default function Equation(props) {
             setError(false);
         } catch(e) {
             renderTarget.innerHTML = "LaTeX Error!";
+            setErrorMessage(e);
             setError(true);
         }
     });
 
     return (<>
         <article class={local.class} onClick={props.onClick}>
-            <p class={`${error()? "text-error" : "text-primary"} ${local.class}`} ref={renderTarget}></p>
+            <p class={`${local.class}`} ref={renderTarget}></p>
+            {/* Error display for when errors occur */}
+            <Show when={error()}>
+                <ErrorBox onExit={() => {setError(false)}}>
+                    {errorMessage()}
+                </ErrorBox>
+            </Show>
         </article>
     </>);
 }
