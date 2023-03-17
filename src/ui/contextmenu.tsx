@@ -39,7 +39,8 @@ export default function ContextMenu(props) {
 
     // track whether a value should be displayed
     const [displayValue, setDisplayValue] = createSignal(false);
-    const [value, setValue] = createSignal(new Map<string, string>());
+    const [property, setProperty] = createSignal("");
+    const [value, setValue] = createSignal("");
 
     // track whether an error should be displayed
     const [displayError, setDisplayError] = createSignal(false);
@@ -47,6 +48,39 @@ export default function ContextMenu(props) {
 
     // reference to value input box
     let valueInput;
+
+    /**
+     * Routine for inspecting a property of the component
+     */
+    function inspect(property: string) {
+        setProperty(property);
+        setDisplayValue(true);
+        // generate netlist
+        const netlist = sheet.forLcapy();
+        // get output from lcapy
+        py.latest.runPython("sys.stdout = io.StringIO()");
+        try {
+            // truly high quality coding style
+            py.latest.runPython(`
+cct = lcapy.Circuit('''${netlist}''')
+output = lcapy.latex(cct.${component.name}${component.id}.${property})
+            `);
+            const output = py.latest.globals.get("output").toString();
+            setValue(output);
+        } catch(e) {
+            setDisplayValue(false);
+            if (e.type == "RuntimeError") {
+                // occurs when circuit has no ground
+                setErrorMessage("It appears your circuit may lack a ground node, please add one before analysing.");
+            } else if (e.type == "ValueError") {
+                // occurs when circuit is not fully complete
+                setErrorMessage("It appears your circuit may not be complete, please connect all components before analysing.");
+            } else {
+                setErrorMessage(e.message);
+            }
+            setDisplayError(true);
+        }
+    }
 
     // define actions to be implemented
     const actions: Action[] = [
@@ -76,67 +110,11 @@ export default function ContextMenu(props) {
         }, {
             name: "Inspect Voltage",
             useable: () => {return !(component instanceof Wire || component instanceof Ground)},
-            callback: () => {
-                setDisplayValue(true);
-                // generate netlist
-                const netlist = sheet.forLcapy();
-                // get output from lcapy
-                py.latest.runPython("sys.stdout = io.StringIO()");
-                try {
-                    py.latest.runPython(`
-cct = lcapy.Circuit('''${netlist}''')
-voltages = cct.${component.name}${component.id}.V
-for key, value in voltages.items():
-    voltages[key] = lcapy.latex(value)
-                    `);
-                    const voltageMap = py.latest.globals.get("voltages").toJs();
-                    setValue(voltageMap);
-                } catch(e) {
-                    setDisplayValue(false);
-                    if (e.type == "RuntimeError") {
-                        // occurs when circuit has no ground
-                        setErrorMessage("It appears your circuit may lack a ground node, please add one before analysing.");
-                    } else if (e.type == "ValueError") {
-                        // occurs when circuit is not fully complete
-                        setErrorMessage("It appears your circuit may not be complete, please connect all components before analysing.");
-                    } else {
-                        setErrorMessage(e.message);
-                    }
-                    setDisplayError(true);
-                }
-            }
+            callback: () => {inspect("v")}
         }, {
             name: "Inspect Current",
             useable: () => {return !(component instanceof Wire || component instanceof Ground)},
-            callback: () => {
-                setDisplayValue(true);
-                // generate netlist
-                const netlist = sheet.forLcapy();
-                // get output from lcapy
-                py.latest.runPython("sys.stdout = io.StringIO()");
-                try {
-                    py.latest.runPython(`
-cct = lcapy.Circuit('''${netlist}''')
-currents = cct.${component.name}${component.id}.I
-for key, value in currents.items():
-    currents[key] = lcapy.latex(value)
-                    `);
-                    const currentMap = py.latest.globals.get("currents").toJs();
-                    setValue(currentMap);
-                } catch(e) {
-                    setDisplayValue(false);
-                    if (e.type == "RuntimeError") {
-                        // occurs when circuit has no ground
-                        setErrorMessage("It appears your circuit may lack a ground node, please add one before analysing.");
-                    } else if (e.type == "ValueError") {
-                        // occurs when circuit is not fully complete
-                        setErrorMessage("It appears your circuit may not be complete, please connect all components before analysing.");
-                    } else {
-                        setErrorMessage(e.message);
-                    }
-                    setDisplayError(true);
-                }
-            }
+            callback: () => {inspect("i")}
         }
     ]
 
@@ -173,9 +151,7 @@ for key, value in currents.items():
 
                     {/* Display the value selected by the user */}
                     <Match when={displayValue()}>
-                        <For each={Array.from(value().entries())} fallback={<p>Error solving!</p>}>{(entry, _) =>
-                            <Equation>{`V_{\\text{${component.name}${component.id}},\\text{${entry[0]}}} = ${entry[1]}`}</Equation>
-                        }</For>
+                        <Equation>{`${property()}_{\\text{${component.name}${component.id}}} = ${value()}`}</Equation>
                     </Match>
 
                     {/* Display the component value in latex when not editing */}
