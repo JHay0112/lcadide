@@ -39,7 +39,7 @@ export default function ContextMenu(props) {
 
     // track whether a value should be displayed
     const [displayValue, setDisplayValue] = createSignal(false);
-    const [value, setValue] = createSignal("");
+    const [value, setValue] = createSignal(new Map<string, string>());
 
     // track whether an error should be displayed
     const [displayError, setDisplayError] = createSignal(false);
@@ -85,10 +85,12 @@ export default function ContextMenu(props) {
                 try {
                     py.latest.runPython(`
 cct = lcapy.Circuit('''${netlist}''')
-print(lcapy.latex(cct.${component.name}${component.id}.V))
+voltages = cct.${component.name}${component.id}.V
+for key, value in voltages.items():
+    voltages[key] = lcapy.latex(value)
                     `);
-                    const stdout = py.latest.runPython("sys.stdout.getvalue()");
-                    setValue(stdout);
+                    const voltageMap = py.latest.globals.get("voltages").toJs();
+                    setValue(voltageMap);
                 } catch(e) {
                     setDisplayValue(false);
                     if (e.type == "RuntimeError") {
@@ -115,10 +117,12 @@ print(lcapy.latex(cct.${component.name}${component.id}.V))
                 try {
                     py.latest.runPython(`
 cct = lcapy.Circuit('''${netlist}''')
-print(lcapy.latex(cct.${component.name}${component.id}.I))
+currents = cct.${component.name}${component.id}.I
+for key, value in currents.items():
+    currents[key] = lcapy.latex(value)
                     `);
-                    const stdout = py.latest.runPython("sys.stdout.getvalue()");
-                    setValue(stdout);
+                    const currentMap = py.latest.globals.get("currents").toJs();
+                    setValue(currentMap);
                 } catch(e) {
                     setDisplayValue(false);
                     if (e.type == "RuntimeError") {
@@ -169,19 +173,21 @@ print(lcapy.latex(cct.${component.name}${component.id}.I))
 
                     {/* Display the value selected by the user */}
                     <Match when={displayValue()}>
-                        <Equation>{`${value()}`}</Equation>
+                        <For each={Array.from(value().entries())} fallback={<p>Error solving!</p>}>{(entry, _) =>
+                            <Equation>{`V_{\\text{${component.name}${component.id}},\\text{${entry[0]}}} = ${entry[1]}`}</Equation>
+                        }</For>
                     </Match>
 
                     {/* Display the component value in latex when not editing */}
                     <Match when={!edit()}>
                         <Equation>{`
-                            ${component.name}_{${component.id}}=${component.value}\ \\left[${component.prefix} ${component.unit}\\right]
+                            \\text{${component.name}${component.id}}=${component.value}\ \\left[${component.prefix} ${component.unit}\\right]
                         `}</Equation>
                     </Match>
 
                     {/* Give an edit box when editing. */}
                     <Match when={edit()}>
-                        <Equation class="inline-block">{`${component.name}_{${component.id}}=`}</Equation>
+                        <Equation class="inline-block">{`\\text{${component.name}${component.id}}=`}</Equation>
                         <input 
                             ref={valueInput}
                             class="inline-block bg-primary text-primary" 
