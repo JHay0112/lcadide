@@ -63,7 +63,7 @@ export default function ContextMenu(props) {
             // truly high quality coding style
             py.latest.runPython(`
 cct = lcapy.Circuit('''${netlist}''')
-output = lcapy.latex(cct.${component.name}${component.id}.${property})
+output = lcapy.latex(lcapy.simplify(cct.${component.name}${component.id}.${property}))
             `);
             const output = py.latest.globals.get("output").toString();
             setValue(output);
@@ -151,7 +151,7 @@ output = lcapy.latex(cct.${component.name}${component.id}.${property})
 
                     {/* Display the value selected by the user */}
                     <Match when={displayValue()}>
-                        <Equation>{`${property()}_{\\text{${component.name}${component.id}}} = ${value()}`}</Equation>
+                        <Equation>{`${property()}_{\\text{${component.name}${component.id}}}(t) = ${value()}`}</Equation>
                     </Match>
 
                     {/* Display the component value in latex when not editing */}
